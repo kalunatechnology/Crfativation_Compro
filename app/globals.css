@@ -1298,4 +1298,654 @@ img {
   .portofolioCard {
     width: 90vw;
   }
+}\n
+
+/* ==========================================================================
+   REFERENCE ALIGNMENT V3 — homepage (2).svg
+   ========================================================================== */
+.hero {
+  height: 900px;
+  min-height: 900px;
+}
+
+.hero__image {
+  object-position: center 48%;
+}
+
+.hero__overlay {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.58) 0%, rgba(0,0,0,.16) 34%, rgba(0,0,0,.18) 58%, rgba(0,0,0,.68) 100%);
+}
+
+.hero__headlineFrame {
+  top: 49%;
+  gap: 12px;
+}
+
+.hero__title {
+  font-size: clamp(38px, 3.75vw, 54px);
+  line-height: 1.12;
+  max-width: 930px;
+  letter-spacing: -0.018em;
+}
+
+.hero__subtitle {
+  font-size: 16px;
+  letter-spacing: .22em;
+}
+
+.hero__numbersRow {
+  top: auto;
+  bottom: 118px;
+  width: min(710px, 92vw);
+  height: 108px;
+  gap: 12px;
+}
+
+.heroNumberBox {
+  height: 108px;
+  max-width: none;
+  background: rgba(13, 13, 13, .42);
+  border: 1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  box-shadow: 0 18px 48px rgba(0,0,0,.24);
+}
+
+.heroNumberVal {
+  font-size: clamp(34px, 3.1vw, 45px);
+}
+
+.heroNumberLabel {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+/* Hub / 3D approach section */
+.hubSection {
+  min-height: 1100px;
+  padding: 150px 20px 115px;
+}
+
+.hubSection__inner {
+  max-width: 1240px;
+}
+
+.hubTitle {
+  font-size: clamp(34px, 3.2vw, 48px);
+  line-height: 1.12;
+  margin-bottom: 54px;
+}
+
+.hubStage {
+  max-width: 1130px;
+  height: 720px;
+  margin-top: 0;
+}
+
+.hubGraphic {
+  width: min(790px, 82vw);
+  height: 680px;
+  max-height: none;
+}
+
+.hubEdgeLabel {
+  position: absolute;
+  top: 20%;
+  z-index: 12;
+  font-family: var(--font-arsenal);
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: .01em;
+}
+
+.hubEdgeLabel--left { left: 0; }
+.hubEdgeLabel--right { right: 0; }
+
+.hubInfoCard {
+  position: absolute;
+  z-index: 15;
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: center;
+  gap: 14px;
+  width: 300px;
+  min-height: 118px;
+  padding: 14px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.96);
+  color: #262626;
+  box-shadow: 0 18px 50px rgba(0,0,0,.28);
+}
+
+.hubInfoCard img {
+  width: 96px;
+  height: 86px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.hubInfoCard div {
+  min-width: 0;
+}
+
+.hubInfoCard strong {
+  display: block;
+  font-family: var(--font-arsenal);
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1.1;
+  margin-bottom: 7px;
+}
+
+.hubInfoCard span {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.45;
+  color: #696969;
+}
+
+.hubInfoCard--client {
+  left: 0;
+  top: 28%;
+}
+
+.hubInfoCard--project {
+  right: 0;
+  bottom: 22%;
+}
+
+.hubScreen--left {
+  top: 24%;
+  left: 24%;
+}
+
+.hubScreen--right {
+  top: 24%;
+  left: 52%;
+}
+
+/* Method / process section */
+.metodeSection {
+  min-height: 1820px;
+  padding: 115px 22px 145px;
+  background: #000;
+  justify-content: flex-start;
+}
+
+.metodeContent {
+  max-width: 1360px;
+}
+
+.metodeTitle {
+  margin: 0 0 90px;
+  font-size: clamp(36px, 3.2vw, 48px);
+  line-height: 1.1;
+}
+
+.metodePanel {
+  width: min(1320px, 96vw);
+  background: #fff;
+  color: #212121;
+  border-radius: 18px;
+  padding: 95px 76px;
+  box-shadow: 0 34px 90px rgba(0,0,0,.28);
+}
+
+.metodeStep {
+  min-height: 390px;
+  display: grid;
+  grid-template-columns: minmax(310px, .9fr) minmax(0, 1.55fr);
+  align-items: center;
+  gap: clamp(56px, 7vw, 118px);
+}
+
+.metodeStep + .metodeStep {
+  margin-top: 86px;
+}
+
+.metodeStep__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.processIso {
+  width: min(100%, 360px);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 20px 22px rgba(0,0,0,.08));
+}
+
+.metodeStep__copy {
+  text-align: left;
+  max-width: 690px;
+}
+
+.metodeStep__headingRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 26px;
+  margin-bottom: 25px;
+}
+
+.metodeStep__title {
+  margin: 0;
+  flex: 0 0 auto;
+  font-family: var(--font-arsenal);
+  font-size: clamp(44px, 4.4vw, 66px);
+  line-height: .98;
+  font-weight: 400;
+  letter-spacing: -.035em;
+  color: #3b3b3b;
+}
+
+.metodeStep__kicker {
+  max-width: 280px;
+  padding-bottom: 5px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.35;
+  color: #4d4d4d;
+}
+
+.metodeStep__desc {
+  margin: 0;
+  max-width: 620px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.62;
+  color: #4f4f4f;
+}
+
+/* Portfolio */
+.portofolioSection {
+  min-height: 930px;
+  padding: 86px 0 112px;
+}
+
+.portofolioHeader {
+  margin-bottom: 40px;
+}
+
+.portofolioTitle {
+  font-size: clamp(36px, 3.2vw, 48px);
+  line-height: 1.1;
+}
+
+.portofolioArrows {
+  position: absolute;
+  right: max(var(--page-gutter), calc((100vw - var(--page-max)) / 2 + var(--page-gutter)));
+  top: 88px;
+}
+
+.portofolioTrack {
+  gap: 48px;
+  padding-left: max(var(--page-gutter), calc((100vw - 865px) / 2));
+}
+
+.portofolioCard {
+  width: min(865px, 78vw);
+  gap: 15px;
+}
+
+.portofolioCard__image {
+  border-radius: 14px;
+  box-shadow: 0 25px 68px rgba(0,0,0,.2);
+}
+
+.portofolioCard__meta {
+  align-items: flex-start;
+}
+
+.portofolioCard__meta > div {
+  min-width: 0;
+}
+
+.portofolioCard__title {
+  font-size: clamp(32px, 3.45vw, 54px);
+  line-height: 1.05;
+}
+
+.portofolioCard__category {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: #8a8a8a;
+}
+
+.portofolioCard__num {
+  font-size: 24px;
+  line-height: 1.2;
+  padding-top: 7px;
+}
+
+.portofolioCard__btn {
+  width: 184px;
+  height: 37px;
+  font-size: 13px;
+}
+
+/* About collage */
+.tentangKamiSection {
+  min-height: 830px;
+  padding: 120px 20px;
+  overflow: hidden;
+}
+
+.tentangKamiContent {
+  position: relative;
+  z-index: 3;
+}
+
+.tentangKamiTitle {
+  width: min(1020px, 88vw);
+  font-size: clamp(36px, 3.35vw, 50px);
+  line-height: 1.08;
+}
+
+.tentangKamiSubtitle {
+  margin-top: 18px;
+  width: min(720px, 76vw);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: #4c4c4c;
+}
+
+.aboutCollage {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  background: #dedede;
+  box-shadow: 0 18px 55px rgba(0,0,0,.12);
+}
+
+.aboutCollage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.08);
+}
+
+.aboutCollage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.08);
+}
+
+.aboutCollage--one {
+  top: 62px;
+  right: 14%;
+  width: 300px;
+  height: 175px;
+}
+
+.aboutCollage--two {
+  left: 15%;
+  bottom: 98px;
+  width: 295px;
+  height: 170px;
+}
+
+.aboutCollage--three {
+  right: 10%;
+  bottom: 60px;
+  width: 360px;
+  height: 155px;
+}
+
+/* CTA and footer proportion refinements */
+.cta {
+  min-height: 352px;
+}
+
+.cta__headline {
+  font-size: clamp(34px, 3.35vw, 48px);
+  line-height: 1.14;
+}
+
+.footer {
+  background: #4b002b;
+}
+
+@media (max-width: 1100px) {
+  .hubInfoCard {
+    width: 250px;
+    grid-template-columns: 76px 1fr;
+  }
+
+  .hubInfoCard img {
+    width: 76px;
+    height: 72px;
+  }
+
+  .metodePanel {
+    padding: 74px 50px;
+  }
+
+  .metodeStep {
+    grid-template-columns: minmax(260px, .8fr) minmax(0, 1.4fr);
+    gap: 48px;
+  }
+
+  .aboutCollage--one { right: 6%; }
+  .aboutCollage--two { left: 6%; }
+  .aboutCollage--three { right: 4%; }
+}
+
+@media (max-width: 990px) {
+  .hubSection {
+    min-height: 940px;
+    padding-top: 120px;
+  }
+
+  .hubStage {
+    height: 650px;
+  }
+
+  .hubEdgeLabel {
+    display: none;
+  }
+
+  .hubInfoCard {
+    display: none;
+  }
+
+  .metodeSection {
+    min-height: auto;
+    padding: 92px 18px 105px;
+  }
+
+  .metodeTitle {
+    margin-bottom: 56px;
+  }
+
+  .metodePanel {
+    width: min(760px, 94vw);
+    padding: 68px 44px;
+  }
+
+  .metodeStep {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .metodeStep + .metodeStep {
+    margin-top: 90px;
+  }
+
+  .metodeStep__copy {
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  .metodeStep__headingRow {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .metodeStep__kicker {
+    padding-bottom: 0;
+    max-width: 420px;
+  }
+
+  .metodeStep__desc {
+    margin-inline: auto;
+  }
+
+  .aboutCollage {
+    opacity: .78;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    min-height: 820px;
+    height: 820px;
+  }
+
+  .hero__headlineFrame {
+    top: 42%;
+    width: 88vw;
+  }
+
+  .hero__title {
+    font-size: 34px;
+  }
+
+  .hero__subtitle {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .hero__numbersRow {
+    bottom: 62px;
+    width: 88vw;
+    height: auto;
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  .heroNumberBox {
+    min-width: 0;
+    height: 88px;
+    padding: 10px 4px;
+  }
+
+  .heroNumberVal {
+    font-size: 28px;
+  }
+
+  .heroNumberLabel {
+    font-size: 10px;
+  }
+
+  .hubSection {
+    min-height: 740px;
+    padding: 92px 14px 70px;
+  }
+
+  .hubTitle {
+    font-size: 32px;
+    width: 90vw;
+    margin-bottom: 20px;
+  }
+
+  .hubStage {
+    height: 500px;
+  }
+
+  .hubGraphic {
+    width: 96vw;
+    height: 500px;
+  }
+
+  .metodePanel {
+    padding: 48px 22px 58px;
+    border-radius: 12px;
+  }
+
+  .processIso {
+    width: min(100%, 285px);
+  }
+
+  .metodeStep__title {
+    font-size: 44px;
+  }
+
+  .metodeStep__kicker {
+    font-size: 11px;
+  }
+
+  .metodeStep__desc {
+    font-size: 13px;
+  }
+
+  .portofolioSection {
+    min-height: 760px;
+    padding-top: 70px;
+  }
+
+  .portofolioArrows {
+    display: none;
+  }
+
+  .portofolioTrack {
+    padding-left: 7vw;
+    gap: 20px;
+  }
+
+  .portofolioCard {
+    width: 86vw;
+  }
+
+  .portofolioCard__title {
+    font-size: 30px;
+  }
+
+  .tentangKamiSection {
+    min-height: 700px;
+    padding: 120px 16px;
+  }
+
+  .tentangKamiTitle {
+    font-size: 34px;
+    width: 92vw;
+  }
+
+  .tentangKamiSubtitle {
+    width: 84vw;
+    font-size: 13px;
+  }
+
+  .aboutCollage--one {
+    width: 170px;
+    height: 105px;
+    right: -18px;
+    top: 62px;
+  }
+
+  .aboutCollage--two {
+    width: 170px;
+    height: 105px;
+    left: -16px;
+    bottom: 82px;
+  }
+
+  .aboutCollage--three {
+    width: 190px;
+    height: 92px;
+    right: -26px;
+    bottom: 38px;
+  }
 }
