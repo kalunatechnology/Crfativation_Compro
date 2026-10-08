@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { projectsRepo } from "@/lib/repositories/projects";
 import type { ProjectInput } from "@/lib/types";
 
-export const runtime = "nodejs";
-
 type Ctx = { params: Promise<{ id: string }> };
 
 async function parseId(ctx: Ctx) {

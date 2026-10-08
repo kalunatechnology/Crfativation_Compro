@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { servicesRepo } from "@/lib/repositories/services";
 import type { ServiceInput } from "@/lib/types";
 
-export const runtime = "nodejs";
-
 // GET /api/services            -> hanya yang aktif
 // GET /api/services?all=1      -> semua (untuk pengelolaan)
 export async function GET(request: NextRequest) {

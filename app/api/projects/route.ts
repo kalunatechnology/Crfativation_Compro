@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { projectsRepo } from "@/lib/repositories/projects";
 import type { ProjectInput } from "@/lib/types";
 
-export const runtime = "nodejs";
-
 // GET /api/projects            -> hanya yang aktif
 // GET /api/projects?all=1      -> semua (untuk pengelolaan)
 export async function GET(request: NextRequest) {
