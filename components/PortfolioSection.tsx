@@ -1,33 +1,34 @@
 "use client";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { dummyProjects } from "@/data/dummy";
+import type { Project } from "@/lib/types";
 
-const portfolioItems = [
-  {
-    number: "01",
-    title: "Mid-Century Coffeebooth",
-    category: "Commercial Food & Beverage",
-    image: "/assets/portfolio-coffeebooth.webp",
-    alt: "Mid-Century Coffeebooth di area komersial mall",
-  },
-  {
-    number: "02",
-    title: "Gamefinity Brand Activation",
-    category: "Brand Activation & Gaming",
-    image: "/assets/portfolio-gamefinity.webp",
-    alt: "Booth dan brand activation Gamefinity outdoor",
-  },
-  {
-    number: "03",
-    title: "Exhibition Project",
-    category: "Trade Show & Expo",
-    image: "/assets/portfolio-exhibition.webp",
-    alt: "Booth exhibition dengan display produk komersial",
-  },
-];
+// Render the same active, ordered SQLite projects as the interactive Hub.
+const fallbackProjects: Project[] = dummyProjects.map((project, index) => ({ ...project, id: index + 1 }));
 
 export default function PortfolioSection() {
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
+  const [portfolioItems, setPortfolioItems] = useState<Project[]>(fallbackProjects);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadPortfolio() {
+      try {
+        const response = await fetch("/api/projects", { signal: controller.signal, cache: "no-store" });
+        if (!response.ok) return;
+        const payload = await response.json();
+        if (!controller.signal.aborted && Array.isArray(payload.data)) {
+          setPortfolioItems(payload.data as Project[]);
+        }
+      } catch {
+        // Keep initial seeded content when the API cannot be reached.
+      }
+    }
+    void loadPortfolio();
+    return () => controller.abort();
+  }, []);
+
   const portfolioTrackRef = useRef<HTMLDivElement>(null);
   const toggleLike = (number: string) => setLikedItems(previous => ({ ...previous, [number]: !previous[number] }));
   const scrollPortfolio = (direction: "left" | "right") => portfolioTrackRef.current?.scrollBy({ left: direction === "left" ? -500 : 500, behavior: "smooth" });
@@ -63,12 +64,13 @@ export default function PortfolioSection() {
           <div className="portofolioSlider" ref={portfolioTrackRef}>
             <div className="portofolioTrack">
               {portfolioItems.map((item) => {
-                const isLiked = !!likedItems[item.number];
+                const projectKey = String(item.id);
+                const isLiked = !!likedItems[projectKey];
                 return (
-                  <article className="portofolioCard" key={item.number}>
+                  <article className="portofolioCard" key={projectKey}>
                     {/* Image box: 865.44px x 467px, border-radius: 29.33px */}
                     <div className="portofolioCard__image">
-                      <Image src={item.image} alt={item.alt} fill sizes="(max-width: 600px) 90vw, 865px" className="portofolioCard__imgTag" />
+                      <Image src={item.image} alt={item.imageAlt || item.title} fill sizes="(max-width: 600px) 90vw, 865px" className="portofolioCard__imgTag" />
                     </div>
 
                     {/* Meta row: Title & Number */}
@@ -80,7 +82,7 @@ export default function PortfolioSection() {
                     {/* Button Lihat lebih banyak & Like */}
                     <div className="portofolioCard__actionRow">
                       <a
-                        href="#contact"
+                        href={item.href || "#contact"}
                         className="portofolioCard__btn"
                       >
                         Lihat lebih banyak
@@ -88,7 +90,7 @@ export default function PortfolioSection() {
                       <button
                         type="button"
                         className={`portofolioCard__like ${isLiked ? "is-liked" : ""}`}
-                        onClick={() => toggleLike(item.number)}
+                        onClick={() => toggleLike(projectKey)}
                         aria-label={isLiked ? "Hapus favorit" : "Sukai proyek"}
                       >
                         {isLiked ? "♥" : "♡"}
