@@ -425,6 +425,7 @@ img {
 }
 
 .portofolioCard__image {
+  position: relative;
   width: 100%;
   aspect-ratio: 865.44 / 467;
   background: #ECECEC;
