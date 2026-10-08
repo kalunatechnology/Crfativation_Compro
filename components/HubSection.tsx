@@ -6,76 +6,85 @@ import { dummyProjects, dummyServices } from "@/data/dummy";
 import type { Project, Service } from "@/lib/types";
 
 /**
- * Craftivation Hub: three scroll scenes.
- * Scene 1 dimensions and positions are taken from the supplied 1440×900 SVG.
- * All styling is Tailwind utilities; animation uses native React scroll state.
- * Services and projects still come from SQLite through the existing API.
+ * Each of the three artboards in hub.svg has a 1440 × 972 coordinate system.
+ * Assets originate from hub.svg rather than approximated 3D placeholders.
+ * Only image/text content comes from the existing SQLite-backed APIs.
  */
-const STAGE = "/assets/hub-stage-reference.avif";
-const CLOSED_STAGE = "/assets/hub-stage-video.avif";
-const MODULAR_ART = "/assets/hub-modular-icon.avif";
-const clamp = (n: number) => Math.max(0, Math.min(1, n));
-const fade = (a: number, b: number, p: number) => {
-  const t = clamp((p - a) / (b - a));
+const SOURCE = {
+  stage: "/assets/hub-source-stage.webp",
+  modular: "/assets/hub-source-modular.webp",
+  versatile: "/assets/hub-source-versatile.webp",
+  project: "/assets/hub-source-project.webp",
+  glow: "/assets/hub-source-glow.webp",
+};
+
+const aliases: Record<string, string> = {
+  "/assets/hub-stage.webp": SOURCE.stage,
+  "/assets/hub-modular.webp": SOURCE.modular,
+  "/assets/hub-modular.svg": SOURCE.modular,
+  "/assets/hub-modular-icon.avif": SOURCE.modular,
+  "/assets/hub-modular-reference.avif": SOURCE.modular,
+  "/assets/hub-versatile.webp": SOURCE.versatile,
+  "/assets/hub-versatile.svg": SOURCE.versatile,
+  "/assets/hub-midcafe.webp": SOURCE.project,
+  "/assets/portfolio-coffeebooth.webp": SOURCE.project,
+};
+const imageFor = (src: string) => aliases[src] ?? src;
+const clamp = (value: number) => Math.max(0, Math.min(1, value));
+const smooth = (start: number, end: number, p: number) => {
+  const t = clamp((p - start) / (end - start));
   return t * t * (3 - 2 * t);
 };
 
-function imageFor(path: string) {
-  const aliases: Record<string, string> = {
-    "/assets/hub-modular.svg": MODULAR_ART,
-    "/assets/hub-modular.webp": MODULAR_ART,
-    "/assets/hub-versatile.webp": "/assets/hub-versatile.svg",
-    "/assets/hub-modular-reference.avif": MODULAR_ART,
-    "/assets/hub-midcafe.webp": "/assets/portfolio-coffeebooth.webp",
-  };
-  return aliases[path] ?? path;
-}
-
-const fallbackServices: Service[] = dummyServices.map((item, index) => ({
-  ...item, id: index + 1,
+const initialServices: Service[] = dummyServices.map((service, index) => ({
+  ...service,
+  id: index + 1,
 }));
-const fallbackProjects: Project[] = dummyProjects.map((item, index) => ({
-  ...item, id: index + 1,
+const initialProjects: Project[] = dummyProjects.map((project, index) => ({
+  ...project,
+  id: index + 1,
 }));
 
-function ServiceArtwork({ service, size }: { service: Service; size: number }) {
+const arsenal = { fontFamily: "var(--font-arsenal), Georgia, serif" };
+
+function ServiceArt({ service }: { service: Service }) {
   return (
-    <div className="relative shrink-0 overflow-hidden" style={{ width: size, height: size }}>
-      <Image
-        src={imageFor(service.image)}
-        alt=""
-        fill
-        unoptimized
-        sizes={size + "px"}
-        className="object-contain"
-      />
-    </div>
+    <Image
+      src={imageFor(service.image)}
+      alt=""
+      fill
+      unoptimized
+      sizes="(max-width: 1024px) 100px, 259px"
+      className="object-contain"
+    />
   );
 }
 
-
-/** Precise card proportions from the supplied SVG at 1440×900. */
 function ServiceCard({ service, large = false }: { service: Service; large?: boolean }) {
   return large ? (
-    <article className="relative h-[466px] w-[776px] shrink-0 overflow-hidden rounded-[44px] bg-white text-[#141414] shadow-[0_15px_40px_rgba(0,0,0,.24)]">
+    <article className="relative h-[466px] w-[776px] shrink-0 overflow-hidden rounded-[43.5px] bg-white text-[#161616] shadow-[0_22px_55px_rgba(0,0,0,0.30)]">
       <div className="absolute left-[58px] top-[96px] h-[274px] w-[259px]">
-        <Image src={imageFor(service.image)} alt="" fill unoptimized sizes="259px" className="object-contain" />
+        <ServiceArt service={service} />
       </div>
-      <div className="absolute left-[398px] top-[153px] w-[310px]">
-        <h4 className="text-[50px] font-normal leading-[1.08] tracking-[-.035em]">{service.name}</h4>
-        <p className="mt-[40px] line-clamp-4 max-w-[282px] text-[20px] leading-[1.30]">{service.description}</p>
-        <a href={service.href} className="mt-[28px] inline-block text-[16px] text-[#8B204B] hover:underline">Pelajari lebih lanjut →</a>
+      <div className="absolute left-[398px] top-[155px] w-[310px]">
+        <h3 className="text-[49px] font-normal leading-none tracking-[-0.035em]">{service.name}</h3>
+        <p className="mt-[39px] line-clamp-4 max-w-[288px] text-[20px] leading-[1.32]">{service.description}</p>
+        <a href={service.href} className="mt-[25px] inline-block text-[16px] text-[#8b204b] hover:underline focus-visible:underline">
+          Pelajari lebih lanjut <span aria-hidden="true">→</span>
+        </a>
       </div>
     </article>
   ) : (
-    <article className="relative h-[223px] w-[372px] overflow-hidden rounded-[21px] bg-white text-[#141414] shadow-[0_14px_35px_rgba(0,0,0,.25)]">
-      <div className="absolute left-[28px] top-[46px] h-[131px] w-[124px]">
-        <Image src={imageFor(service.image)} alt="" fill unoptimized sizes="124px" className="object-contain" />
+    <article className="relative h-[223px] w-[371px] overflow-hidden rounded-[20.8px] bg-white text-[#161616] shadow-[0_18px_48px_rgba(0,0,0,0.33)]">
+      <div className="absolute left-[27px] top-[46px] h-[131px] w-[124px]">
+        <ServiceArt service={service} />
       </div>
-      <div className="absolute left-[190px] top-[70px] w-[160px]">
-        <h3 className="text-[26px] font-normal leading-[1.05] tracking-[-.035em]">{service.name}</h3>
-        <p className="mt-[14px] line-clamp-4 text-[11px] leading-[1.3]">{service.description}</p>
-        <a href={service.href} className="mt-[13px] inline-block text-[11px] text-[#8B204B] hover:underline">Pelajari lebih lanjut →</a>
+      <div className="absolute left-[189px] top-[71px] w-[162px]">
+        <h3 className="text-[26px] font-normal leading-none tracking-[-0.03em]">{service.name}</h3>
+        <p className="mt-[15px] line-clamp-4 text-[11px] leading-[1.28]">{service.description}</p>
+        <a href={service.href} className="mt-[11px] inline-block text-[11px] text-[#8b204b] hover:underline">
+          Pelajari lebih lanjut <span aria-hidden="true">→</span>
+        </a>
       </div>
     </article>
   );
@@ -84,8 +93,8 @@ function ServiceCard({ service, large = false }: { service: Service; large?: boo
 function ProjectPhoto({ project, large = false }: { project: Project; large?: boolean }) {
   return (
     <div className={large
-      ? "relative h-[467px] w-[865px] overflow-hidden rounded-[29px] shadow-[0_24px_60px_rgba(0,0,0,.34)]"
-      : "relative h-[218px] w-[403px] overflow-hidden rounded-[29px] shadow-[0_20px_45px_rgba(0,0,0,.34)]"
+      ? "relative h-[467px] w-[865px] overflow-hidden rounded-[29.3px] shadow-[0_25px_65px_rgba(0,0,0,0.33)]"
+      : "relative h-[218px] w-[403px] overflow-hidden rounded-[29.3px] shadow-[0_20px_47px_rgba(0,0,0,0.38)]"
     }>
       <Image
         src={imageFor(project.image)}
@@ -99,256 +108,222 @@ function ProjectPhoto({ project, large = false }: { project: Project; large?: bo
   );
 }
 
+function MobileHub({ services, projects }: { services: Service[]; projects: Project[] }) {
+  return (
+    <div className="mx-auto max-w-[670px] px-5 pb-20 pt-24">
+      <h2 className="mx-auto max-w-[390px] text-center text-[clamp(26px,6vw,40px)] leading-[1.15] tracking-[-0.03em]" style={arsenal}>
+        Redefining space within commercial needs
+      </h2>
+      <div className="relative mx-auto mt-6 aspect-[2226/1920] w-full max-w-[550px]">
+        <Image src={SOURCE.stage} alt="Konsep panggung tiga dimensi Craftivation" fill unoptimized sizes="(max-width: 670px) 90vw, 550px" className="object-contain" />
+      </div>
+      {services.length > 0 && (
+        <div className="mt-12">
+          <h3 className="mb-5 text-[28px]" style={arsenal}>Lihat Layanan Kami</h3>
+          <div className="grid gap-4">
+            {services.map((item) => (
+              <article key={item.id} className="flex items-center gap-4 rounded-[22px] bg-white p-5 text-[#171717]">
+                <div className="relative h-[95px] w-[95px] shrink-0"><ServiceArt service={item} /></div>
+                <div className="min-w-0">
+                  <h4 className="text-[23px] leading-none">{item.name}</h4>
+                  <p className="mt-2 text-[12px] leading-[1.35]">{item.description}</p>
+                  <a href={item.href} className="mt-2 inline-block text-xs text-[#8b204b]">Pelajari lebih lanjut →</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+      {projects.length > 0 && (
+        <div className="mt-14">
+          <h3 className="mb-5 text-[28px]" style={arsenal}>Lihat Proyek Kami</h3>
+          {projects.slice(0, 3).map((item) => (
+            <a href={item.href} key={item.id} className="mb-9 block">
+              <div className="relative aspect-[865/467] overflow-hidden rounded-[20px]">
+                <Image src={imageFor(item.image)} alt={item.imageAlt || item.title} fill unoptimized sizes="(max-width: 670px) 90vw, 600px" className="object-cover" />
+              </div>
+              <div className="mt-3 flex justify-between text-[13px] text-white/70"><span>{item.number}</span><span>{item.client}</span></div>
+              <h4 className="mt-3 text-center text-[25px] leading-tight" style={arsenal}>{item.title}</h4>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function HubSection() {
-  const ref = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const [scale, setScale] = useState(1);
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const [services, setServices] = useState<Service[]>(fallbackServices);
-  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [services, setServices] = useState<Service[]>(initialServices);
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [projectIndex, setProjectIndex] = useState(0);
 
-  // Read SQLite-backed APIs; dummy.ts is an initial/fallback value, not an overwrite.
   useEffect(() => {
     const controller = new AbortController();
-    const load = async () => {
-      try {
-        const [serviceResponse, projectResponse] = await Promise.all([
-          fetch("/api/services", { signal: controller.signal, cache: "no-store" }),
-          fetch("/api/projects", { signal: controller.signal, cache: "no-store" }),
-        ]);
-        if (!serviceResponse.ok || !projectResponse.ok) return;
-        const [serviceBody, projectBody] = await Promise.all([
-          serviceResponse.json(), projectResponse.json(),
-        ]);
-        if (controller.signal.aborted) return;
-        if (Array.isArray(serviceBody.data)) setServices(serviceBody.data);
-        if (Array.isArray(projectBody.data)) setProjects(projectBody.data);
-      } catch {
-        // Keep the initial dummy.ts fallback if the API is unavailable.
-      }
-    };
+    async function load() {
+      const [s, p] = await Promise.allSettled([
+        fetch("/api/services", { cache: "no-store", signal: controller.signal }).then((r) => {
+          if (!r.ok) throw new Error("services unavailable");
+          return r.json();
+        }),
+        fetch("/api/projects", { cache: "no-store", signal: controller.signal }).then((r) => {
+          if (!r.ok) throw new Error("projects unavailable");
+          return r.json();
+        }),
+      ]);
+      if (controller.signal.aborted) return;
+      if (s.status === "fulfilled" && Array.isArray(s.value?.data)) setServices(s.value.data);
+      if (p.status === "fulfilled" && Array.isArray(p.value?.data)) setProjects(p.value.data);
+    }
     void load();
     return () => controller.abort();
   }, []);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const onMotion = () => setReduceMotion(media.matches);
-    onMotion();
-    media.addEventListener("change", onMotion);
+    const updateMotion = () => setReducedMotion(media.matches);
+    updateMotion();
+    media.addEventListener("change", updateMotion);
 
     let frame = 0;
     const measure = () => {
       frame = 0;
-      setScale(Math.min(window.innerWidth / 1440, window.innerHeight / 900));
-      const section = ref.current;
+      const section = sectionRef.current;
       if (!section) return;
-      const bounds = section.getBoundingClientRect();
-      const scrollable = Math.max(1, bounds.height - window.innerHeight);
-      const next = clamp(-bounds.top / scrollable);
-      setProgress((before) => Math.abs(before - next) > 0.001 ? next : before);
+      const rect = section.getBoundingClientRect();
+      const travel = Math.max(1, rect.height - window.innerHeight);
+      const next = clamp(-rect.top / travel);
+      setProgress((last) => Math.abs(last - next) > 0.001 ? next : last);
+      setScale(Math.min(window.innerWidth / 1440, window.innerHeight / 972));
     };
-    const onScroll = () => {
-      if (!frame) frame = window.requestAnimationFrame(measure);
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
     return () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      media.removeEventListener("change", onMotion);
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      media.removeEventListener("change", updateMotion);
     };
   }, []);
 
-  const firstService = services[0];
-  const secondService = services[1];
-  const selectedProject = projects.length
+  const activeProject = projects.length
     ? projects[Math.min(projectIndex, projects.length - 1)]
     : undefined;
+  const firstService = services[0];
+  const secondService = services[1];
 
-  // Overlapping fades keep the composition alive while moving between scenes.
-  const intro = 1 - fade(0.15, 0.37, progress);
-  const service = fade(0.24, 0.43, progress) * (1 - fade(0.59, 0.77, progress));
-  const project = fade(0.65, 0.84, progress);
+  // Three linked compositions, not three unrelated slide transitions.
+  const approachIn = 1 - smooth(0.15, 0.40, progress);
+  const servicesIn = smooth(0.25, 0.46, progress) * (1 - smooth(0.57, 0.79, progress));
+  const projectIn = smooth(0.65, 0.86, progress);
+  const zoom = smooth(0.10, 0.50, progress);
+  const stageExit = smooth(0.61, 0.86, progress);
 
-  const jump = (phase: number) => {
-    const section = ref.current;
+  const go = (phase: number) => {
+    const section = sectionRef.current;
     if (!section) return;
     const top = window.scrollY + section.getBoundingClientRect().top;
     const travel = Math.max(0, section.offsetHeight - window.innerHeight);
-    window.scrollTo({ top: top + phase * travel, behavior: reduceMotion ? "instant" : "smooth" });
+    window.scrollTo({ top: top + travel * phase, behavior: reducedMotion ? "instant" : "smooth" });
   };
 
-  const pageStyle = { transform: "translate(-50%, -50%) scale(" + scale + ")" };
-  const headingFont = { fontFamily: "var(--font-arsenal)" };
+  const canvasStyle = { transform: `translate(-50%, -50%) scale(${scale})` };
 
   return (
-    <section
-      id="approach"
-      ref={ref}
-      aria-label="Pendekatan, layanan, dan proyek Craftivation"
-      className="relative isolate scroll-mt-[70px] overflow-clip bg-[#010101] text-white"
-    >
-      {/* Mobile and reduced motion: readable vertical content, no sticky trapping. */}
-      <div className={"mx-auto max-w-[700px] px-5 py-20 " + (reduceMotion ? "lg:block" : "lg:hidden")}>
-        <h2 className="mx-auto max-w-[420px] text-center text-[clamp(28px,6vw,40px)] leading-tight tracking-[-0.035em]" style={headingFont}>
-          Redefining space within commercial needs
-        </h2>
-        <div className="relative mx-auto mt-8 aspect-[742/864] w-full max-w-[460px]">
-          <Image src={CLOSED_STAGE} alt="Panggung isometrik Craftivation" fill unoptimized sizes="(max-width: 700px) 90vw, 460px" className="object-contain" />
-        </div>
-        {services.length > 0 && (
-          <div className="mt-10">
-            <h3 className="mb-5 text-2xl" style={headingFont}>Lihat Layanan Kami</h3>
-            <div className="grid gap-4">
-              {services.slice(0, 2).map((item) => (
-                <article key={item.id} className="flex min-w-0 items-center gap-4 rounded-[22px] bg-white p-5 text-black">
-                  <div className="relative h-[100px] w-[100px] shrink-0">
-                    <Image src={imageFor(item.image)} alt="" fill unoptimized sizes="100px" className="object-contain" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-[24px] leading-tight">{item.name}</h4>
-                    <p className="mt-2 text-[13px] leading-relaxed text-black/75">{item.description}</p>
-                    <a className="mt-3 inline-block text-xs text-[#8e204b]" href={item.href}>Pelajari lebih lanjut →</a>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        )}
-        {selectedProject && (
-          <div className="mt-12">
-            <h3 className="mb-5 text-2xl" style={headingFont}>Lihat Proyek Kami</h3>
-            <a href={selectedProject.href} className="relative block aspect-[1.85] overflow-hidden rounded-2xl">
-              <Image src={imageFor(selectedProject.image)} alt={selectedProject.imageAlt || selectedProject.title} fill unoptimized sizes="(max-width: 700px) 90vw, 650px" className="object-cover" />
-            </a>
-            <div className="mt-4 flex justify-between text-sm text-white/75">
-              <span>{selectedProject.number}</span><span>{selectedProject.client}</span>
-            </div>
-            <h4 className="mt-4 text-center text-[28px]" style={headingFont}>{selectedProject.title}</h4>
-          </div>
-        )}
+    <section id="approach" ref={sectionRef} aria-label="Pendekatan Craftivation" className="relative isolate scroll-mt-[70px] overflow-clip bg-[#010101] text-white">
+      <div className={reducedMotion ? "lg:block" : "lg:hidden"}>
+        <MobileHub services={services} projects={projects} />
       </div>
 
-      {/* Desktop: 1440 × 900 reference coordinates, scaled uniformly per viewport. */}
-      <div className={"relative h-[320svh] " + (reduceMotion ? "hidden" : "hidden lg:block")}>
-        <div className="sticky top-0 h-[100svh] overflow-hidden bg-[#010101]">
-          <div className="absolute left-1/2 top-1/2 h-[900px] w-[1440px] origin-center" style={pageStyle}>
+      <div className={reducedMotion ? "hidden" : "relative hidden h-[320svh] lg:block"}>
+        <div className="sticky top-0 h-[100svh] min-h-[600px] overflow-hidden bg-[#010101]">
+          <div className="absolute left-1/2 top-1/2 h-[972px] w-[1440px] origin-center" style={canvasStyle}>
 
-            {/* Scene 1: precisely positioned 3D stage, labels and overlaid cards. */}
-            <div
-              className="absolute inset-0"
-              style={{ opacity: intro, visibility: intro > 0.01 ? "visible" : "hidden", pointerEvents: intro > 0.12 ? "auto" : "none" }}
-            >
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute left-[349px] top-[145px] h-[640px] w-[742px] will-change-transform"
-                style={{ transform: "translateY(" + (fade(0.04, 0.38, progress) * 40) + "px) scale(" + (1 + fade(0.06, 0.38, progress) * 0.19) + ")", transformOrigin: "center center" }}
-              >
-                <Image src={CLOSED_STAGE} alt="" fill unoptimized sizes="742px" className="object-contain" />
-                <div aria-hidden="true" className="absolute left-[50%] top-[44%] h-[168px] w-[65px] -translate-x-1/2 shadow-[0_20px_22px_rgba(0,0,0,.58)]" style={{ clipPath: "polygon(50% 0,100% 14%,100% 89%,50% 100%,0 89%,0 14%)", background: "linear-gradient(100deg,#430015 0%,#85163d 52%,#46001b 100%)" }}>
-                  <div className="absolute inset-x-0 top-0 h-[21px] bg-[#8B2348]" style={{clipPath:"polygon(50% 0,100% 90%,50% 100%,0 90%)"}} />
-                  <div className="absolute inset-x-0 bottom-0 h-[4px] bg-white shadow-[0_0_10px_2px_white]" />
-                </div>
-              </div>
+            {/* Shared stage moves and zooms continuously across the first transition. */}
+            <div aria-hidden="true" className="pointer-events-none absolute left-[349px] top-[170px] z-0 h-[732px] w-[742px] will-change-transform" style={{
+              opacity: 1 - stageExit,
+              transform: `translate3d(${zoom * -170}px, ${zoom * 250}px, 0) scale(${1 + zoom * 1.25})`,
+              transformOrigin: "center center",
+            }}>
+              <Image src={SOURCE.stage} alt="" fill unoptimized sizes="742px" className="object-contain" />
+              {/* The central burgundy column is reproduced as the vector geometry from hub.svg. */}
+              <svg viewBox="650 438 140 213" aria-hidden="true" className="absolute left-[41%] top-[33%] h-[32%] w-[18%] overflow-visible">
+                <defs>
+                  <linearGradient id="hub-pillar-right" x1="718" y1="473" x2="760" y2="603" gradientUnits="userSpaceOnUse"><stop stopColor="#7E1435"/><stop offset="1" stopColor="#3B0016"/></linearGradient>
+                  <linearGradient id="hub-pillar-left" x1="678" y1="472" x2="720" y2="628" gradientUnits="userSpaceOnUse"><stop stopColor="#630724"/><stop offset="1" stopColor="#2B0011"/></linearGradient>
+                </defs>
+                <path d="M719.792 498.895L760.09 472.756V603.453L719.792 629.592V498.895Z" fill="url(#hub-pillar-right)"/>
+                <path d="M679.494 603.452L719.792 629.592V498.895L679.494 472.755V603.452Z" fill="url(#hub-pillar-left)"/>
+                <path d="M718.756 450.51C719.393 450.125 720.191 450.125 720.827 450.51L758.352 473.223C759.638 474.001 759.638 475.867 758.352 476.645L720.827 499.357C720.191 499.743 719.393 499.743 718.756 499.357L681.231 476.645C679.946 475.867 679.946 474.001 681.231 473.223L718.756 450.51Z" fill="#A52C4E"/>
+                <path d="M718.758 572.492C719.394 572.108 720.19 572.108 720.826 572.492L769.237 601.741C770.525 602.519 770.525 604.386 769.237 605.164L720.826 634.413C720.19 634.797 719.394 634.797 718.758 634.413L670.347 605.164C669.059 604.386 669.059 602.519 670.347 601.741L718.758 572.492Z" fill="white" opacity=".93"/>
+              </svg>
+            </div>
 
-              <h2
-                className="absolute left-1/2 top-[157px] w-[900px] -translate-x-1/2 text-center text-[40px] font-normal leading-[1.24] tracking-[-0.028em]"
-                style={headingFont}
-              >
+            {/* Scene 1: placement measured from the first 972px of hub.svg. */}
+            <div className="absolute inset-0 z-10" aria-hidden={approachIn < 0.03} style={{ opacity: approachIn, visibility: approachIn < 0.02 ? "hidden" : "visible", pointerEvents: approachIn > 0.12 ? "auto" : "none" }}>
+              <h2 className="absolute left-1/2 top-[155px] w-[840px] -translate-x-1/2 text-center text-[40px] font-normal leading-tight tracking-[-0.025em]" style={arsenal}>
                 Redefining space within commercial needs
               </h2>
-
-              <div className="absolute left-[144px] top-[238px]">
-                <button type="button" onClick={() => jump(0.48)} className="text-[20px] text-white/85 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-white">
-                  Lihat Layanan Kami
-                </button>
-              </div>
-
+              <button type="button" className="absolute left-[144px] top-[237px] text-[20px] text-white/85 hover:text-white" onClick={() => go(0.46)}>
+                Lihat Layanan Kami
+              </button>
               {firstService && (
-                <div className="absolute left-[144px] top-[297px]">
+                <div className="absolute left-[144px] top-[297px]" style={{ transform: `translate3d(${-zoom * 165}px, ${zoom * -25}px, 0) scale(${1 + zoom * 0.5})`, transformOrigin: "center" }}>
                   <ServiceCard service={firstService} />
                 </div>
               )}
-
-              {selectedProject && (
+              {activeProject && (
                 <>
-                  <div className="absolute left-[1040px] top-[444px] w-[312px] text-right">
-                    <button type="button" onClick={() => jump(0.88)} className="text-[20px] text-white/85 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-white">
-                      Lihat Proyek Kami
-                    </button>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => jump(0.88)}
-                    className="absolute left-[947px] top-[487px] block rounded-[29px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                    aria-label={"Lihat proyek " + selectedProject.title}
-                  >
-                    <ProjectPhoto project={selectedProject} />
+                  <button type="button" onClick={() => go(0.86)} className="absolute left-[1040px] top-[447px] w-[310px] text-right text-[20px] text-white/85 hover:text-white">
+                    Lihat Proyek Kami
+                  </button>
+                  <button type="button" onClick={() => go(0.86)} aria-label={`Lihat proyek ${activeProject.title}`} className="absolute left-[947px] top-[487px] rounded-[29px] focus-visible:outline-2 focus-visible:outline-white" style={{ transform: `translate3d(${zoom * -60}px, ${zoom * -12}px, 0) scale(${1 + zoom * 0.18})` }}>
+                    <ProjectPhoto project={activeProject} />
                   </button>
                 </>
               )}
             </div>
 
-            {/* Scene 2: oversized service cards; the second card exits right edge. */}
-            <div
-              className="absolute inset-0 overflow-hidden"
-              style={{ opacity: service, visibility: service > 0.01 ? "visible" : "hidden", pointerEvents: service > 0.12 ? "auto" : "none" }}
-            >
-              <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div
-                  className="absolute left-[380px] top-[-230px] h-[1200px] w-[900px] opacity-25 blur-[9px]"
-                  style={{ transform: "scale(" + (1.25 + fade(0.26, 0.5, progress) * 0.28) + ")" }}
-                >
-                  <Image src={STAGE} alt="" fill unoptimized sizes="900px" className="object-cover" />
-                </div>
-                <div className="absolute bottom-[-160px] right-[-60px] h-[370px] w-[620px] -rotate-[33deg] bg-white/20 blur-[60px]" />
+            {/* Scene 2: actual service-card geometry from rows 972–1944 of hub.svg. */}
+            <div className="absolute inset-0 z-20 overflow-hidden" aria-hidden={servicesIn < 0.03} style={{ opacity: servicesIn, visibility: servicesIn < 0.02 ? "hidden" : "visible", pointerEvents: servicesIn > 0.12 ? "auto" : "none" }}>
+              <div aria-hidden="true" className="pointer-events-none absolute bottom-[-160px] right-[-120px] h-[370px] w-[590px] -rotate-[30deg] bg-white/20 blur-[65px]" />
+              <div className="absolute left-[176px] top-[54px] flex items-center gap-[20px]">
+                <button type="button" onClick={() => go(0.02)} aria-label="Kembali ke tampilan utama" className="text-[43px] leading-none text-white/90 hover:text-white">‹</button>
+                <h3 className="text-[44px] leading-tight" style={arsenal}>Lihat Layanan Kami</h3>
               </div>
-              <div className="absolute left-[310px] top-[155px] flex items-center gap-[22px]">
-                <button type="button" onClick={() => jump(0.03)} aria-label="Kembali ke Hub" className="text-[38px] leading-none hover:text-white/65 focus-visible:outline-2 focus-visible:outline-white">‹</button>
-                <h3 className="text-[44px] font-normal leading-none" style={headingFont}>Lihat Layanan Kami</h3>
-              </div>
-              <div
-                className="absolute left-[316px] top-[300px] flex w-max gap-[58px] will-change-transform"
-                style={{ transform: "translateX(" + ((1 - fade(0.28, 0.48, progress)) * 70) + "px)" }}
-              >
+              <div className="absolute left-[135px] top-[140px] flex w-max gap-[58px] will-change-transform" style={{ transform: `translateX(${(1 - smooth(0.30, 0.49, progress)) * 260}px) scale(${0.91 + smooth(0.30, 0.49, progress) * 0.09})`, transformOrigin: "left center" }}>
                 {firstService && <ServiceCard service={firstService} large />}
                 {secondService && <ServiceCard service={secondService} large />}
               </div>
             </div>
 
-            {/* Scene 3: centered project, metadata at sides, large title below. */}
-            <div
-              className="absolute inset-0 overflow-hidden"
-              style={{ opacity: project, visibility: project > 0.01 ? "visible" : "hidden", pointerEvents: project > 0.12 ? "auto" : "none" }}
-            >
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-                <div className="absolute -left-[130px] top-[90px] h-[700px] w-[320px] rotate-[37deg] bg-white/[0.25] blur-[65px]" />
-                <div className="absolute -bottom-[160px] -left-[120px] h-[390px] w-[480px] rounded-full bg-[#5b0922]/70 blur-[100px]" />
+            {/* Scene 3: SVG's project card, side metadata and soft brown glow. */}
+            <div className="absolute inset-0 z-30 overflow-hidden" aria-hidden={projectIn < 0.03} style={{ opacity: projectIn, visibility: projectIn < 0.02 ? "hidden" : "visible", pointerEvents: projectIn > 0.12 ? "auto" : "none" }}>
+              <div aria-hidden="true" className="pointer-events-none absolute left-[390px] top-[385px] h-[361px] w-[668px] opacity-65 blur-[29px]">
+                <Image src={SOURCE.glow} alt="" fill unoptimized sizes="668px" className="object-cover" />
               </div>
-              <button type="button" onClick={() => jump(0.49)} aria-label="Kembali ke layanan" className="absolute left-[294px] top-[128px] text-[44px] leading-none hover:text-white/70 focus-visible:outline-2 focus-visible:outline-white">‹</button>
-              <h3 className="absolute left-1/2 top-[116px] -translate-x-1/2 whitespace-nowrap text-[46px] font-normal" style={headingFont}>Lihat Proyek Kami</h3>
-              {selectedProject && (
+              <div aria-hidden="true" className="pointer-events-none absolute bottom-[-130px] left-[-120px] h-[470px] w-[260px] rotate-[38deg] bg-white/20 blur-[50px]" />
+              <button type="button" onClick={() => go(0.47)} aria-label="Kembali ke layanan" className="absolute left-[293px] top-[48px] text-[43px] leading-none text-white/90 hover:text-white">‹</button>
+              <h3 className="absolute left-1/2 top-[22px] -translate-x-1/2 whitespace-nowrap text-[47px]" style={arsenal}>Lihat Proyek Kami</h3>
+              {activeProject && (
                 <>
-                  <a
-                    href={selectedProject.href}
-                    className="absolute left-[293px] top-[224px] block overflow-hidden rounded-[29px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                    style={{ transform: "translateY(" + ((1 - fade(0.67, 0.88, progress)) * 44) + "px) scale(" + (0.96 + fade(0.67, 0.88, progress) * 0.04) + ")" }}
-                  >
-                    <ProjectPhoto project={selectedProject} large />
+                  <a href={activeProject.href} className="absolute left-[293px] top-[100px] rounded-[29px] focus-visible:outline-2 focus-visible:outline-white" style={{ transform: `translate3d(0, ${(1 - smooth(0.70, 0.89, progress)) * 54}px,0) scale(${0.94 + 0.06 * smooth(0.70, 0.89, progress)})` }}>
+                    <ProjectPhoto project={activeProject} large />
                   </a>
-                  <span className="absolute left-[174px] top-[440px] text-[29px] text-white/90">{selectedProject.number}</span>
-                  <span className="absolute left-[1203px] top-[440px] text-[29px] text-white/90">{selectedProject.client}</span>
-                  <h4 className="absolute left-1/2 top-[737px] w-[1060px] -translate-x-1/2 text-center text-[49px] font-normal leading-tight tracking-[-0.03em]" style={headingFont}>
-                    {selectedProject.title}
-                  </h4>
+                  <span className="absolute left-[175px] top-[315px] text-[28px]">{activeProject.number}</span>
+                  <span className="absolute right-[170px] top-[315px] text-[28px]">{activeProject.client}</span>
+                  <h4 className="absolute left-1/2 top-[609px] w-[1110px] -translate-x-1/2 text-center text-[49px] leading-tight tracking-[-0.02em]" style={arsenal}>{activeProject.title}</h4>
                   {projects.length > 1 && (
-                    <div className="absolute bottom-[28px] left-1/2 flex -translate-x-1/2 gap-7">
-                      <button type="button" aria-label="Proyek sebelumnya" onClick={() => setProjectIndex(i => (i - 1 + projects.length) % projects.length)} className="rounded-full border border-white/30 px-4 py-1 text-xl hover:bg-white/15">‹</button>
-                      <button type="button" aria-label="Proyek berikutnya" onClick={() => setProjectIndex(i => (i + 1) % projects.length)} className="rounded-full border border-white/30 px-4 py-1 text-xl hover:bg-white/15">›</button>
+                    <div className="absolute bottom-[62px] left-1/2 flex -translate-x-1/2 gap-7">
+                      <button type="button" onClick={() => setProjectIndex((i) => (i - 1 + projects.length) % projects.length)} aria-label="Proyek sebelumnya" className="rounded-full border border-white/40 px-4 py-1 text-2xl hover:bg-white/15">‹</button>
+                      <button type="button" onClick={() => setProjectIndex((i) => (i + 1) % projects.length)} aria-label="Proyek berikutnya" className="rounded-full border border-white/40 px-4 py-1 text-2xl hover:bg-white/15">›</button>
                     </div>
                   )}
                 </>
