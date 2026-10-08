@@ -207,131 +207,215 @@ img {
 }
 
 /* ==========================================================================
-   SECTION 3: METODE / PROCESS (section/homepage/metode)
+   SECTION 3 — METODE / PROSES
+   Source: uploaded metode.svg + homepage.svg artboards.
+   A single white, three-stage panel on the black homepage background.
    ========================================================================== */
 .metodeSection {
   position: relative;
+  isolation: isolate;
   width: 100%;
-  min-height: 900px;
-  background: var(--black-base);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 100px 20px;
+  padding: clamp(92px, 10vw, 154px) clamp(15px, 2.3vw, 36px) clamp(90px, 9vw, 146px);
+  color: #474747;
+  background: #010101;
 }
 
-.metodeGlow {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 75% 50%, rgba(92, 0, 57, 0.32), transparent 45%),
-    radial-gradient(circle at 25% 55%, rgba(42, 0, 23, 0.28), transparent 40%);
-  filter: blur(35px);
-  pointer-events: none;
-}
-
-.metodeContent {
-  position: relative;
-  z-index: 2;
+.metodeSection__heading {
+  margin: 0 auto clamp(52px, 5.5vw, 84px);
   width: 100%;
-  max-width: 1317px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   text-align: center;
+  color: #fff;
 }
 
-.metodeTitle {
-  margin: 0 0 46px;
-  font-family: var(--font-arsenal);
-  font-style: normal;
-  font-weight: 400;
-  font-size: clamp(34px, 3.4vw, 48px);
-  line-height: 60px;
-  text-align: center;
-  color: #FFFFFF;
-}
-
-.metodeCard {
-  width: min(680px, 92vw);
-  background: rgba(22, 22, 22, 0.5);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  padding: clamp(32px, 4vw, 44px) clamp(28px, 4vw, 48px);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-  transition: transform 300ms ease;
-}
-
-.metodeCard__stepTag {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  margin-bottom: 14px;
-}
-
-.metodeCard__stepNum {
-  font-family: var(--font-arsenal);
-  font-size: clamp(32px, 3.2vw, 44px);
-  font-weight: 500;
-  color: var(--gold-light);
-  line-height: 1;
-}
-
-.metodeCard__stepTotal {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.metodeCard__title {
-  margin: 0 0 14px;
-  font-family: var(--font-arsenal);
-  font-size: clamp(22px, 2.2vw, 28px);
-  font-weight: 400;
-  color: #FFFFFF;
-}
-
-.metodeCard__desc {
+.metodeSection__heading h2 {
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: clamp(14px, 1.1vw, 16px);
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-arsenal), sans-serif;
+  font-weight: 400;
+  font-size: clamp(34px, 3.55vw, 52px);
+  line-height: 1.2;
+  letter-spacing: -0.027em;
 }
 
-/* 4 Indicator Dots from Figma: width 80px, height 8px, top 711px */
-.metodeDots {
-  display: flex;
-  justify-content: center;
+.metodeSection__panel {
+  width: min(100%, 1375px);
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 12px 60px rgba(0,0,0,.13);
+}
+
+.metodeStage {
+  width: 100%;
+  min-height: clamp(520px, 48.5vw, 722px);
+  display: grid;
+  grid-template-columns: minmax(0, 45.5%) minmax(0, 54.5%);
   align-items: center;
-  gap: 16px;
-  width: 80px;
-  height: 8px;
-  margin-top: 48px;
+  position: relative;
+  background: #fff;
 }
 
-.metodeDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #D9D9D9;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: all 240ms ease;
+.metodeStage + .metodeStage {
+  border-top: 1px solid #e5e5e5;
 }
 
-.metodeDot:hover {
-  background: rgba(255, 255, 255, 0.9);
+.metodeStage__art {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  padding: 30px 14px 30px clamp(20px, 3vw, 45px);
 }
 
-.metodeDot.is-active {
-  background: var(--gold-light);
-  transform: scale(1.4);
-  box-shadow: 0 0 10px rgba(233, 209, 171, 0.85);
+.metodeIllustration {
+  display: block;
+  width: min(100%, 430px);
+  height: auto;
+  overflow: visible;
+}
+
+.metodeStage__copy {
+  min-width: 0;
+  padding: 24px clamp(28px, 4.6vw, 66px) 24px clamp(8px, 1.5vw, 22px);
+  font-family: var(--font-jost), sans-serif;
+  color: #474747;
+}
+
+.metodeStage__headingRow {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2.15vw, 32px);
+}
+
+.metodeStage__headingRow h3 {
+  margin: 0;
+  flex: 0 0 auto;
+  font-family: var(--font-arsenal), sans-serif;
+  font-size: clamp(46px, 4.5vw, 66px);
+  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: -.035em;
+}
+
+.metodeStage__subtitle {
+  margin: 0;
+  max-width: 260px;
+  font-family: var(--font-arsenal), sans-serif;
+  font-size: clamp(16px, 1.55vw, 22px);
+  line-height: 1.18;
+  color: #565656;
+}
+
+.metodeStage__description {
+  max-width: 665px;
+  margin: clamp(28px, 2.8vw, 42px) 0 0;
+  font-size: clamp(17px, 1.56vw, 22px);
+  font-weight: 400;
+  line-height: 1.33;
+  letter-spacing: -.016em;
+}
+
+/* Motion is progressive enhancement: without JS all text and art remain visible.
+   The row, SVG booth walls and fixtures have staggered entry transitions. */
+.metodeSection--animated .metodeStage__art,
+.metodeSection--animated .metodeStage__copy {
+  transition: opacity .85s cubic-bezier(.2,.8,.2,1),
+              transform 1s cubic-bezier(.2,.8,.2,1);
+  will-change: auto;
+}
+.metodeSection--animated .metodeStage__copy {
+  transition-delay: .12s;
+}
+.metodeSection--animated .metodeStage[data-entered="false"] .metodeStage__art {
+  opacity: 0;
+  transform: translate3d(0, 54px, 0) scale(.95);
+}
+.metodeSection--animated .metodeStage[data-entered="false"] .metodeStage__copy {
+  opacity: 0;
+  transform: translate3d(0, 34px, 0);
+}
+.metodeSection--animated .metodeStage[data-entered="true"] .metodeStage__art,
+.metodeSection--animated .metodeStage[data-entered="true"] .metodeStage__copy {
+  opacity: 1;
+  transform: translate3d(0,0,0) scale(1);
+}
+
+.metodeBooth__walls,
+.metodeBooth__floor,
+.metodeBooth__fixtures,
+.metodeBooth__finish {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity .75s ease, transform .95s cubic-bezier(.2,.8,.2,1);
+}
+
+.metodeBooth__floor { transition-delay: .15s; }
+.metodeBooth__fixtures { transition-delay: .31s; }
+.metodeBooth__finish { transition-delay: .43s; }
+
+.metodeSection--animated .metodeStage[data-entered="false"] .metodeBooth__walls {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+.metodeSection--animated .metodeStage[data-entered="false"] .metodeBooth__floor {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.metodeSection--animated .metodeStage[data-entered="false"] .metodeBooth__fixtures,
+.metodeSection--animated .metodeStage[data-entered="false"] .metodeBooth__finish {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@media (max-width: 1020px) {
+  .metodeStage { min-height: clamp(455px, 59vw, 570px); grid-template-columns: minmax(0, 43%) minmax(0, 57%); }
+  .metodeStage__art { padding-inline: 16px; }
+  .metodeStage__copy { padding-right: 26px; padding-left: 4px; }
+  .metodeStage__headingRow { gap: 16px; }
+  .metodeStage__headingRow h3 { font-size: clamp(38px, 4.6vw, 52px); }
+  .metodeStage__subtitle { font-size: clamp(14px, 1.7vw, 18px); }
+  .metodeStage__description { font-size: clamp(15px, 1.7vw, 18px); }
+}
+
+@media (max-width: 720px) {
+  .metodeSection {
+    padding: 86px 15px 88px;
+  }
+  .metodeSection__heading {
+    margin-bottom: 44px;
+  }
+  .metodeSection__heading h2 {
+    max-width: 460px;
+    margin-inline: auto;
+    font-size: clamp(30px, 6.5vw, 42px);
+  }
+  .metodeSection__panel { border-radius: 22px; }
+  .metodeStage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+    padding: 48px clamp(24px, 6vw, 42px) 70px;
+    gap: 18px;
+  }
+  .metodeStage__art { padding: 0; }
+  .metodeIllustration { width: min(100%, 320px); }
+  .metodeStage__copy { width: 100%; padding: 0; }
+  .metodeStage__headingRow { align-items: flex-start; flex-direction: column; gap: 9px; }
+  .metodeStage__headingRow h3 { font-size: clamp(44px, 9vw, 60px); }
+  .metodeStage__subtitle { max-width: none; font-size: 18px; }
+  .metodeStage__description { max-width: 540px; margin-top: 22px; font-size: 17px; line-height: 1.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metodeSection *,
+  .metodeSection *::before,
+  .metodeSection *::after {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* ==========================================================================
