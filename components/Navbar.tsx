@@ -14,7 +14,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const updateNavbar = () => setScrolled(window.scrollY > 30);
+    const updateNavbar = () => setScrolled(window.scrollY > 20);
     updateNavbar();
     window.addEventListener("scroll", updateNavbar, { passive: true });
     return () => window.removeEventListener("scroll", updateNavbar);
@@ -29,12 +29,12 @@ export default function Navbar() {
   return (
     <header className={`siteNav ${scrolled ? "siteNav--scrolled" : "siteNav--top"}`}>
       <div className="siteNav__inner pageShell">
-        <a className="siteNav__brand" href="#about" aria-label="Craftivation Home">
+        <a className="siteNav__brand" href="#hero" aria-label="Craftivation Home">
           <Image
-            src="/assets/logo-white.svg"
+            src="/assets/logo-black.svg"
             alt="Craftivation Exhibition Contractor"
-            width={168}
-            height={36}
+            width={159}
+            height={32}
             priority
             className="siteNav__logo"
           />
