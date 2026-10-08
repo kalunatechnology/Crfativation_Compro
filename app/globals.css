@@ -611,50 +611,188 @@ img {
 }
 
 /* ==========================================================================
-   SECTION 5: TENTANG KAMI (section/homepage/tentangkami)
+   SECTION 5: TENTANG KAMI — exact 1440x900 source artboard
+   Single white plane, three authentic grayscale photos and precise alignment.
    ========================================================================== */
 .tentangKamiSection {
   position: relative;
+  isolation: isolate;
   width: 100%;
-  min-height: 600px;
-  background: var(--white);
-  color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 120px 20px;
-  text-align: center;
+  padding: 0;
+  color: #1e1e1e;
+  background: #fff;
+  overflow: hidden;
+  scroll-margin-top: 70px;
 }
-
+.tentangKamiScene {
+  position: relative;
+  width: min(100%, 1440px);
+  aspect-ratio: 1440 / 900;
+  margin-inline: auto;
+  isolation: isolate;
+  container-type: inline-size;
+  background:
+    radial-gradient(ellipse 58% 46% at 12% 96%, rgba(145,139,135,.085), transparent 84%),
+    radial-gradient(ellipse 45% 39% at 86% 82%, rgba(141,132,130,.045), transparent 80%),
+    #fff;
+}
+.tentangKamiPhoto {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  overflow: hidden;
+  background: #eee;
+}
+.tentangKamiPhoto__image {
+  object-fit: fill;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+  filter: grayscale(1);
+}
+.tentangKamiPhoto--top {
+  left: 53.819444%;
+  top: 8.111111%;
+  width: 29.791667%;
+  aspect-ratio: 429 / 286;
+}
+.tentangKamiPhoto--bottomLeft {
+  left: 16.527778%;
+  top: 67.666667%;
+  width: 21.597222%;
+  aspect-ratio: 311 / 207;
+}
+.tentangKamiPhoto--bottomRight {
+  left: 72.777778%;
+  top: 61.333333%;
+  width: 21.597222%;
+  aspect-ratio: 311 / 207;
+}
 .tentangKamiContent {
+  position: absolute;
+  z-index: 2;
+  top: 43.111111%;
+  inset-inline: 0;
+  width: 100%;
+  padding-inline: 7%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  text-align: center;
 }
-
 .tentangKamiTitle {
   margin: 0;
-  width: min(1317px, 94vw);
-  font-family: var(--font-arsenal);
-  font-style: normal;
+  font-family: var(--font-arsenal), sans-serif;
   font-weight: 400;
-  font-size: clamp(32px, 3.4vw, 48px);
-  line-height: 60px;
-  text-align: center;
-  color: var(--text-dark);
+  font-size: 3.36cqw;
+  line-height: 1.2;
+  letter-spacing: -.026em;
+  color: #1e1e1e;
+  white-space: nowrap;
+}
+.tentangKamiSubtitle {
+  width: min(62cqw, 870px);
+  max-width: 100%;
+  margin: 2.08cqw 0 0;
+  font-family: var(--font-arsenal), sans-serif;
+  font-size: 1.67cqw;
+  line-height: 1.28;
+  font-weight: 400;
+  color: #1e1e1e;
+  text-wrap: balance;
 }
 
-.tentangKamiSubtitle {
-  margin: 28px 0 0;
-  width: min(870px, 90vw);
-  font-family: var(--font-arsenal);
-  font-style: normal;
-  font-weight: 400;
-  font-size: clamp(18px, 1.8vw, 24px);
-  line-height: 30px;
-  text-align: center;
-  color: var(--text-dark);
+/* Entrance motion is progressive enhancement, stays invisible only until the
+   section enters the viewport, and never interferes with normal page scroll. */
+.tentangKamiSection--animated[data-revealed="false"] .tentangKamiPhoto--top {
+  opacity: 0;
+  transform: translate3d(0, 25px, 0);
+}
+.tentangKamiSection--animated[data-revealed="false"] .tentangKamiContent {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+.tentangKamiSection--animated[data-revealed="false"] .tentangKamiPhoto--bottomLeft {
+  opacity: 0;
+  transform: translate3d(-23px, 24px, 0);
+}
+.tentangKamiSection--animated[data-revealed="false"] .tentangKamiPhoto--bottomRight {
+  opacity: 0;
+  transform: translate3d(23px, 24px, 0);
+}
+.tentangKamiPhoto,
+.tentangKamiContent {
+  transition: opacity .8s cubic-bezier(.22,.72,.23,1),
+              transform .9s cubic-bezier(.22,.72,.23,1);
+}
+.tentangKamiPhoto--bottomLeft { transition-delay: .14s; }
+.tentangKamiPhoto--bottomRight { transition-delay: .23s; }
+.tentangKamiContent { transition-delay: .08s; }
+
+@media (max-width: 900px) {
+  .tentangKamiSection { padding: 68px 18px 78px; }
+  .tentangKamiScene {
+    width: min(100%, 650px);
+    aspect-ratio: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(14px, 3.5vw, 25px);
+    row-gap: clamp(24px, 5vw, 42px);
+    background: transparent;
+  }
+  .tentangKamiPhoto { position: relative; inset: auto; width: 100%; height: auto; }
+  .tentangKamiPhoto--top {
+    grid-column: 1 / -1;
+    width: min(78%, 440px);
+    aspect-ratio: 429 / 286;
+    justify-self: end;
+  }
+  .tentangKamiContent {
+    position: relative;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    inset: auto;
+    width: 100%;
+    padding: 0;
+  }
+  .tentangKamiTitle {
+    font-size: clamp(28px, 5vw, 43px);
+    line-height: 1.14;
+    letter-spacing: -.022em;
+    white-space: normal;
+    text-wrap: balance;
+  }
+  .tentangKamiSubtitle {
+    width: min(100%, 550px);
+    margin-top: 22px;
+    font-size: clamp(17px, 2.4vw, 21px);
+    line-height: 1.38;
+    text-wrap: pretty;
+  }
+  .tentangKamiPhoto--bottomLeft,
+  .tentangKamiPhoto--bottomRight {
+    grid-row: 3;
+    aspect-ratio: 311 / 207;
+    align-self: start;
+  }
+  .tentangKamiPhoto--bottomLeft { grid-column: 1; }
+  .tentangKamiPhoto--bottomRight { grid-column: 2; margin-top: 22%; }
+}
+@media (max-width: 480px) {
+  .tentangKamiSection { padding-inline: 17px; }
+  .tentangKamiScene { row-gap: 28px; }
+  .tentangKamiPhoto--top { width: 84%; }
+  .tentangKamiTitle { font-size: clamp(29px, 7.2vw, 35px); }
+  .tentangKamiSubtitle { font-size: 16px; line-height: 1.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tentangKamiSection .tentangKamiPhoto,
+  .tentangKamiSection .tentangKamiContent {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* ==========================================================================
