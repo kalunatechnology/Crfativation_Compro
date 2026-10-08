@@ -294,7 +294,7 @@ export default function HubSection() {
         </h2>
         <div className="relative mx-auto mt-7 aspect-[1440/972] w-full overflow-hidden">
           <Image src={SVG.stage} alt="Panggung 3D Craftivation" fill unoptimized sizes="(max-width: 680px) 90vw, 680px" className="object-contain" />
-          <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[35.7%] w-[3.61%] -translate-x-1/2" />
+          <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[46.1%] w-[3.61%] -translate-x-1/2" />
         </div>
         {services.length > 0 && (
           <div className="mt-8">
@@ -361,7 +361,7 @@ export default function HubSection() {
                 <SourceArtboard src={SVG.intro} />
                 {/* The exact 52×40 vector mark from the supplied Figma SVG,
                     positioned above the central burgundy pillar. */}
-                <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-[720px] top-[347px] -translate-x-1/2" />
+                <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-[720px] top-[448px] -translate-x-1/2" />
               </div>
               {first && <div className="absolute left-[144px] top-[297px]"><ServiceCard item={first} variant="small" /></div>}
               {chosen && (
