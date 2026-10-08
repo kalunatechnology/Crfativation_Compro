@@ -135,6 +135,8 @@ export default function HubSection() {
   const [services, setServices] = useState<Service[]>(demoServices);
   const [projects, setProjects] = useState<Project[]>(demoProjects);
   const [projectIndex, setProjectIndex] = useState(0);
+  const [activeServiceIndex, setActiveServiceIndex] = useState(0);
+  const serviceScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -189,13 +191,66 @@ export default function HubSection() {
   }, []);
 
   const first = services[0];
-  const second = services[1];
   const chosen = projects.length > 0 ? projects[Math.min(projectIndex, projects.length - 1)] : null;
   const introOpacity = 1 - blend(0.14, 0.35, progress);
   const serviceOpacity = blend(0.25, 0.43, progress) * (1 - blend(0.57, 0.75, progress));
   const projectOpacity = blend(0.66, 0.85, progress);
   const servicesArrive = blend(0.25, 0.43, progress);
   const projectArrive = blend(0.66, 0.85, progress);
+
+  // Slider position follows the complete, sorted SQLite service list.
+  // Center the selected card within the viewport instead of aligning it left.
+  function scrollToService(index: number) {
+    const viewport = serviceScrollRef.current;
+    if (!viewport || services.length === 0) return;
+    const normalized = (index + services.length) % services.length;
+    const card = viewport.querySelector<HTMLElement>(`[data-service-index="${normalized}"]`);
+    if (!card) return;
+    const left = card.offsetLeft + card.offsetWidth / 2 - viewport.clientWidth / 2;
+    viewport.scrollTo({ left, behavior: reducedMotion ? "instant" : "smooth" });
+    setActiveServiceIndex(normalized);
+  }
+
+  function handleServiceScroll() {
+    const viewport = serviceScrollRef.current;
+    if (!viewport) return;
+    const midpoint = viewport.scrollLeft + viewport.clientWidth / 2;
+    const cards = viewport.querySelectorAll<HTMLElement>("[data-service-index]");
+    let nearest = 0;
+    let distance = Number.POSITIVE_INFINITY;
+    cards.forEach((card, index) => {
+      const current = Math.abs(card.offsetLeft + card.offsetWidth / 2 - midpoint);
+      if (current < distance) {
+        nearest = index;
+        distance = current;
+      }
+    });
+    setActiveServiceIndex(previous => previous === nearest ? previous : nearest);
+  }
+
+  useEffect(() => {
+    // A new API result may contain any number of cards, including zero.
+    setActiveServiceIndex(0);
+    if (serviceScrollRef.current) serviceScrollRef.current.scrollLeft = 0;
+  }, [services]);
+
+  useEffect(() => {
+    // With the pointer over the service rail, a normal mouse wheel advances
+    // horizontally; at either end, normal page/scene scrolling resumes.
+    const viewport = serviceScrollRef.current;
+    if (!viewport || reducedMotion || services.length < 2) return;
+    const wheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY) || Math.abs(event.deltaY) < 1) return;
+      const last = viewport.scrollWidth - viewport.clientWidth;
+      const direction = event.deltaY;
+      const canMove = direction > 0 ? viewport.scrollLeft < last - 2 : viewport.scrollLeft > 2;
+      if (!canMove) return;
+      event.preventDefault();
+      viewport.scrollBy({ left: direction, behavior: "auto" });
+    };
+    viewport.addEventListener("wheel", wheel, { passive: false });
+    return () => viewport.removeEventListener("wheel", wheel);
+  }, [reducedMotion, services.length]);
 
   function toScene(phase: number) {
     const element = sectionRef.current;
@@ -219,28 +274,53 @@ export default function HubSection() {
         </h2>
         <div className="relative mx-auto mt-7 aspect-[1440/972] w-full overflow-hidden">
           <Image src={SVG.stage} alt="Panggung 3D Craftivation" fill unoptimized sizes="(max-width: 680px) 90vw, 680px" className="object-contain" />
+          <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[35.7%] w-[3.61%] -translate-x-1/2" />
         </div>
         {services.length > 0 && (
           <div className="mt-8">
             <h3 className="mb-5 text-2xl">Lihat Layanan Kami</h3>
-            <div className="grid gap-4">
-              {services.slice(0, 2).map(s => (
-                <article key={s.id} className="flex items-center gap-4 rounded-3xl bg-white p-5 text-[#1e1e1e]">
+            <div
+              className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-5"
+              role="region"
+              aria-label="Geser daftar layanan Craftivation"
+              tabIndex={0}
+              style={{ scrollbarWidth: "thin", scrollbarColor: "#a99a9f transparent" }}
+            >
+              {services.map(s => (
+                <article key={s.id} className="flex min-h-[168px] w-[min(84vw,480px)] shrink-0 snap-center items-center gap-4 rounded-3xl bg-white p-5 text-[#1e1e1e]">
                   <div className="relative h-24 w-24 shrink-0"><Image src={imageFor(s.image)} alt="" fill unoptimized sizes="96px" className="object-contain" /></div>
-                  <div className="min-w-0"><h4 className="text-[24px]">{s.name}</h4><p className="mt-2 text-[13px] leading-relaxed">{s.description}</p></div>
+                  <div className="min-w-0">
+                    <h4 className="text-[24px]">{s.name}</h4>
+                    <p className="mt-2 text-[13px] leading-relaxed">{s.description}</p>
+                    {s.href && <a className="mt-3 inline-block text-[13px] text-[#801e46] underline-offset-4 hover:underline" href={s.href}>Lihat detail ↗</a>}
+                  </div>
                 </article>
               ))}
             </div>
+            <p className="mt-1 text-center text-xs text-white/55">Geser ke samping untuk melihat {services.length} layanan</p>
           </div>
         )}
-        {chosen && (
+        {projects.length > 0 && (
           <div className="mt-12">
             <h3 className="mb-5 text-2xl">Lihat Proyek Kami</h3>
-            <a href={chosen.href} className="relative block aspect-[865/467] overflow-hidden rounded-3xl">
-              <Image src={imageFor(chosen.image)} alt={chosen.imageAlt || chosen.title} fill unoptimized sizes="(max-width: 680px) 90vw, 680px" className="object-cover" />
-            </a>
-            <div className="mt-4 flex justify-between text-sm text-white/70"><span>{chosen.number}</span><span>{chosen.client}</span></div>
-            <h4 className="mt-3 text-center text-[28px]">{chosen.title}</h4>
+            <div
+              className="flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain pb-5"
+              role="region"
+              aria-label="Geser daftar proyek Craftivation"
+              tabIndex={0}
+              style={{ scrollbarWidth: "thin", scrollbarColor: "#a99a9f transparent" }}
+            >
+              {projects.map(project => (
+                <article key={project.id} className="w-[min(88vw,565px)] shrink-0 snap-center">
+                  <a href={project.href} className="relative block aspect-[865/467] overflow-hidden rounded-3xl">
+                    <Image src={imageFor(project.image)} alt={project.imageAlt || project.title} fill unoptimized sizes="(max-width: 680px) 90vw, 565px" className="object-cover" />
+                  </a>
+                  <div className="mt-4 flex justify-between text-sm text-white/70"><span>{project.number}</span><span>{project.client}</span></div>
+                  <h4 className="mt-3 text-center text-[28px]">{project.title}</h4>
+                </article>
+              ))}
+            </div>
+            {projects.length > 1 && <p className="mt-1 text-center text-xs text-white/55">Geser untuk melihat {projects.length} proyek</p>}
           </div>
         )}
       </div>
@@ -259,6 +339,9 @@ export default function HubSection() {
             >
               <div className="absolute inset-0" style={{ transform: `translateY(${blend(.06,.35,progress) * 10}px) scale(${1 + blend(.06,.35,progress) * .045})` }}>
                 <SourceArtboard src={SVG.intro} />
+                {/* The exact 52×40 vector mark from the supplied Figma SVG,
+                    positioned above the central burgundy pillar. */}
+                <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-[720px] top-[347px] -translate-x-1/2" />
               </div>
               {first && <div className="absolute left-[144px] top-[297px]"><ServiceCard item={first} variant="small" /></div>}
               {chosen && (
@@ -281,12 +364,46 @@ export default function HubSection() {
               <SourceArtboard src={SVG.services} />
               <button type="button" onClick={() => toScene(.02)} aria-label="Kembali ke Hub" className="absolute left-[113px] top-[402px] h-[70px] w-[65px] focus-visible:outline-2 focus-visible:outline-white" />
               <div
-                className="absolute left-[135px] top-[140px] flex w-max gap-[58px]"
-                style={{ transform: `translateX(${(1 - servicesArrive) * 55}px) translateY(${(1 - servicesArrive) * 16}px) scale(${.965 + servicesArrive * .035})`, transformOrigin: "left center" }}
+                className="absolute left-[250px] top-[140px] w-[940px]"
+                style={{ transform: `translateY(${(1 - servicesArrive) * 16}px) scale(${.965 + servicesArrive * .035})`, transformOrigin: "center center" }}
               >
-                {first && <ServiceCard item={first} variant="large" />}
-                {second && <ServiceCard item={second} variant="large" />}
+                <div
+                  ref={serviceScrollRef}
+                  onScroll={handleServiceScroll}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowRight") { event.preventDefault(); scrollToService(activeServiceIndex + 1); }
+                    if (event.key === "ArrowLeft") { event.preventDefault(); scrollToService(activeServiceIndex - 1); }
+                  }}
+                  className="w-full overflow-x-auto overflow-y-hidden pb-[18px]"
+                  role="region"
+                  aria-label="Slider layanan Craftivation, gunakan panah atau geser untuk berpindah"
+                  tabIndex={0}
+                  style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,.55) transparent", scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}
+                >
+                  <div className="relative flex w-max items-stretch gap-[34px] px-[82px]">
+                    {services.map((service, index) => (
+                      <div
+                        key={service.id}
+                        data-service-index={index}
+                        className="shrink-0 snap-center"
+                        style={{ scrollSnapAlign: "center" }}
+                        role="group"
+                        aria-label={`${service.name}, layanan ${index + 1} dari ${services.length}`}
+                      >
+                        <ServiceCard item={service} variant="large" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {services.length === 0 && <p className="pt-20 text-center text-2xl text-white/70">Layanan akan segera hadir.</p>}
               </div>
+              {services.length > 1 && (
+                <nav aria-label="Navigasi slider layanan" className="absolute bottom-[184px] left-1/2 flex -translate-x-1/2 items-center gap-7">
+                  <button type="button" onClick={() => scrollToService(activeServiceIndex - 1)} aria-label="Layanan sebelumnya" className="grid h-12 w-12 place-items-center rounded-full border border-white/40 text-[30px] leading-none transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white">‹</button>
+                  <span className="min-w-[100px] text-center text-[16px] tabular-nums tracking-[.13em] text-white/80">{String(activeServiceIndex + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}</span>
+                  <button type="button" onClick={() => scrollToService(activeServiceIndex + 1)} aria-label="Layanan berikutnya" className="grid h-12 w-12 place-items-center rounded-full border border-white/40 text-[30px] leading-none transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white">›</button>
+                </nav>
+              )}
             </div>
 
             {/* SCENE 3: original SVG shadow/header and editable project/photo content. */}
@@ -307,10 +424,11 @@ export default function HubSection() {
                   <span className="absolute left-[1202px] top-[319px] max-w-[215px] truncate text-[25px] font-normal">{chosen.client}</span>
                   <h3 className="absolute left-1/2 top-[606px] w-[1100px] -translate-x-1/2 text-center text-[48px] leading-[1.12] tracking-[-.026em]" style={{ fontFamily: "var(--font-arsenal)" }}>{chosen.title}</h3>
                   {projects.length > 1 && (
-                    <div className="absolute bottom-[80px] left-1/2 flex -translate-x-1/2 items-center gap-8">
-                      <button type="button" onClick={() => setProjectIndex(i => (i - 1 + projects.length) % projects.length)} aria-label="Proyek sebelumnya" className="rounded-full border border-white/30 px-4 py-1 text-2xl hover:bg-white/10">‹</button>
-                      <button type="button" onClick={() => setProjectIndex(i => (i + 1) % projects.length)} aria-label="Proyek berikutnya" className="rounded-full border border-white/30 px-4 py-1 text-2xl hover:bg-white/10">›</button>
-                    </div>
+                    <nav aria-label="Navigasi slider proyek" className="absolute bottom-[80px] left-1/2 flex -translate-x-1/2 items-center gap-7">
+                      <button type="button" onClick={() => setProjectIndex(i => (i - 1 + projects.length) % projects.length)} aria-label="Proyek sebelumnya" className="grid h-12 w-12 place-items-center rounded-full border border-white/40 text-[30px] leading-none hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white">‹</button>
+                      <span className="min-w-[100px] text-center text-[16px] tabular-nums tracking-[.13em] text-white/80">{String(Math.min(projectIndex, projects.length - 1) + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
+                      <button type="button" onClick={() => setProjectIndex(i => (i + 1) % projects.length)} aria-label="Proyek berikutnya" className="grid h-12 w-12 place-items-center rounded-full border border-white/40 text-[30px] leading-none hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white">›</button>
+                    </nav>
                   )}
                 </>
               )}
