@@ -137,6 +137,8 @@ export default function HubSection() {
   const [projectIndex, setProjectIndex] = useState(0);
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const serviceScrollRef = useRef<HTMLDivElement>(null);
+  const projectWheelAtRef = useRef(0);
+  const projectTouchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -428,6 +430,29 @@ export default function HubSection() {
             <div
               className="absolute inset-0"
               style={{ opacity: projectOpacity, visibility: projectOpacity > .012 ? "visible" : "hidden", pointerEvents: projectOpacity > .2 ? "auto" : "none" }}
+              onWheel={(event) => {
+                // Trackpad swipe changes projects; vertical wheel keeps the page scrolling.
+                if (projects.length < 2 || Math.abs(event.deltaX) < 12 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+                const now = performance.now();
+                if (now - projectWheelAtRef.current < 550) return;
+                projectWheelAtRef.current = now;
+                const step = event.deltaX > 0 ? 1 : -1;
+                setProjectIndex(i => (i + step + projects.length) % projects.length);
+              }}
+              onTouchStart={(event) => {
+                const touch = event.changedTouches[0];
+                if (touch) projectTouchStartRef.current = { x: touch.clientX, y: touch.clientY };
+              }}
+              onTouchEnd={(event) => {
+                const touch = event.changedTouches[0];
+                const start = projectTouchStartRef.current;
+                projectTouchStartRef.current = null;
+                if (!touch || !start || projects.length < 2) return;
+                const dx = touch.clientX - start.x;
+                const dy = touch.clientY - start.y;
+                if (Math.abs(dx) < 65 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
+                setProjectIndex(i => (i + (dx < 0 ? 1 : -1) + projects.length) % projects.length);
+              }}
             >
               <SourceArtboard src={SVG.project} />
               <button type="button" onClick={() => toScene(.48)} aria-label="Kembali ke layanan" className="absolute left-[274px] top-[0px] h-[60px] w-[65px] focus-visible:outline-2 focus-visible:outline-white" />
