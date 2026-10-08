@@ -137,8 +137,7 @@ export default function HubSection() {
   const [projectIndex, setProjectIndex] = useState(0);
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const serviceScrollRef = useRef<HTMLDivElement>(null);
-  const projectWheelAtRef = useRef(0);
-  const projectTouchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const projectScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -272,6 +271,75 @@ export default function HubSection() {
     return () => viewport.removeEventListener("wheel", wheel);
   }, [reducedMotion, services.length]);
 
+  // Project slides use the same centered horizontal scroll rail as services.
+  // This keeps every active SQLite project navigable regardless of list length.
+  function scrollToProject(index: number) {
+    const viewport = projectScrollRef.current;
+    if (!viewport || projects.length === 0) return;
+    const normalized = Math.max(0, Math.min(index, projects.length - 1));
+    const slide = viewport.querySelector<HTMLElement>(`[data-project-index="${normalized}"]`);
+    if (!slide) return;
+    const left = slide.offsetLeft + slide.offsetWidth / 2 - viewport.clientWidth / 2;
+    viewport.scrollTo({ left, behavior: reducedMotion ? "instant" : "smooth" });
+    setProjectIndex(normalized);
+  }
+
+  function handleProjectScroll() {
+    const viewport = projectScrollRef.current;
+    if (!viewport) return;
+    const midpoint = viewport.scrollLeft + viewport.clientWidth / 2;
+    const slides = viewport.querySelectorAll<HTMLElement>("[data-project-index]");
+    let nearest = 0;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+    slides.forEach((slide, index) => {
+      const distance = Math.abs(slide.offsetLeft + slide.offsetWidth / 2 - midpoint);
+      if (distance < nearestDistance) {
+        nearest = index;
+        nearestDistance = distance;
+      }
+    });
+    setProjectIndex(previous => previous === nearest ? previous : nearest);
+  }
+
+  useEffect(() => {
+    setProjectIndex(0);
+    if (projectScrollRef.current) projectScrollRef.current.scrollLeft = 0;
+  }, [projects]);
+
+  useEffect(() => {
+    const viewport = projectScrollRef.current;
+    if (!viewport || reducedMotion || projects.length < 2) return;
+    let lastStepAt = 0;
+    const wheel = (event: WheelEvent) => {
+      // Native two-finger horizontal gestures remain browser-driven.
+      // Mouse-wheel steps one project; at either end normal page scrolling resumes.
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY) || Math.abs(event.deltaY) < 2) return;
+      const slides = viewport.querySelectorAll<HTMLElement>("[data-project-index]");
+      if (!slides.length) return;
+      const center = viewport.scrollLeft + viewport.clientWidth / 2;
+      let nearest = 0;
+      let closest = Number.POSITIVE_INFINITY;
+      slides.forEach((slide, index) => {
+        const distance = Math.abs(slide.offsetLeft + slide.offsetWidth / 2 - center);
+        if (distance < closest) { nearest = index; closest = distance; }
+      });
+      const next = nearest + (event.deltaY > 0 ? 1 : -1);
+      if (next < 0 || next >= slides.length) return;
+      event.preventDefault();
+      const now = performance.now();
+      if (now - lastStepAt < 550) return;
+      lastStepAt = now;
+      const destination = slides[next];
+      viewport.scrollTo({
+        left: destination.offsetLeft + destination.offsetWidth / 2 - viewport.clientWidth / 2,
+        behavior: "smooth",
+      });
+      setProjectIndex(next);
+    };
+    viewport.addEventListener("wheel", wheel, { passive: false });
+    return () => viewport.removeEventListener("wheel", wheel);
+  }, [reducedMotion, projects.length]);
+
   function toScene(phase: number) {
     const element = sectionRef.current;
     if (!element) return;
@@ -300,11 +368,11 @@ export default function HubSection() {
           <div className="mt-8">
             <h3 className="mb-5 text-2xl">Lihat Layanan Kami</h3>
             <div
-              className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-5"
+              className="hub-clean-rail flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-3"
               role="region"
               aria-label="Geser daftar layanan Craftivation"
               tabIndex={0}
-              style={{ scrollbarWidth: "thin", scrollbarColor: "#a99a9f transparent", paddingInline: "max(0px, calc((100% - min(84vw, 480px)) / 2))", scrollPaddingInline: "max(0px, calc((100% - min(84vw, 480px)) / 2))" }}
+              style={{ paddingInline: "max(0px, calc((100% - min(84vw, 480px)) / 2))", scrollPaddingInline: "max(0px, calc((100% - min(84vw, 480px)) / 2))" }}
             >
               {services.map(s => (
                 <article key={s.id} className="flex min-h-[168px] w-[min(84vw,480px)] shrink-0 snap-center items-center gap-4 rounded-3xl bg-white p-5 text-[#1e1e1e]">
@@ -324,11 +392,11 @@ export default function HubSection() {
           <div className="mt-12">
             <h3 className="mb-5 text-2xl">Lihat Proyek Kami</h3>
             <div
-              className="flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain pb-5"
+              className="hub-clean-rail flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain pb-3"
               role="region"
               aria-label="Geser daftar proyek Craftivation"
               tabIndex={0}
-              style={{ scrollbarWidth: "thin", scrollbarColor: "#a99a9f transparent", paddingInline: "max(0px, calc((100% - min(88vw, 565px)) / 2))", scrollPaddingInline: "max(0px, calc((100% - min(88vw, 565px)) / 2))" }}
+              style={{ paddingInline: "max(0px, calc((100% - min(88vw, 565px)) / 2))", scrollPaddingInline: "max(0px, calc((100% - min(88vw, 565px)) / 2))" }}
             >
               {projects.map(project => (
                 <article key={project.id} className="w-[min(88vw,565px)] shrink-0 snap-center">
@@ -382,9 +450,9 @@ export default function HubSection() {
               style={{ opacity: serviceOpacity, visibility: serviceOpacity > .012 ? "visible" : "hidden", pointerEvents: serviceOpacity > .2 ? "auto" : "none" }}
             >
               <SourceArtboard src={SVG.services} />
-              <button type="button" onClick={() => toScene(.02)} aria-label="Kembali ke Hub" className="absolute left-[113px] top-[402px] h-[70px] w-[65px] focus-visible:outline-2 focus-visible:outline-white" />
+              <button type="button" onClick={() => toScene(.02)} aria-label="Kembali ke Hub" className="absolute left-[122px] top-[52px] grid h-[46px] w-[46px] place-items-center rounded-full text-[24px] text-white/75 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white">‹</button>
               <div
-                className="absolute left-[250px] top-[140px] w-[940px]"
+                className="absolute left-[250px] top-[284px] w-[940px]"
                 style={{ transform: `translateY(${(1 - servicesArrive) * 16}px) scale(${.965 + servicesArrive * .035})`, transformOrigin: "center center" }}
               >
                 <div
@@ -394,11 +462,11 @@ export default function HubSection() {
                     if (event.key === "ArrowRight") { event.preventDefault(); scrollToService(activeServiceIndex + 1); }
                     if (event.key === "ArrowLeft") { event.preventDefault(); scrollToService(activeServiceIndex - 1); }
                   }}
-                  className="w-full overflow-x-auto overflow-y-hidden pb-[18px]"
+                  className="hub-clean-rail w-full overflow-x-auto overflow-y-hidden"
                   role="region"
                   aria-label="Slider layanan Craftivation, gunakan panah atau geser untuk berpindah"
                   tabIndex={0}
-                  style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,.55) transparent", scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}
+                  style={{ scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}
                 >
                   <div className="relative flex w-max items-stretch gap-[34px] px-[82px]">
                     {services.map((service, index) => (
@@ -418,62 +486,96 @@ export default function HubSection() {
                 {services.length === 0 && <p className="pt-20 text-center text-2xl text-white/70">Layanan akan segera hadir.</p>}
               </div>
               {services.length > 1 && (
-                <nav aria-label="Navigasi slider layanan" className="absolute bottom-[184px] left-1/2 flex -translate-x-1/2 items-center gap-7">
-                  <button type="button" onClick={() => scrollToService(activeServiceIndex - 1)} aria-label="Layanan sebelumnya" className="grid h-12 w-12 place-items-center rounded-full border border-white/40 text-[30px] leading-none transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white">‹</button>
-                  <span className="min-w-[100px] text-center text-[16px] tabular-nums tracking-[.13em] text-white/80">{String(activeServiceIndex + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}</span>
-                  <button type="button" onClick={() => scrollToService(activeServiceIndex + 1)} aria-label="Layanan berikutnya" className="grid h-12 w-12 place-items-center rounded-full border border-white/40 text-[30px] leading-none transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white">›</button>
+                <nav aria-label="Navigasi slider layanan" className="absolute left-[326px] top-[215px] flex items-center gap-[14px]">
+                  <button type="button" onClick={() => scrollToService(activeServiceIndex - 1)} disabled={activeServiceIndex === 0} aria-label="Layanan sebelumnya" className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35">‹</button>
+                  <button type="button" onClick={() => scrollToService(activeServiceIndex + 1)} disabled={activeServiceIndex === services.length - 1} aria-label="Layanan berikutnya" className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35">›</button>
+                  <span className="ml-[12px] min-w-[74px] text-[16px] tabular-nums tracking-[.1em] text-white/65">{String(activeServiceIndex + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}</span>
                 </nav>
               )}
             </div>
 
-            {/* SCENE 3: original SVG shadow/header and editable project/photo content. */}
+            {/* SCENE 3: SVG header with a centered, database-driven project rail. */}
             <div
               className="absolute inset-0"
               style={{ opacity: projectOpacity, visibility: projectOpacity > .012 ? "visible" : "hidden", pointerEvents: projectOpacity > .2 ? "auto" : "none" }}
-              onWheel={(event) => {
-                // Trackpad swipe changes projects; vertical wheel keeps the page scrolling.
-                if (projects.length < 2 || Math.abs(event.deltaX) < 12 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
-                const now = performance.now();
-                if (now - projectWheelAtRef.current < 550) return;
-                projectWheelAtRef.current = now;
-                const step = event.deltaX > 0 ? 1 : -1;
-                setProjectIndex(i => (i + step + projects.length) % projects.length);
-              }}
-              onTouchStart={(event) => {
-                const touch = event.changedTouches[0];
-                if (touch) projectTouchStartRef.current = { x: touch.clientX, y: touch.clientY };
-              }}
-              onTouchEnd={(event) => {
-                const touch = event.changedTouches[0];
-                const start = projectTouchStartRef.current;
-                projectTouchStartRef.current = null;
-                if (!touch || !start || projects.length < 2) return;
-                const dx = touch.clientX - start.x;
-                const dy = touch.clientY - start.y;
-                if (Math.abs(dx) < 65 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
-                setProjectIndex(i => (i + (dx < 0 ? 1 : -1) + projects.length) % projects.length);
-              }}
             >
               <SourceArtboard src={SVG.project} />
-              <button type="button" onClick={() => toScene(.48)} aria-label="Kembali ke layanan" className="absolute left-[274px] top-[0px] h-[60px] w-[65px] focus-visible:outline-2 focus-visible:outline-white" />
-              {chosen && (
+              <button
+                type="button"
+                onClick={() => toScene(.48)}
+                aria-label="Kembali ke layanan"
+                className="absolute left-[266px] top-[60px] grid h-[46px] w-[46px] place-items-center rounded-full text-[24px] text-white/75 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white"
+              >‹</button>
+
+              {projects.length > 1 && (
+                <nav aria-label="Navigasi slider proyek" className="absolute left-[284px] top-[155px] flex items-center gap-[14px]">
+                  <button
+                    type="button"
+                    onClick={() => scrollToProject(projectIndex - 1)}
+                    disabled={projectIndex === 0}
+                    aria-label="Proyek sebelumnya"
+                    className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35"
+                  >‹</button>
+                  <button
+                    type="button"
+                    onClick={() => scrollToProject(projectIndex + 1)}
+                    disabled={projectIndex === projects.length - 1}
+                    aria-label="Proyek berikutnya"
+                    className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35"
+                  >›</button>
+                  <span className="ml-[12px] min-w-[74px] text-[16px] tabular-nums tracking-[.1em] text-white/65">
+                    {String(projectIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+                  </span>
+                </nav>
+              )}
+
+              {projects.length > 0 ? (
                 <>
-                  <a
-                    href={chosen.href}
-                    className="absolute left-[292.56px] top-[99.37px] block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                  <div
+                    className="absolute left-[237.5px] top-[220px] w-[965px]"
                     style={{ transform: `translateY(${(1 - projectArrive) * 35}px) scale(${.97 + projectArrive * .03})`, transformOrigin: "center center" }}
-                  ><ProjectImage item={chosen} large /></a>
-                  <span className="absolute left-[174px] top-[319px] text-[25px] font-normal">{chosen.number}</span>
-                  <span className="absolute left-[1202px] top-[319px] max-w-[215px] truncate text-[25px] font-normal">{chosen.client}</span>
-                  <h3 className="absolute left-1/2 top-[606px] w-[1100px] -translate-x-1/2 text-center text-[48px] leading-[1.12] tracking-[-.026em]" style={{ fontFamily: "var(--font-arsenal)" }}>{chosen.title}</h3>
-                  {projects.length > 1 && (
-                    <nav aria-label="Navigasi slider proyek" className="absolute bottom-[80px] left-1/2 flex -translate-x-1/2 items-center gap-7">
-                      <button type="button" onClick={() => setProjectIndex(i => (i - 1 + projects.length) % projects.length)} aria-label="Proyek sebelumnya" className="grid h-12 w-12 place-items-center rounded-full border border-white/40 text-[30px] leading-none hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white">‹</button>
-                      <span className="min-w-[100px] text-center text-[16px] tabular-nums tracking-[.13em] text-white/80">{String(Math.min(projectIndex, projects.length - 1) + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
-                      <button type="button" onClick={() => setProjectIndex(i => (i + 1) % projects.length)} aria-label="Proyek berikutnya" className="grid h-12 w-12 place-items-center rounded-full border border-white/40 text-[30px] leading-none hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white">›</button>
-                    </nav>
+                  >
+                    <div
+                      ref={projectScrollRef}
+                      onScroll={handleProjectScroll}
+                      onKeyDown={(event) => {
+                        if (event.key === "ArrowRight") { event.preventDefault(); scrollToProject(projectIndex + 1); }
+                        if (event.key === "ArrowLeft") { event.preventDefault(); scrollToProject(projectIndex - 1); }
+                      }}
+                      className="hub-clean-rail w-full overflow-x-auto overflow-y-hidden"
+                      role="region"
+                      aria-label="Geser untuk melihat daftar proyek Craftivation"
+                      tabIndex={0}
+                      style={{ scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}
+                    >
+                      <div className="relative flex w-max items-stretch gap-[34px] px-[50px]">
+                        {projects.map((project, index) => (
+                          <div key={project.id} data-project-index={index} className="shrink-0 snap-center" role="group" aria-label={`${project.title}, proyek ${index + 1} dari ${projects.length}`}>
+                            <a
+                              href={project.href}
+                              tabIndex={index === projectIndex ? 0 : -1}
+                              className="block rounded-[29.326px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                            >
+                              <ProjectImage item={project} large />
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {chosen && (
+                    <>
+                      <span className="absolute left-[174px] top-[440px] text-[25px] font-normal tabular-nums">{chosen.number || String(projectIndex + 1).padStart(2, "0")}</span>
+                      <span className="absolute left-[1202px] top-[440px] max-w-[215px] truncate text-[25px] font-normal">{chosen.client}</span>
+                      <h3
+                        className="absolute left-1/2 top-[729px] w-[1100px] -translate-x-1/2 text-center text-[48px] leading-[1.12] tracking-[-.026em]"
+                        style={{ fontFamily: "var(--font-arsenal)" }}
+                      >{chosen.title}</h3>
+                    </>
                   )}
                 </>
+              ) : (
+                <p className="absolute left-1/2 top-1/2 -translate-x-1/2 text-2xl text-white/70">Proyek akan segera hadir.</p>
               )}
             </div>
           </div>
