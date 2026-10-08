@@ -37,6 +37,11 @@ function init(db: Database.Database) {
       sort_order  INTEGER NOT NULL DEFAULT 0,
       is_active   INTEGER NOT NULL DEFAULT 1
     );
+
+    CREATE TABLE IF NOT EXISTS craftivation_seed_migrations (
+      key        TEXT PRIMARY KEY,
+      applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 
   // Seed hanya jika tabel kosong.
@@ -60,6 +65,32 @@ function init(db: Database.Database) {
     );
     db.transaction(() => {
       for (const p of dummyProjects) insert.run({ ...p, isActive: p.isActive ? 1 : 0 });
+    })();
+  }
+
+  // One-time, additive upgrade for installations created when MidCafe was
+  // the only seeded example. The two projects already shown in the portfolio
+  // are now represented in SQLite too, without overwriting edited rows.
+  // The migration is recorded once, so intentionally removed rows stay removed.
+  const migrationKey = "hub-showcase-projects-v1";
+  const migrationApplied = db
+    .prepare("SELECT key FROM craftivation_seed_migrations WHERE key = ?")
+    .get(migrationKey);
+  if (!migrationApplied) {
+    db.transaction(() => {
+      const legacyMidCafeOnly =
+        count("projects") === 1 &&
+        Boolean(db.prepare("SELECT id FROM projects WHERE slug = ?").get("mid-century-coffeebooth"));
+      if (legacyMidCafeOnly) {
+        const insert = db.prepare(
+          `INSERT OR IGNORE INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active)
+           VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive)`
+        );
+        for (const project of dummyProjects.slice(1)) {
+          insert.run({ ...project, isActive: project.isActive ? 1 : 0 });
+        }
+      }
+      db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(migrationKey);
     })();
   }
 }
