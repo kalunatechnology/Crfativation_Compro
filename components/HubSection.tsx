@@ -239,14 +239,32 @@ export default function HubSection() {
     // horizontally; at either end, normal page/scene scrolling resumes.
     const viewport = serviceScrollRef.current;
     if (!viewport || reducedMotion || services.length < 2) return;
+    let lastStepAt = 0;
     const wheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaX) > Math.abs(event.deltaY) || Math.abs(event.deltaY) < 1) return;
-      const last = viewport.scrollWidth - viewport.clientWidth;
-      const direction = event.deltaY;
-      const canMove = direction > 0 ? viewport.scrollLeft < last - 2 : viewport.scrollLeft > 2;
-      if (!canMove) return;
+      // Horizontal trackpad gestures use the browser's native rail scrolling.
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY) || Math.abs(event.deltaY) < 2) return;
+      const cards = viewport.querySelectorAll<HTMLElement>("[data-service-index]");
+      if (!cards.length) return;
+      const midpoint = viewport.scrollLeft + viewport.clientWidth / 2;
+      let nearest = 0;
+      let shortest = Number.POSITIVE_INFINITY;
+      cards.forEach((card, i) => {
+        const distance = Math.abs(card.offsetLeft + card.offsetWidth / 2 - midpoint);
+        if (distance < shortest) { nearest = i; shortest = distance; }
+      });
+      const next = nearest + (event.deltaY > 0 ? 1 : -1);
+      // At the ends, give control back to the vertically scrolling Hub scene.
+      if (next < 0 || next >= cards.length) return;
       event.preventDefault();
-      viewport.scrollBy({ left: direction, behavior: "auto" });
+      const now = performance.now();
+      if (now - lastStepAt < 550) return;
+      lastStepAt = now;
+      const destination = cards[next];
+      viewport.scrollTo({
+        left: destination.offsetLeft + destination.offsetWidth / 2 - viewport.clientWidth / 2,
+        behavior: "smooth",
+      });
+      setActiveServiceIndex(next);
     };
     viewport.addEventListener("wheel", wheel, { passive: false });
     return () => viewport.removeEventListener("wheel", wheel);
