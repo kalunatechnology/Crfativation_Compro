@@ -204,7 +204,7 @@ export default function HubSection() {
   function scrollToService(index: number) {
     const viewport = serviceScrollRef.current;
     if (!viewport || services.length === 0) return;
-    const normalized = (index + services.length) % services.length;
+    const normalized = Math.max(0, Math.min(index, services.length - 1));
     const card = viewport.querySelector<HTMLElement>(`[data-service-index="${normalized}"]`);
     if (!card) return;
     const left = card.offsetLeft + card.offsetWidth / 2 - viewport.clientWidth / 2;
