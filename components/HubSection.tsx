@@ -12,6 +12,8 @@ import type { Project, Service } from "@/lib/types";
  * Services and projects still come from SQLite through the existing API.
  */
 const STAGE = "/assets/hub-stage-reference.avif";
+const CLOSED_STAGE = "/assets/hub-stage-video.avif";
+const MODULAR_ART = "/assets/hub-modular-icon.avif";
 const clamp = (n: number) => Math.max(0, Math.min(1, n));
 const fade = (a: number, b: number, p: number) => {
   const t = clamp((p - a) / (b - a));
@@ -20,9 +22,10 @@ const fade = (a: number, b: number, p: number) => {
 
 function imageFor(path: string) {
   const aliases: Record<string, string> = {
-    "/assets/hub-modular.svg": "/assets/hub-modular-reference.avif",
-    "/assets/hub-modular.webp": "/assets/hub-modular-reference.avif",
+    "/assets/hub-modular.svg": MODULAR_ART,
+    "/assets/hub-modular.webp": MODULAR_ART,
     "/assets/hub-versatile.webp": "/assets/hub-versatile.svg",
+    "/assets/hub-modular-reference.avif": MODULAR_ART,
     "/assets/hub-midcafe.webp": "/assets/portfolio-coffeebooth.webp",
   };
   return aliases[path] ?? path;
@@ -50,41 +53,29 @@ function ServiceArtwork({ service, size }: { service: Service; size: number }) {
   );
 }
 
-function ServiceCard({
-  service,
-  large = false,
-}: {
-  service: Service;
-  large?: boolean;
-}) {
-  if (large) {
-    return (
-      <article className="flex h-[455px] w-[760px] shrink-0 items-center rounded-[42px] bg-white px-[55px] text-[#151515] shadow-[0_20px_55px_rgba(0,0,0,0.3)]">
-        <ServiceArtwork service={service} size={270} />
-        <div className="ml-[55px] min-w-0">
-          <h4 className="text-[49px] font-normal leading-[1.08] tracking-[-0.035em]">{service.name}</h4>
-          <p className="mt-[34px] max-w-[270px] text-[20px] leading-[1.32] text-[#292929]">
-            {service.description}
-          </p>
-          <a href={service.href} className="mt-5 inline-block text-[16px] text-[#8e204b] hover:underline">
-            Pelajari lebih lanjut →
-          </a>
-        </div>
-      </article>
-    );
-  }
 
-  return (
-    <article className="flex h-[223px] w-[372px] items-center rounded-[22px] bg-white px-[27px] text-[#151515] shadow-[0_20px_50px_rgba(0,0,0,0.34)]">
-      <ServiceArtwork service={service} size={135} />
-      <div className="ml-[20px] min-w-0">
-        <h3 className="text-[26px] font-normal leading-[1.05] tracking-[-0.03em]">{service.name}</h3>
-        <p className="mt-[15px] line-clamp-4 text-[12px] leading-[1.27] text-[#303030]">
-          {service.description}
-        </p>
-        <a href={service.href} className="mt-[17px] inline-block text-[11px] text-[#921945] hover:underline">
-          Pelajari lebih lanjut →
-        </a>
+/** Precise card proportions from the supplied SVG at 1440×900. */
+function ServiceCard({ service, large = false }: { service: Service; large?: boolean }) {
+  return large ? (
+    <article className="relative h-[466px] w-[776px] shrink-0 overflow-hidden rounded-[44px] bg-white text-[#141414] shadow-[0_15px_40px_rgba(0,0,0,.24)]">
+      <div className="absolute left-[58px] top-[96px] h-[274px] w-[259px]">
+        <Image src={imageFor(service.image)} alt="" fill unoptimized sizes="259px" className="object-contain" />
+      </div>
+      <div className="absolute left-[398px] top-[153px] w-[310px]">
+        <h4 className="text-[50px] font-normal leading-[1.08] tracking-[-.035em]">{service.name}</h4>
+        <p className="mt-[40px] line-clamp-4 max-w-[282px] text-[20px] leading-[1.30]">{service.description}</p>
+        <a href={service.href} className="mt-[28px] inline-block text-[16px] text-[#8B204B] hover:underline">Pelajari lebih lanjut →</a>
+      </div>
+    </article>
+  ) : (
+    <article className="relative h-[223px] w-[372px] overflow-hidden rounded-[21px] bg-white text-[#141414] shadow-[0_14px_35px_rgba(0,0,0,.25)]">
+      <div className="absolute left-[28px] top-[46px] h-[131px] w-[124px]">
+        <Image src={imageFor(service.image)} alt="" fill unoptimized sizes="124px" className="object-contain" />
+      </div>
+      <div className="absolute left-[190px] top-[70px] w-[160px]">
+        <h3 className="text-[26px] font-normal leading-[1.05] tracking-[-.035em]">{service.name}</h3>
+        <p className="mt-[14px] line-clamp-4 text-[11px] leading-[1.3]">{service.description}</p>
+        <a href={service.href} className="mt-[13px] inline-block text-[11px] text-[#8B204B] hover:underline">Pelajari lebih lanjut →</a>
       </div>
     </article>
   );
@@ -93,35 +84,17 @@ function ServiceCard({
 function ProjectPhoto({ project, large = false }: { project: Project; large?: boolean }) {
   return (
     <div className={large
-      ? "relative h-[455px] w-[846px] overflow-hidden rounded-[29px] shadow-[0_24px_60px_rgba(0,0,0,0.34)]"
-      : "relative h-[220px] w-[405px] overflow-hidden rounded-[29px] shadow-[0_20px_48px_rgba(0,0,0,0.35)]"
+      ? "relative h-[467px] w-[865px] overflow-hidden rounded-[29px] shadow-[0_24px_60px_rgba(0,0,0,.34)]"
+      : "relative h-[218px] w-[403px] overflow-hidden rounded-[29px] shadow-[0_20px_45px_rgba(0,0,0,.34)]"
     }>
-      {large ? (
-        <Image
-          src={imageFor(project.image)}
-          alt={project.imageAlt || project.title}
-          fill
-          unoptimized
-          sizes="846px"
-          className="object-cover"
-        />
-      ) : (
-        <div className="grid h-full w-full grid-cols-2 grid-rows-2 overflow-hidden">
-          {["left center", "right center", "center top", "center bottom"].map((position) => (
-            <div key={position} className="relative overflow-hidden">
-              <Image
-                src={imageFor(project.image)}
-                alt={position === "left center" ? project.imageAlt || project.title : ""}
-                fill
-                unoptimized
-                sizes="205px"
-                className="object-cover"
-                style={{ objectPosition: position }}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      <Image
+        src={imageFor(project.image)}
+        alt={project.imageAlt || project.title}
+        fill
+        unoptimized
+        sizes={large ? "865px" : "403px"}
+        className="object-cover"
+      />
     </div>
   );
 }
@@ -225,7 +198,7 @@ export default function HubSection() {
           Redefining space within commercial needs
         </h2>
         <div className="relative mx-auto mt-8 aspect-[742/864] w-full max-w-[460px]">
-          <Image src={STAGE} alt="Panggung isometrik Craftivation" fill unoptimized sizes="(max-width: 700px) 90vw, 460px" className="object-contain" />
+          <Image src={CLOSED_STAGE} alt="Panggung isometrik Craftivation" fill unoptimized sizes="(max-width: 700px) 90vw, 460px" className="object-contain" />
         </div>
         {services.length > 0 && (
           <div className="mt-10">
@@ -272,20 +245,24 @@ export default function HubSection() {
             >
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute left-[349px] top-[36px] h-[864px] w-[742px] will-change-transform"
+                className="pointer-events-none absolute left-[349px] top-[145px] h-[640px] w-[742px] will-change-transform"
                 style={{ transform: "translateY(" + (fade(0.04, 0.38, progress) * 40) + "px) scale(" + (1 + fade(0.06, 0.38, progress) * 0.19) + ")", transformOrigin: "center center" }}
               >
-                <Image src={STAGE} alt="" fill unoptimized priority={false} sizes="742px" className="object-contain" />
+                <Image src={CLOSED_STAGE} alt="" fill unoptimized sizes="742px" className="object-contain" />
+                <div aria-hidden="true" className="absolute left-[50%] top-[44%] h-[168px] w-[65px] -translate-x-1/2 shadow-[0_20px_22px_rgba(0,0,0,.58)]" style={{ clipPath: "polygon(50% 0,100% 14%,100% 89%,50% 100%,0 89%,0 14%)", background: "linear-gradient(100deg,#430015 0%,#85163d 52%,#46001b 100%)" }}>
+                  <div className="absolute inset-x-0 top-0 h-[21px] bg-[#8B2348]" style={{clipPath:"polygon(50% 0,100% 90%,50% 100%,0 90%)"}} />
+                  <div className="absolute inset-x-0 bottom-0 h-[4px] bg-white shadow-[0_0_10px_2px_white]" />
+                </div>
               </div>
 
               <h2
-                className="absolute left-1/2 top-[144px] w-[900px] -translate-x-1/2 text-center text-[40px] font-normal leading-[1.24] tracking-[-0.028em]"
+                className="absolute left-1/2 top-[157px] w-[900px] -translate-x-1/2 text-center text-[40px] font-normal leading-[1.24] tracking-[-0.028em]"
                 style={headingFont}
               >
                 Redefining space within commercial needs
               </h2>
 
-              <div className="absolute left-[144px] top-[237px]">
+              <div className="absolute left-[144px] top-[238px]">
                 <button type="button" onClick={() => jump(0.48)} className="text-[20px] text-white/85 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-white">
                   Lihat Layanan Kami
                 </button>
@@ -307,7 +284,7 @@ export default function HubSection() {
                   <button
                     type="button"
                     onClick={() => jump(0.88)}
-                    className="absolute left-[947px] top-[489px] block rounded-[29px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                    className="absolute left-[947px] top-[487px] block rounded-[29px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                     aria-label={"Lihat proyek " + selectedProject.title}
                   >
                     <ProjectPhoto project={selectedProject} />
@@ -330,12 +307,12 @@ export default function HubSection() {
                 </div>
                 <div className="absolute bottom-[-160px] right-[-60px] h-[370px] w-[620px] -rotate-[33deg] bg-white/20 blur-[60px]" />
               </div>
-              <div className="absolute left-[326px] top-[154px] flex items-center gap-[22px]">
+              <div className="absolute left-[310px] top-[155px] flex items-center gap-[22px]">
                 <button type="button" onClick={() => jump(0.03)} aria-label="Kembali ke Hub" className="text-[38px] leading-none hover:text-white/65 focus-visible:outline-2 focus-visible:outline-white">‹</button>
                 <h3 className="text-[44px] font-normal leading-none" style={headingFont}>Lihat Layanan Kami</h3>
               </div>
               <div
-                className="absolute left-[326px] top-[304px] flex w-max gap-[55px] will-change-transform"
+                className="absolute left-[316px] top-[300px] flex w-max gap-[58px] will-change-transform"
                 style={{ transform: "translateX(" + ((1 - fade(0.28, 0.48, progress)) * 70) + "px)" }}
               >
                 {firstService && <ServiceCard service={firstService} large />}
@@ -358,14 +335,14 @@ export default function HubSection() {
                 <>
                   <a
                     href={selectedProject.href}
-                    className="absolute left-[294px] top-[227px] block overflow-hidden rounded-[29px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                    className="absolute left-[293px] top-[224px] block overflow-hidden rounded-[29px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                     style={{ transform: "translateY(" + ((1 - fade(0.67, 0.88, progress)) * 44) + "px) scale(" + (0.96 + fade(0.67, 0.88, progress) * 0.04) + ")" }}
                   >
                     <ProjectPhoto project={selectedProject} large />
                   </a>
-                  <span className="absolute left-[176px] top-[430px] text-[29px] text-white/90">{selectedProject.number}</span>
-                  <span className="absolute left-[1180px] top-[430px] text-[29px] text-white/90">{selectedProject.client}</span>
-                  <h4 className="absolute left-1/2 top-[717px] w-[1060px] -translate-x-1/2 text-center text-[49px] font-normal leading-tight tracking-[-0.03em]" style={headingFont}>
+                  <span className="absolute left-[174px] top-[440px] text-[29px] text-white/90">{selectedProject.number}</span>
+                  <span className="absolute left-[1203px] top-[440px] text-[29px] text-white/90">{selectedProject.client}</span>
+                  <h4 className="absolute left-1/2 top-[737px] w-[1060px] -translate-x-1/2 text-center text-[49px] font-normal leading-tight tracking-[-0.03em]" style={headingFont}>
                     {selectedProject.title}
                   </h4>
                   {projects.length > 1 && (
