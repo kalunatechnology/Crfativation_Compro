@@ -1,14 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { dummyProjects, dummyServices } from "@/data/dummy";
 import type { Project, Service } from "@/lib/types";
 
 // Seluruh tampilan memakai utility Tailwind + inline style untuk animasi.
 // Tidak membutuhkan CSS Module, Framer Motion, atau library animasi lainnya.
 const ASSETS = {
-  stage: "/assets/hub-stage.webp",
+  stage: "/assets/hub-stage.svg",
 };
+
+// Handle legacy image paths already saved in SQLite.
+function resolveAsset(path: string) {
+  const replacements: Record<string, string> = {
+    "/assets/hub-stage.webp": "/assets/hub-stage.svg",
+    "/assets/hub-modular.webp": "/assets/hub-modular.svg",
+    "/assets/hub-versatile.webp": "/assets/hub-versatile.svg",
+    "/assets/hub-midcafe.webp": "/assets/portfolio-coffeebooth.webp",
+  };
+  return replacements[path] ?? path;
+}
 
 const clamp = (value: number) => Math.max(0, Math.min(1, value));
 const ease = (from: number, to: number, value: number) => {
@@ -37,12 +49,7 @@ function ServiceCard({
           : "min-h-[198px] gap-5 rounded-[22px] p-6 lg:gap-7 lg:p-8"
       }`}
     >
-      <img
-        src={image}
-        alt=""
-        loading="lazy"
-        className={`shrink-0 rounded-lg object-contain ${compact ? "h-[90px] w-[90px]" : "h-[118px] w-[118px] lg:h-[140px] lg:w-[140px]"}`}
-      />
+      <Image src={resolveAsset(image)} alt="" width={140} height={140} unoptimized className={`shrink-0 rounded-lg object-contain ${compact ? "h-[90px] w-[90px]" : "h-[118px] w-[118px] lg:h-[140px] lg:w-[140px]"}`} />
       <div className="min-w-0 flex-1">
         <h3 className={`font-normal tracking-[-0.035em] ${compact ? "text-[21px]" : "text-[27px] lg:text-[31px]"}`}>
           {name}
@@ -66,16 +73,11 @@ function ServiceCard({
 function ProjectPreview({ project, large = false }: { project: Project; large?: boolean }) {
   return (
     <div className="relative">
-      <img
-        src={project.image}
-        alt={project.imageAlt}
-        loading="lazy"
-        className={`w-full object-cover ${
+      <Image src={resolveAsset(project.image)} alt={project.imageAlt} width={1000} height={540} unoptimized className={`w-full object-cover ${
           large
             ? "aspect-[1.88/1] rounded-[18px] shadow-[0_28px_70px_rgba(0,0,0,0.35)]"
             : "aspect-[1.9/1] rounded-[17px] shadow-[0_16px_45px_rgba(0,0,0,0.35)]"
-        }`}
-      />
+        }`} />
     </div>
   );
 }
@@ -168,16 +170,16 @@ export default function HubSection() {
   return (
     <section
       id="approach"
-      aria-labelledby="hub-title"
+      aria-label="Redefining space within commercial needs"
       className="relative isolate scroll-mt-[70px] overflow-clip bg-[#030303] text-white"
     >
       {/* MOBILE: susunan statis yang aman untuk layar kecil */}
-      <div className="mx-auto max-w-[600px] px-5 pb-20 pt-20 md:hidden">
-        <h2 id="hub-title" className="mx-auto max-w-[370px] text-center text-[29px] font-normal leading-[1.16] tracking-[-0.035em]">
+      <div className={`mx-auto max-w-[600px] px-5 pb-20 pt-20 ${reduceMotion ? "md:block" : "md:hidden"}`}>
+        <h2 className="mx-auto max-w-[370px] text-center text-[29px] font-normal leading-[1.16] tracking-[-0.035em]">
           Redefining space within commercial needs
         </h2>
         <div className="relative mx-auto mt-7 aspect-[1.16] w-full max-w-[480px]">
-          <img src={ASSETS.stage} alt="Craftivation 3D isometric exhibition concept" className="h-full w-full object-contain" />
+          <Image src={ASSETS.stage} alt="Craftivation 3D isometric exhibition concept" width={1000} height={700} unoptimized className="h-full w-full object-contain" />
         </div>
 
         <div className="mt-5 flex items-center justify-between gap-4">
@@ -185,7 +187,7 @@ export default function HubSection() {
           <span aria-hidden="true" className="text-[25px] text-white/50">↘</span>
         </div>
         <div className="mt-5 grid gap-3">
-          {services.map((item) => (
+          {services.slice(0, 2).map((item) => (
             <ServiceCard key={item.id} {...item} compact />
           ))}
         </div>
@@ -194,7 +196,7 @@ export default function HubSection() {
           <h3 className="text-[20px] font-normal">Lihat Proyek Kami</h3>
           <a href="#projects" aria-label="Lihat semua proyek" className="text-[25px] text-white/60">↗</a>
         </div>
-        {projects.map((item) => (
+        {projects.slice(0, 3).map((item) => (
           <div key={item.id} className="mt-5">
             <ProjectPreview project={item} large />
             <div className="mt-4 flex items-center justify-between text-[13px] text-white/65">
@@ -207,7 +209,7 @@ export default function HubSection() {
       </div>
 
       {/* DESKTOP: sticky storytelling on scroll. */}
-      <div ref={sectionRef} className="relative hidden h-[320svh] md:block">
+      <div ref={sectionRef} className={`relative hidden h-[320svh] ${reduceMotion ? "md:hidden" : "md:block"}`}>
         <div className="sticky top-0 h-[100svh] min-h-[640px] w-full overflow-hidden bg-[#030303]">
           {/* Sumbu 3D panggung: membesar & bergerak mengikuti scroll */}
           <div
@@ -217,7 +219,7 @@ export default function HubSection() {
               transform: `translate(-50%, -50%) translate3d(${stageX}px, ${stageY}px, 0) scale(${stageScale})`,
             }}
           >
-            <img src={ASSETS.stage} alt="" className="h-full w-full object-contain" />
+            <Image src={ASSETS.stage} alt="" width={1000} height={700} unoptimized className="h-full w-full object-contain" />
             {/* Menara maroon di tengah podium seperti referensi Figma */}
             <div
               className="absolute left-1/2 top-[51%] h-[100px] w-[30px] -translate-x-1/2 bg-gradient-to-r from-[#350714] via-[#7f173b] to-[#410d25] shadow-[8px_16px_18px_rgba(0,0,0,0.5)] lg:h-[130px] lg:w-[38px]"
@@ -276,7 +278,7 @@ export default function HubSection() {
               className="absolute left-1/2 top-[50%] grid w-[min(1050px,90vw)] -translate-x-1/2 -translate-y-1/2 grid-cols-2 gap-5 lg:gap-7"
               style={{ transform: `translate(-50%, calc(-50% + ${(1 - serviceIn) * 38}px))` }}
             >
-              {services.map((item) => (
+              {services.slice(0, 2).map((item) => (
                 <div key={item.id} className="pointer-events-auto min-w-0">
                   <ServiceCard {...item} />
                 </div>

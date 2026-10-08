@@ -9,7 +9,7 @@ export const dummyServices: ServiceInput[] = [
     name: "Modular",
     description:
       "Paket booth praktis dan minimalis untuk kebutuhan jangka pendek brand Anda.",
-    image: "/assets/hub-modular.webp",
+    image: "/assets/hub-modular.svg",
     href: "#contact",
     sortOrder: 1,
     isActive: true,
@@ -19,7 +19,7 @@ export const dummyServices: ServiceInput[] = [
     name: "Versatile",
     description:
       "Paket booth lengkap dan fungsional. Menyesuaikan kebutuhan brand Anda.",
-    image: "/assets/hub-versatile.webp",
+    image: "/assets/hub-versatile.svg",
     href: "#contact",
     sortOrder: 2,
     isActive: true,
@@ -34,7 +34,7 @@ export const dummyProjects: ProjectInput[] = [
     client: "MidCafe",
     description:
       "Booth kopi bergaya mid-century dengan panel kayu vertikal untuk area komersial.",
-    image: "/assets/hub-midcafe.webp",
+    image: "/assets/portfolio-coffeebooth.webp",
     imageAlt:
       "Booth Mid-Century Coffeebooth dengan interior kayu pada area komersial",
     href: "#projects",
