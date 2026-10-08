@@ -70,8 +70,8 @@ function ServiceCard({ item, variant }: { item: Service; variant: "small" | "lar
         : { left: 190, top: 72, width: 164 }}>
         <h3
           className={big
-            ? "text-[50px] font-normal leading-[1.06] tracking-[-0.035em]"
-            : "text-[26px] font-normal leading-[1.08] tracking-[-0.025em]"}
+            ? "line-clamp-2 text-[50px] font-normal leading-[1.06] tracking-[-0.035em]"
+            : "line-clamp-2 text-[26px] font-normal leading-[1.08] tracking-[-0.025em]"}
           style={{ fontFamily: "var(--font-arsenal)" }}
         >{item.name}</h3>
         <p className={big
@@ -294,7 +294,7 @@ export default function HubSection() {
         </h2>
         <div className="relative mx-auto mt-7 aspect-[1440/972] w-full overflow-hidden">
           <Image src={SVG.stage} alt="Panggung 3D Craftivation" fill unoptimized sizes="(max-width: 680px) 90vw, 680px" className="object-contain" />
-          <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[46.1%] w-[3.61%] -translate-x-1/2" />
+          <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[46.1%] h-auto w-[3.61%] -translate-x-1/2" />
         </div>
         {services.length > 0 && (
           <div className="mt-8">
@@ -304,7 +304,7 @@ export default function HubSection() {
               role="region"
               aria-label="Geser daftar layanan Craftivation"
               tabIndex={0}
-              style={{ scrollbarWidth: "thin", scrollbarColor: "#a99a9f transparent" }}
+              style={{ scrollbarWidth: "thin", scrollbarColor: "#a99a9f transparent", paddingInline: "max(0px, calc((100% - min(84vw, 480px)) / 2))", scrollPaddingInline: "max(0px, calc((100% - min(84vw, 480px)) / 2))" }}
             >
               {services.map(s => (
                 <article key={s.id} className="flex min-h-[168px] w-[min(84vw,480px)] shrink-0 snap-center items-center gap-4 rounded-3xl bg-white p-5 text-[#1e1e1e]">
@@ -328,7 +328,7 @@ export default function HubSection() {
               role="region"
               aria-label="Geser daftar proyek Craftivation"
               tabIndex={0}
-              style={{ scrollbarWidth: "thin", scrollbarColor: "#a99a9f transparent" }}
+              style={{ scrollbarWidth: "thin", scrollbarColor: "#a99a9f transparent", paddingInline: "max(0px, calc((100% - min(88vw, 565px)) / 2))", scrollPaddingInline: "max(0px, calc((100% - min(88vw, 565px)) / 2))" }}
             >
               {projects.map(project => (
                 <article key={project.id} className="w-[min(88vw,565px)] shrink-0 snap-center">
