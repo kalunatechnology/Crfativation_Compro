@@ -6,7 +6,7 @@ import Image from "next/image";
  * responsive rather than embedding a screenshot of the design.
  */
 const footerLinks = [
-  { label: "Project", href: "/#projects" },
+  { label: "Project", href: "/projects" },
   { label: "Approach", href: "/approach" },
   { label: "About Us", href: "/about" },
   { label: "Contact", href: "#contact" },
