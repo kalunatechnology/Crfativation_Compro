@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 const navItems = [
   { label: "Portofolio", href: "#projects" },
-  { label: "Pendekatan", href: "#approach" },
+  { label: "Pendekatan", href: "/approach" },
   { label: "Tentang Kami", href: "/about" },
 ];
 
@@ -15,7 +15,7 @@ const navItems = [
  * <= 20px: charcoal transparan, teks/logo putih.
  * > 20px: putih solid, teks/logo gelap.
  */
-export default function HomepageNavbar({ variant = "home" }: { variant?: "home" | "about" }) {
+export default function HomepageNavbar({ variant = "home" }: { variant?: "home" | "about" | "approach" }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -41,8 +41,8 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
   }, []);
 
   const closeMenu = () => setMenuOpen(false);
-  const navHref = (href: string) => variant === "about" && href.startsWith("#") ? "/" + href : href;
-  const logoHref = variant === "about" ? "/" : "#hero";
+  const navHref = (href: string) => variant !== "home" && href.startsWith("#") && href !== "#contact" ? "/" + href : href;
+  const logoHref = variant === "home" ? "#hero" : "/";
 
   return (
     <header
@@ -82,7 +82,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
             <a
               key={item.href}
               href={navHref(item.href)}
-              aria-current={variant === "about" && item.href === "/about" ? "page" : undefined}
+              aria-current={((variant === "about" && item.href === "/about") || (variant === "approach" && item.href === "/approach")) ? "page" : undefined}
               className="text-[16px] font-normal leading-[1.2] text-inherit no-underline transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none"
             >
               {item.label}
@@ -146,6 +146,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
           <a
             key={item.href}
             href={navHref(item.href)}
+            aria-current={((variant === "about" && item.href === "/about") || (variant === "approach" && item.href === "/approach")) ? "page" : undefined}
             onClick={closeMenu}
             tabIndex={menuOpen ? 0 : -1}
             className="flex min-h-[50px] items-center text-[16px] font-normal text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
