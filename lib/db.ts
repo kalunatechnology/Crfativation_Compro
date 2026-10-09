@@ -3,8 +3,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { dummyProjects, dummyServices } from "@/data/dummy";
 
-const DB_DIR = path.join(process.cwd(), "data");
-const DB_PATH = path.join(DB_DIR, "craftivation.db");
+// Optional path for persistent SQLite volumes on a stateful host. Defaults to
+// the exact legacy database path so existing projects and migration history stay intact.
+const DB_PATH = process.env.CRAFTIVATION_DB_PATH
+  ? path.resolve(process.env.CRAFTIVATION_DB_PATH)
+  : path.join(process.cwd(), "data", "craftivation.db");
+const DB_DIR = path.dirname(DB_PATH);
 
 const globalForDb = globalThis as unknown as { __craftivationDb?: Database.Database };
 
