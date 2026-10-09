@@ -1,33 +1,11 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { dummyProjects } from "@/data/dummy";
-import type { Project } from "@/lib/types";
-
-// Render the same active, ordered SQLite projects as the interactive Hub.
-const fallbackProjects: Project[] = dummyProjects.map((project, index) => ({ ...project, id: index + 1 }));
+import { useRef, useState } from "react";
+import { useProjects } from "@/lib/useProjects";
 
 export default function PortfolioSection() {
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
-  const [portfolioItems, setPortfolioItems] = useState<Project[]>(fallbackProjects);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    async function loadPortfolio() {
-      try {
-        const response = await fetch("/api/projects", { signal: controller.signal, cache: "no-store" });
-        if (!response.ok) return;
-        const payload = await response.json();
-        if (!controller.signal.aborted && Array.isArray(payload.data)) {
-          setPortfolioItems(payload.data as Project[]);
-        }
-      } catch {
-        // Keep initial seeded content when the API cannot be reached.
-      }
-    }
-    void loadPortfolio();
-    return () => controller.abort();
-  }, []);
+  const { items: portfolioItems } = useProjects();
 
   const portfolioTrackRef = useRef<HTMLDivElement>(null);
   const toggleLike = (number: string) => setLikedItems(previous => ({ ...previous, [number]: !previous[number] }));
