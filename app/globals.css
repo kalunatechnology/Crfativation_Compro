@@ -2124,3 +2124,399 @@ html {
   .aboutValues__rail { scroll-behavior: auto; }
   .aboutValues__arrow { transition: none !important; }
 }
+
+
+/* ==========================================================================
+   CRAFTIVATION / APPROACH LANDING PAGE
+   Source approach.svg (1440 x 4105): hero 900, three alternating process
+   rows 1681, service cards 507, existing CTA and burgundy footer.
+   Deliberately no sticky/pinned scroll or scroll-driven visual scrubbing.
+   ========================================================================== */
+.approachPage {
+  background: #fff;
+  color: #3b3b3b;
+}
+.approachHero {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 900px;
+  min-height: min(900px, 100svh);
+  overflow: hidden;
+  background: #121212;
+  color: #fff;
+}
+.approachHero__photo {
+  object-fit: cover;
+  object-position: center;
+  animation: approachHeroFocus 2s cubic-bezier(.22,1,.36,1) both;
+}
+.approachHero__shade {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.73) 0%, rgba(0,0,0,.47) 35%, rgba(0,0,0,.13) 68%, rgba(0,0,0,.18) 100%),
+    linear-gradient(0deg, rgba(0,0,0,.12), transparent 60%);
+}
+.approachHero__copy {
+  position: absolute;
+  z-index: 2;
+  top: 43.4%;
+  left: max(32px, calc((100vw - 1252px) / 2));
+  max-width: min(790px, calc(100% - 64px));
+  animation: approachHeroText 1.15s cubic-bezier(.22,1,.36,1) .18s both;
+}
+.approachHero__copy h1 {
+  margin: 0;
+  font-family: var(--font-jost), var(--font-sans), sans-serif;
+  font-size: clamp(34px, 3.8vw, 57px);
+  line-height: 1.13;
+  font-weight: 400;
+  letter-spacing: -.038em;
+  color: #f3f3f3;
+}
+.approachHero__copy p {
+  margin: 19px 0 0;
+  font-family: var(--font-jost), var(--font-sans), sans-serif;
+  font-size: clamp(15px, 1.25vw, 19px);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -.012em;
+  color: #e9e9e9;
+}
+@keyframes approachHeroFocus {
+  from { opacity: .82; transform: scale(1.055); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes approachHeroText {
+  from { opacity: 0; transform: translate3d(0,24px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+
+/* Process: all three cards are independent rows in document order.
+   Image "building" is only an entrance sequence, never a scroll trap. */
+.approachMethods {
+  width: 100%;
+  padding: 0 24px 91px;
+  background: #fff;
+}
+.approachMethods__container {
+  width: min(100%, 1179px);
+  margin: 0 auto;
+}
+.approachStep {
+  display: grid;
+  grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+  align-items: center;
+  width: 100%;
+  min-height: 527px;
+  border-bottom: 1px solid #d3d3d3;
+  color: #3b3b3b;
+}
+.approachStep__visual {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 34px 15px;
+}
+.approachStep__copy {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  padding: 0 5px 0 12px;
+}
+.approachStep--visualRight {
+  grid-template-columns: minmax(0, 58%) minmax(0, 42%);
+}
+.approachStep--visualRight .approachStep__visual {
+  grid-column: 2;
+}
+.approachStep--visualRight .approachStep__copy {
+  grid-column: 1;
+  padding: 0 16px 0 42px;
+}
+.approachStep__number {
+  display: block;
+  margin: 0 0 46px;
+  font-family: var(--font-arsenal), serif;
+  color: #4B002B;
+  font-size: clamp(61px, 5.2vw, 77px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.05em;
+}
+.approachStep__headingLine {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(25px, 4.1vw, 64px);
+}
+.approachStep__headingLine h2 {
+  margin: 0;
+  font-family: var(--font-arsenal), serif;
+  font-size: clamp(39px, 3.9vw, 58px);
+  line-height: 1.17;
+  font-weight: 400;
+  letter-spacing: -.035em;
+  color: #3b3b3b;
+}
+.approachStep__headingLine p {
+  margin: 3px 0 0;
+  max-width: 385px;
+  font-family: var(--font-arsenal), serif;
+  font-size: clamp(21px, 2vw, 29px);
+  line-height: 1.25;
+  font-weight: 400;
+  letter-spacing: -.015em;
+  color: #4e4e4e;
+}
+.approachStep__description {
+  max-width: 625px;
+  margin: 27px 0 0;
+  font-family: var(--font-jost), var(--font-sans), sans-serif;
+  font-size: clamp(16px, 1.24vw, 18px);
+  line-height: 1.45;
+  color: #565656;
+}
+.approachArt {
+  position: relative;
+  width: min(100%, 410px);
+  aspect-ratio: 780/860;
+  overflow: visible;
+  isolation: isolate;
+}
+.approachArt__frame {
+  position: absolute;
+  display: block;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+}
+.approachArt__frame:not(:last-child) { opacity: 0; }
+.approachArt__frame:last-child { opacity: 1; }
+
+/* Progressive reveal of blueprint -> wooden structure -> installed details.
+   Animation plays as each row enters the viewport, once per navigation. */
+.approachStep[data-home-state="visible"] .approachArt--kenali .approachArt__frame {
+  animation: approachLineDraw 1150ms cubic-bezier(.22,1,.36,1) both;
+}
+.approachStep[data-home-state="visible"] .approachArt--kreasi .approachArt__frame--blueprint {
+  animation: approachPlanFade 1450ms ease both;
+}
+.approachStep[data-home-state="visible"] .approachArt--kreasi .approachArt__frame--structure {
+  animation: approachBuildWipe 1800ms cubic-bezier(.22,1,.36,1) both;
+}
+.approachStep[data-home-state="visible"] .approachArt--implikasi .approachArt__frame--blueprint {
+  animation: approachPlanFade 1550ms ease both;
+}
+.approachStep[data-home-state="visible"] .approachArt--implikasi .approachArt__frame--structure {
+  animation: approachMiddleLayer 2000ms ease both;
+}
+.approachStep[data-home-state="visible"] .approachArt--implikasi .approachArt__frame--finish {
+  animation: approachFinishReveal 2250ms cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes approachLineDraw {
+  0% { opacity: 0; clip-path: inset(0 100% 0 0); transform: translate3d(0,11px,0) scale(.94); }
+  100% { opacity: 1; clip-path: inset(0); transform: translate3d(0,0,0) scale(1); }
+}
+@keyframes approachPlanFade {
+  0%, 20% { opacity: 0; transform: scale(.94); }
+  31%, 55% { opacity: .9; transform: scale(.97); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes approachBuildWipe {
+  0%, 31% { opacity: 0; clip-path: inset(100% 0 0 0); transform: translate3d(0,18px,0) scale(.96); }
+  72%, 100% { opacity: 1; clip-path: inset(0); transform: translate3d(0,0,0) scale(1); }
+}
+@keyframes approachMiddleLayer {
+  0%, 24% { opacity: 0; clip-path: inset(100% 0 0 0); }
+  48%, 68% { opacity: 1; clip-path: inset(0); }
+  100% { opacity: 0; clip-path: inset(0); }
+}
+@keyframes approachFinishReveal {
+  0%, 56% { opacity: 0; clip-path: inset(95% 0 0 0); transform: translate3d(0,15px,0) scale(.975); }
+  100% { opacity: 1; clip-path: inset(0); transform: translate3d(0,0,0) scale(1); }
+}
+
+/* Three service/package cards: design-first, SQLite text when available. */
+.approachPackages {
+  width: 100%;
+  min-height: 507px;
+  background: #fff;
+  color: #3b3b3b;
+  padding: 66px 24px 80px;
+}
+.approachPackages__container {
+  max-width: 1386px;
+  margin-inline: auto;
+}
+.approachPackages__container > h2 {
+  margin: 0 0 47px;
+  text-align: center;
+  font-family: var(--font-arsenal), serif;
+  font-size: clamp(32px, 3.45vw, 49px);
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  font-weight: 400;
+}
+.approachPackages__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 26px;
+}
+.approachPackage {
+  display: grid;
+  grid-template-columns: minmax(100px, 40%) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(12px, 1.2vw, 20px);
+  height: 250px;
+  min-width: 0;
+  padding: 17px clamp(14px, 1.6vw, 24px);
+  border: 1px solid #ededed;
+  border-radius: 22px;
+  background: #fff;
+  color: #3b3b3b;
+  box-shadow: 0 6px 10px rgba(0,0,0,.16);
+  text-decoration: none;
+  transition: box-shadow .35s ease, translate .35s cubic-bezier(.22,1,.36,1);
+}
+.approachPackage:hover {
+  box-shadow: 0 14px 25px rgba(0,0,0,.18);
+  translate: 0 -4px;
+}
+.approachPackage:focus-visible {
+  outline: 3px solid #4B002B;
+  outline-offset: 4px;
+}
+.approachPackage__art {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  min-width: 0;
+}
+.approachPackage__image {
+  object-fit: contain;
+}
+.approachPackage__content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 17px;
+}
+.approachPackage__content strong {
+  font-family: var(--font-arsenal), serif;
+  font-size: clamp(22px, 2.15vw, 31px);
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: -.025em;
+}
+.approachPackage__content > span {
+  font-family: var(--font-jost), var(--font-sans), sans-serif;
+  font-size: clamp(12px, 1.12vw, 16px);
+  line-height: 1.3;
+  color: #565656;
+}
+
+@media (max-width: 1100px) {
+  .approachStep__number { margin-bottom: 30px; }
+  .approachStep__headingLine { gap: 24px; }
+  .approachStep__headingLine h2 { font-size: clamp(35px, 4.8vw, 49px); }
+  .approachStep__headingLine p { font-size: clamp(20px, 2.4vw, 25px); }
+  .approachStep--visualRight .approachStep__copy { padding-left: 15px; }
+  .approachPackage { grid-template-columns: minmax(100px, 36%) minmax(0, 1fr); gap: 13px; padding-inline: 13px; }
+  .approachPackages__grid { gap: 16px; }
+}
+@media (max-width: 860px) {
+  .approachHero { height: min(820px, 100svh); min-height: 570px; }
+  .approachHero__copy { top: 43%; left: clamp(26px, 6vw, 52px); }
+  .approachHero__copy h1 { font-size: clamp(36px, 5.4vw, 49px); }
+  .approachMethods { padding-bottom: 60px; }
+  .approachStep {
+    grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+    min-height: 420px;
+  }
+  .approachStep--visualRight { grid-template-columns: minmax(0, 58%) minmax(0, 42%); }
+  .approachStep__visual { padding-inline: 0; }
+  .approachArt { max-width: 325px; }
+  .approachStep__number { font-size: 55px; margin-bottom: 25px; }
+  .approachStep__headingLine { grid-template-columns: minmax(0,1fr); gap: 7px; }
+  .approachStep__description { font-size: 15px; margin-top: 19px; }
+  .approachPackage { height: 210px; grid-template-columns: minmax(0,1fr); grid-template-rows: 90px auto; justify-items: center; gap: 0; padding: 12px; }
+  .approachPackage__art { width: 100px; }
+  .approachPackage__content { text-align: center; gap: 6px; }
+  .approachPackage__content strong { font-size: 22px; }
+  .approachPackage__content > span { font-size: 11px; }
+}
+@media (max-width: 650px) {
+  .approachHero { height: min(690px, 90svh); min-height: 510px; }
+  .approachHero__photo { object-position: 64% center; }
+  .approachHero__shade { background: linear-gradient(90deg, rgba(0,0,0,.73),rgba(0,0,0,.32) 80%); }
+  .approachHero__copy { top: 46%; left: 23px; max-width: calc(100% - 46px); }
+  .approachHero__copy h1 { font-size: clamp(34px,8vw,46px); line-height: 1.15; }
+  .approachHero__copy p { font-size: 13px; line-height: 1.55; max-width: 320px; }
+  .approachHero__desktopBreak { display: none; }
+  .approachMethods { padding: 30px 20px 55px; }
+  .approachStep, .approachStep--visualRight {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 30px 0 43px;
+    min-height: 0;
+  }
+  .approachStep__visual {
+    order: 0;
+    height: auto;
+    max-width: 360px;
+    padding: 0;
+  }
+  .approachArt { width: min(77vw, 320px); max-width: none; }
+  .approachStep__copy, .approachStep--visualRight .approachStep__copy {
+    order: 1;
+    width: 100%;
+    padding: 0;
+  }
+  .approachStep__number { font-size: 52px; margin-bottom: 23px; }
+  .approachStep__headingLine { display: flex; gap: 12px; align-items: start; justify-content: space-between; }
+  .approachStep__headingLine h2 { font-size: clamp(35px,9vw,47px); }
+  .approachStep__headingLine p { font-size: 18px; max-width: 51%; }
+  .approachStep__description { max-width: 540px; font-size: 15px; margin-top: 19px; line-height: 1.6; }
+  .approachPackages { min-height: 0; padding: 58px 18px 72px; }
+  .approachPackages__container > h2 { font-size: clamp(29px,7vw,38px); margin-bottom: 30px; text-wrap: balance; }
+  .approachPackages__grid { grid-template-columns: minmax(0,1fr); gap: 16px; max-width: 450px; margin-inline: auto; }
+  .approachPackage {
+    height: 178px;
+    grid-template-columns: 140px minmax(0,1fr);
+    grid-template-rows: auto;
+    justify-items: stretch;
+    padding: 15px 18px;
+    border-radius: 18px;
+    gap: 15px;
+  }
+  .approachPackage__art { width: 140px; }
+  .approachPackage__content { text-align: left; gap: 10px; }
+  .approachPackage__content strong { font-size: 27px; }
+  .approachPackage__content > span { font-size: 14px; }
+}
+@media (max-width: 390px) {
+  .approachPackage { grid-template-columns: 111px minmax(0,1fr); gap: 10px; padding: 11px; }
+  .approachPackage__art { width: 111px; }
+  .approachPackage__content strong { font-size: 24px; }
+  .approachPackage__content > span { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .approachHero__photo, .approachHero__copy,
+  .approachArt__frame { animation: none !important; transform: none !important; clip-path: none !important; }
+  .approachArt__frame:not(:last-child) { opacity: 0 !important; }
+  .approachArt__frame:last-child { opacity: 1 !important; }
+  .approachPackage:hover { translate: none; }
+}
