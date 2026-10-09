@@ -1,4 +1,5 @@
 import HomepageNavbar from "@/components/HomepageNavbar";
+import HomepageMotion from "@/components/HomepageMotion";
 import HeroSection from "@/components/HeroSection";
 import HubSection from "@/components/HubSection";
 import ProcessSection from "@/components/ProcessSection";
@@ -11,6 +12,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <>
+      <HomepageMotion />
       <HomepageNavbar />
       <main className="homepage">
         <HeroSection />
