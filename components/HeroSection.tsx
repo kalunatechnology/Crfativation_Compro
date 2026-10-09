@@ -6,7 +6,7 @@ export default function HeroSection() {
 <section
   id="hero"
   aria-labelledby="hero-title"
-  className="relative isolate h-[100svh] min-h-[720px] overflow-hidden bg-[#161616] text-white lg:min-h-[800px]"
+  className="homeHero relative isolate h-[100svh] min-h-[720px] overflow-hidden bg-[#161616] text-white lg:min-h-[800px]"
 >
   {/* Background Image */}
   <Image
@@ -16,12 +16,12 @@ export default function HeroSection() {
     priority
     unoptimized
     sizes="100vw"
-    className="absolute inset-0 z-0 object-cover object-center"
+    className="homeHero__image absolute inset-0 z-0 object-cover object-center"
   />
 
   {/* Background Overlay */}
   <div
-    className="absolute inset-0 z-10 bg-black/30"
+    className="homeHero__shade absolute inset-0 z-10 bg-black/30"
     aria-hidden="true"
   />
 
@@ -37,7 +37,7 @@ export default function HeroSection() {
     <h1
       id="hero-title"
       className="
-        max-w-[960px]
+        homeHero__title max-w-[960px]
         text-[29px] font-normal leading-[1.2]
         tracking-[-0.035em]
         sm:text-[34px]
@@ -50,7 +50,7 @@ export default function HeroSection() {
     {/* Subtitle */}
     <p
       className="
-        mt-6 text-[11px] font-normal
+        homeHero__subtitle mt-6 text-[11px] font-normal
         uppercase tracking-[0.13em]
         sm:text-[13px] lg:text-[14px]
       "
@@ -62,7 +62,7 @@ export default function HeroSection() {
     <div
       aria-label="Statistik Craftivation"
       className="
-        mt-[95px] grid w-full max-w-[695.29px]
+        homeHero__stats mt-[95px] grid w-full max-w-[695.29px]
         grid-cols-3 gap-[8px]
         sm:mt-[105px] sm:gap-[15px]
         lg:mt-[128px]
@@ -76,7 +76,7 @@ export default function HeroSection() {
         <div
           key={index}
           className="
-            relative flex h-[112px] min-w-0
+            homeHero__stat relative flex h-[112px] min-w-0
             flex-col items-center justify-center
             gap-1 overflow-hidden
             border border-white/10
@@ -143,6 +143,17 @@ export default function HeroSection() {
       ))}
     </div>
   </div>
+
+  {/* The opening curtain is visual only and never locks document scrolling. */}
+  <div className="homeHero__curtain" aria-hidden="true">
+    <span className="homeHero__curtainMark">CRAFTIVATION</span>
+    <span className="homeHero__curtainTrack"><span /></span>
+    <span className="homeHero__curtainLabel">EXHIBITION CONTRACTOR</span>
+  </div>
+  <a href="#approach" className="homeHero__scrollCue" aria-label="Scroll untuk melihat pendekatan Craftivation">
+    <span>SCROLL TO EXPLORE</span>
+    <span aria-hidden="true">↓</span>
+  </a>
 </section>
   );
 }
