@@ -157,6 +157,7 @@ export default function HomepageNavbar() {
           Contact Us
         </a>
       </nav>
+      <span className="homeScrollProgress" aria-hidden="true" />
     </header>
   );
 }
