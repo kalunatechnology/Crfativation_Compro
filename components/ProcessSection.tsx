@@ -3,9 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * The three-stage composition, terminology and copy follow the supplied
- * "metode.svg" artboard. All illustration parts stay as scalable, sharp SVG.
- * Animations reveal on actual page scroll (not a timer/carousel).
+ * One continuous, scroll-scrubbed assembly. Frames supplied by the client:
+ * Kenali = fine rectangular outline, Kreasi = wood corner + slatted floor,
+ * Implikasi = oval cutout, counter and floating shelving.
+ *
+ * No wheel hijacking: native page scrolling drives the visual progress.
+ * Small screens, no JS and reduced-motion users see the complete three-row
+ * description in normal document flow instead.
  */
 const methods = [
   {
@@ -31,166 +35,222 @@ const methods = [
   },
 ] as const;
 
-/**
- * Lightweight SVG re-creation of the three isometric construction stages.
- * The first stage is deliberately line-only, while the later stages reveal
- * the same wooden exhibition architecture, floor, oval and fixtures.
- */
-function MethodStructure({ stage }: { stage: number }) {
-  const built = stage > 0;
+const clamp = (n: number) => Math.min(1, Math.max(0, n));
+const ease = (n: number) => {
+  const t = clamp(n);
+  return t * t * (3 - 2 * t);
+};
+const range = (n: number, start: number, end: number) =>
+  ease((n - start) / (end - start));
+
+function MethodStructure({ progress }: { progress: number }) {
+  // Separate layers are necessary for a true assembly, not a GIF crossfade.
+  const blueprint = 1 - range(progress, 0.08, 0.22);
+  const leftWall = range(progress, 0.10, 0.29);
+  const rightWall = range(progress, 0.15, 0.33);
+  const floor = range(progress, 0.21, 0.39);
+  const oval = range(progress, 0.61, 0.71);
+  const counter = range(progress, 0.69, 0.81);
+  const shelfA = range(progress, 0.76, 0.88);
+  const shelfB = range(progress, 0.83, 0.96);
+  const stageScale = 0.89 + 0.11 * range(progress, 0.08, 0.4) + 0.025 * range(progress, 0.81, 1);
+
   return (
     <svg
+      className="metodeIllustration metodeIllustration--story"
       viewBox="0 0 440 440"
       role="img"
-      aria-label={stage === 0 ? "Kerangka ruang isometrik" : stage === 1 ? "Proses desain dan fabrikasi booth" : "Booth selesai dengan detail instalasi"}
-      className="metodeIllustration"
+      aria-label="Konstruksi booth yang berubah dari outline menjadi dinding dan lantai, kemudian lengkap dengan meja dan rak"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <linearGradient id="method-wood-front" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#a56d45"/>
-          <stop offset=".32" stopColor="#c18a5c"/>
-          <stop offset=".62" stopColor="#805039"/>
-          <stop offset="1" stopColor="#b37d56"/>
+        <linearGradient id="method-wood-left" x1="0" y1="0" x2="1" y2=".75">
+          <stop offset="0" stopColor="#a6754e" />
+          <stop offset=".42" stopColor="#c1946b" />
+          <stop offset=".8" stopColor="#9e6b48" />
+          <stop offset="1" stopColor="#75503d" />
         </linearGradient>
-        <linearGradient id="method-wood-side" x1="0" y1="0" x2="1" y2=".8">
-          <stop offset="0" stopColor="#916040"/>
-          <stop offset=".45" stopColor="#c5a07f"/>
-          <stop offset=".7" stopColor="#79513a"/>
-          <stop offset="1" stopColor="#9f6a49"/>
+        <linearGradient id="method-wood-right" x1="0" y1="0" x2="1" y2=".9">
+          <stop offset="0" stopColor="#80573f" />
+          <stop offset=".45" stopColor="#b17f58" />
+          <stop offset=".8" stopColor="#865c42" />
+          <stop offset="1" stopColor="#654530" />
         </linearGradient>
-        <pattern id="method-grain" width="54" height="105" patternUnits="userSpaceOnUse">
-          <path d="M8 0C2 26 19 42 10 74S12 104 9 106M19-4C35 19 14 40 27 67S26 97 20 110M38-4C30 20 46 43 37 73S40 99 43 110M51-4C43 15 55 35 49 64S51 95 48 110"
-            stroke="#3c2419" strokeOpacity=".28" strokeWidth="1.7" fill="none" />
-          <path d="M11 2C16 29 5 41 17 70M32-3C41 30 29 63 33 108M45 5C40 32 49 66 42 92"
-            stroke="#f9d6ae" strokeOpacity=".23" strokeWidth="2.2" fill="none" />
+        <pattern id="method-grain" width="58" height="145" patternUnits="userSpaceOnUse">
+          <path
+            d="M7 -5C-2 30 21 48 7 85S16 131 8 155M22 -5C42 21 11 59 25 89S25 131 18 155M39 -5C21 35 54 60 42 94S49 133 38 155M55 -5C39 33 64 55 49 102S62 133 53 155"
+            stroke="#432819" strokeOpacity=".23" strokeWidth="2" fill="none"
+          />
+          <path d="M14 0C6 30 28 56 13 98M34 0C43 32 28 73 36 139M51 8C40 45 57 95 47 143"
+            stroke="#efc5a0" strokeOpacity=".28" strokeWidth="2" fill="none" />
         </pattern>
-        <linearGradient id="method-floor" x1="0" y1="0" x2=".8" y2="1">
-          <stop offset="0" stopColor="#f8f8f8"/>
-          <stop offset=".72" stopColor="#ededed"/>
-          <stop offset="1" stopColor="#d5d5d5"/>
+        <linearGradient id="method-floor" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#fff" />
+          <stop offset=".72" stopColor="#f3f3f3" />
+          <stop offset="1" stopColor="#dedede" />
         </linearGradient>
-        <linearGradient id="method-counter" x1="0" y1="0" x2=".7" y2="1">
-          <stop offset="0" stopColor="#c69c72"/>
-          <stop offset="1" stopColor="#63422b"/>
+        <linearGradient id="method-counter" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#c19c75" />
+          <stop offset="1" stopColor="#6f4a30" />
         </linearGradient>
       </defs>
 
-      {built ? (
-        <g className="metodeBooth">
-          {/* Isometric wooden corner, following the original artboard proportions. */}
-          <g className="metodeBooth__walls">
-            <path d="M216 34 51 118 51 302 216 218Z" fill="url(#method-wood-front)" stroke="#63452f" strokeWidth="1.7"/>
-            <path d="M216 34 382 118 382 302 216 218Z" fill="url(#method-wood-side)" stroke="#63452f" strokeWidth="1.7"/>
-            <path d="M216 34 51 118 51 302 216 218Z" fill="url(#method-grain)" opacity=".84"/>
-            <path d="M216 34 382 118 382 302 216 218Z" fill="url(#method-grain)" opacity=".6"/>
-            {/* White oval cut-out in the left panel. */}
-            <ellipse cx="135" cy="168" rx="33" ry="50" transform="rotate(27 135 168)" fill="white" stroke="#e0ddd8" strokeWidth="3"/>
-          </g>
+      <g style={{ transformOrigin: "220px 220px", transform: "scale(" + stageScale + ")" }}>
+        {/* Reference frame 1: a true flat square, NOT a prebuilt 3D box. */}
+        <rect x="165" y="162" width="110" height="110" fill="none"
+          stroke="#b4b4b4" strokeWidth="1.3"
+          style={{ opacity: blueprint, transformOrigin: "220px 217px", transform: "scale(" + (1 + range(progress, 0.02, 0.2) * 0.15) + ")" }} />
 
-          {/* Slatted white display floor rises as production becomes tangible. */}
-          <g className="metodeBooth__floor">
-            <path d="M51 302 216 218 382 302 216 387Z" fill="url(#method-floor)" stroke="#c9c9c9" strokeWidth="2"/>
-            <path d="M95 281 258 364M135 261 300 343M176 241 342 322M217 218 382 302"
-              stroke="white" strokeWidth="6" opacity=".98"/>
-            <path d="M216 387 382 302" stroke="#bbb" strokeWidth="2"/>
-          </g>
+        {/* Reference frame 2: two timber walls assemble before the floor settles. */}
+        <g style={{ opacity: leftWall, transform: "translate3d(" + (-17 * (1 - leftWall)) + "px," + (-13 * (1 - leftWall)) + "px,0)" }}>
+          <path d="M220 49 54 135 54 306 220 221Z" fill="url(#method-wood-left)" stroke="#75553b" strokeWidth="1.6" />
+          <path d="M220 49 54 135 54 306 220 221Z" fill="url(#method-grain)" opacity=".75" />
+        </g>
+        <g style={{ opacity: rightWall, transform: "translate3d(" + (17 * (1 - rightWall)) + "px," + (-13 * (1 - rightWall)) + "px,0)" }}>
+          <path d="M220 49 386 135 386 306 220 221Z" fill="url(#method-wood-right)" stroke="#654936" strokeWidth="1.6" />
+          <path d="M220 49 386 135 386 306 220 221Z" fill="url(#method-grain)" opacity=".65" />
+        </g>
+        <g style={{ opacity: floor, transform: "translate3d(0," + (25 * (1 - floor)) + "px,0)" }}>
+          <path d="M54 306 220 221 386 306 220 391Z" fill="url(#method-floor)" stroke="#c9c9c9" strokeWidth="2.2" />
+          <path d="M85 290 251 375M117 274 283 359M150 257 316 342M183 239 349 324M220 221 386 306"
+            fill="none" stroke="#d4d4d4" strokeWidth="1.1" />
+          <path d="M54 306 220 391 386 306" fill="none" stroke="#aaa" strokeWidth="1.5" />
+        </g>
 
-          {/* Counters and floating display shelves. */}
-          <g className="metodeBooth__fixtures">
-            <path d="M51 294 216 376 216 413 51 330Z" fill="url(#method-counter)"/>
-            <path d="M51 294 78 281 244 363 216 376Z" fill="#fbfbfb"/>
-            <path d="M216 376 244 363 244 401 216 413Z" fill="#9d7857"/>
-            <path d="M213 187 232 177 317 219 296 230Z" fill="#fff" stroke="#dcdcdc" strokeWidth="1.3"/>
-            <path d="M267 177 286 167 381 216 361 226Z" fill="#fff" stroke="#e2e2e2" strokeWidth="1.3"/>
-            {stage === 2 && (
-              <g className="metodeBooth__finish">
-                <path d="M214 185 318 237 303 245 199 194Z" fill="#fff" stroke="#e4e4e4" strokeWidth="1"/>
-                <path d="M216 418 390 330" stroke="#c4c4c4" strokeWidth="2"/>
-              </g>
-            )}
-          </g>
+        {/* Reference frame 3: oval, counter and each shelf install individually. */}
+        <g style={{ opacity: oval, transform: "translate3d(0," + (12 * (1 - oval)) + "px,0)" }}>
+          <ellipse cx="149" cy="190" rx="37" ry="54" transform="rotate(27 149 190)" fill="#fff" stroke="#e4ddd4" strokeWidth="3.5" />
         </g>
-      ) : (
-        <g className="metodeBooth__outline">
-          <path d="M220 32 47 120 47 320 220 233Z" fill="white" stroke="#b6b6b6" strokeWidth="1.6"/>
-          <path d="M220 32 393 120 393 320 220 233Z" fill="white" stroke="#b6b6b6" strokeWidth="1.6"/>
-          <path d="M47 320 220 233 393 320 220 408Z" fill="#d9d9d9" stroke="#b6b6b6" strokeWidth="1.6"/>
+        <g style={{ opacity: counter, transform: "translate3d(0," + (30 * (1 - counter)) + "px,0)" }}>
+          <path d="M60 306 220 387 220 425 60 345Z" fill="url(#method-counter)" />
+          <path d="M60 306 85 293 246 374 220 387Z" fill="#fafafa" stroke="#dfdfdf" strokeWidth="1.3" />
+          <path d="M220 387 246 374 246 412 220 425Z" fill="#987354" />
         </g>
-      )}
+        <g style={{ opacity: shelfA, transform: "translate3d(" + (19 * (1 - shelfA)) + "px," + (-19 * (1 - shelfA)) + "px,0)" }}>
+          <path d="M235 166 251 158 337 202 320 212Z" fill="#fff" stroke="#d1d1d1" strokeWidth="1.4" />
+          <path d="M320 212 337 202 337 206 320 216Z" fill="#d8d8d8" />
+        </g>
+        <g style={{ opacity: shelfB, transform: "translate3d(" + (18 * (1 - shelfB)) + "px," + (-16 * (1 - shelfB)) + "px,0)" }}>
+          <path d="M234 215 251 206 335 249 319 258Z" fill="#fff" stroke="#d1d1d1" strokeWidth="1.4" />
+          <path d="M319 258 335 249 335 254 319 263Z" fill="#d8d8d8" />
+          <path d="M289 203 307 193 381 231 364 241Z" fill="#fff" stroke="#d1d1d1" strokeWidth="1.4" />
+        </g>
+      </g>
     </svg>
   );
 }
 
+function MethodCopy({ method }: { method: (typeof methods)[number] }) {
+  return (
+    <>
+      <div className="metodeStage__headingRow">
+        <h3>{method.title}</h3>
+        <p className="metodeStage__subtitle">{method.subtitle}</p>
+      </div>
+      <p className="metodeStage__description">{method.description}</p>
+    </>
+  );
+}
+
+function copyOpacity(index: number, progress: number) {
+  if (index === 0) return 1 - range(progress, 0.24, 0.36);
+  if (index === 1) return range(progress, 0.30, 0.42) * (1 - range(progress, 0.62, 0.74));
+  return range(progress, 0.69, 0.81);
+}
+
 export default function ProcessSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [entered, setEntered] = useState<boolean[]>([false, false, false]);
-  const [motionReady, setMotionReady] = useState(false);
+  const storyRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<number>(0);
+  const [enhanced, setEnhanced] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Pages with JS disabled still render every stage; only enhance when
-    // IntersectionObserver is supported and reduced motion is not requested.
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (prefersReduced.matches || !("IntersectionObserver" in window)) return;
-
-    const rows = sectionRef.current?.querySelectorAll<HTMLElement>("[data-method-index]");
-    if (!rows?.length) return;
-
-    const visibleAtMount = Array.from(rows, row => {
-      const bounds = row.getBoundingClientRect();
-      return bounds.top < window.innerHeight * .95 && bounds.bottom > 0;
-    });
-    setEntered(visibleAtMount);
-    setMotionReady(true);
-
-    const observer = new IntersectionObserver(
-      observations => {
-        setEntered(previous => {
-          const next = [...previous];
-          observations.forEach(observation => {
-            if (!observation.isIntersecting) return;
-            const index = Number((observation.target as HTMLElement).dataset.methodIndex);
-            if (Number.isInteger(index) && index >= 0 && index < next.length) next[index] = true;
-          });
-          return next.every((entry, index) => entry === previous[index]) ? previous : next;
-        });
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: .2 }
-    );
-
-    rows.forEach(row => observer.observe(row));
-    return () => observer.disconnect();
+    // Keep mobile and accessible reduced-motion rendering in document order.
+    const motion = window.matchMedia("(min-width: 1024px) and (prefers-reduced-motion: no-preference)");
+    const onChange = () => setEnhanced(motion.matches);
+    onChange();
+    motion.addEventListener("change", onChange);
+    return () => motion.removeEventListener("change", onChange);
   }, []);
+
+  useEffect(() => {
+    if (!enhanced) return;
+    const measure = () => {
+      frameRef.current = 0;
+      const node = storyRef.current;
+      if (!node) return;
+      const rect = node.getBoundingClientRect();
+      const stickyHeight = window.innerHeight - 70;
+      const travel = Math.max(1, rect.height - stickyHeight);
+      const next = clamp((70 - rect.top) / travel);
+      setProgress(prev => Math.abs(prev - next) < 0.0008 ? prev : next);
+    };
+    const schedule = () => {
+      if (!frameRef.current) frameRef.current = requestAnimationFrame(measure);
+    };
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [enhanced]);
 
   return (
     <section
       id="method"
-      ref={sectionRef}
       aria-labelledby="metode-title"
-      className={`metodeSection${motionReady ? " metodeSection--animated" : ""}`}
+      className={"metodeSection" + (enhanced ? " metodeSection--scroll" : "")}
     >
       <div className="metodeSection__heading">
         <h2 id="metode-title">Bagaimana cara kami bekerja?</h2>
       </div>
 
+      {/* A single pinned booth grows while each copy stage transitions. */}
+      <div ref={storyRef} className="metodeScrollStory">
+        <div className="metodeScrollStory__sticky">
+          <div className="metodeScrollStory__panel">
+            <div className="metodeScrollStory__art">
+              <MethodStructure progress={progress} />
+            </div>
+            <div className="metodeScrollStory__narrative">
+              {methods.map((method, index) => {
+                const opacity = copyOpacity(index, progress);
+                return (
+                  <article
+                    key={method.number}
+                    className="metodeScrollStory__step"
+                    style={{
+                      opacity,
+                      visibility: opacity < 0.005 ? "hidden" : "visible",
+                      transform: "translate3d(0," + ((1 - opacity) * 24) + "px,0)",
+                      pointerEvents: opacity > 0.96 ? "auto" : "none",
+                    }}
+                    aria-hidden={opacity < 0.5}
+                  >
+                    <MethodCopy method={method} />
+                  </article>
+                );
+              })}
+              <div className="metodeScrollStory__progress" aria-hidden="true">
+                <span style={{ transform: "scaleX(" + progress + ")" }} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Progressive fallback: all steps remain discoverable and readable. */}
       <div className="metodeSection__panel">
         {methods.map((method, index) => (
-          <article
-            key={method.number}
-            data-method-index={index}
-            data-entered={entered[index] ? "true" : "false"}
-            className="metodeStage"
-            aria-labelledby={`metode-step-${method.number}`}
-          >
-            <div className="metodeStage__art" aria-hidden="true">
-              <MethodStructure stage={index} />
+          <article key={method.number} className="metodeStage">
+            <div className="metodeStage__art">
+              <MethodStructure progress={index === 0 ? 0 : index === 1 ? 0.48 : 1} />
             </div>
             <div className="metodeStage__copy">
-              <div className="metodeStage__headingRow">
-                <h3 id={`metode-step-${method.number}`}>{method.title}</h3>
-                <p className="metodeStage__subtitle">{method.subtitle}</p>
-              </div>
-              <p className="metodeStage__description">{method.description}</p>
+              <MethodCopy method={method} />
             </div>
           </article>
         ))}
