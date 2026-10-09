@@ -49,13 +49,13 @@ export default function AboutValuesSection() {
   const syncActive = useCallback(() => {
     const rail = railRef.current;
     if (!rail) return;
-    const midpoint = rail.scrollLeft + rail.clientWidth / 2;
+    const leftEdge = rail.scrollLeft;
     let nearest = 0;
     let distance = Infinity;
     const cards = rail.querySelectorAll<HTMLElement>("[data-about-value]");
     cards.forEach((card, index) => {
-      const center = card.offsetLeft - (cards[0]?.offsetLeft || 0) + card.clientWidth / 2;
-      const currentDistance = Math.abs(midpoint - center);
+      const start = card.offsetLeft - (cards[0]?.offsetLeft || 0);
+      const currentDistance = Math.abs(leftEdge - start);
       if (currentDistance < distance) {
         distance = currentDistance;
         nearest = index;
