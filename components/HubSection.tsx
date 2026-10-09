@@ -371,7 +371,7 @@ export default function HubSection() {
       </div>
 
       {mobileDetail && openMobileItem && (
-        <div role="dialog" aria-modal="true" aria-label={mobileDetail.kind === "services" ? "Detail layanan" : "Detail proyek"} className="fixed inset-0 z-[110] grid place-items-center overflow-y-auto bg-black/90 px-4 py-12 motion-safe:animate-[hub-appear_350ms_ease-out_both] lg:hidden">
+        <div role="dialog" aria-modal="true" aria-label={mobileDetail.kind === "services" ? "Detail layanan" : "Detail proyek"} className={"fixed inset-0 z-[110] grid place-items-center overflow-y-auto bg-black/90 px-4 py-12 motion-safe:animate-[hub-appear_350ms_ease-out_both] " + (reducedMotion ? "lg:grid" : "lg:hidden")}>
           <div className="relative w-full max-w-[560px] rounded-[28px] bg-white p-6 text-[#1e1e1e] shadow-2xl motion-safe:animate-[hub-rise_500ms_ease-out_both]">
             <button type="button" autoFocus onClick={() => setMobileDetail(null)} aria-label="Tutup detail" className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-[#1e1e1e] text-xl text-white">×</button>
             {mobileDetail.kind === "services" ? (
@@ -414,14 +414,14 @@ export default function HubSection() {
               <button type="button" onClick={() => navigate("projects")} disabled={Boolean(flight) || !projects.length} aria-label="Lihat proyek kami" className="absolute left-[1170px] top-[426px] h-[60px] w-[245px] focus-visible:outline-2 focus-visible:outline-white" />
             </div>
 
-            <div className={scene === "services" ? "absolute inset-0 motion-safe:animate-[hub-appear_400ms_ease-out_both]" : "hidden"} aria-hidden={scene !== "services"}>
+            <div className={scene === "services" ? "absolute inset-0" : "hidden"} aria-hidden={scene !== "services"}>
               <SourceArtboard src={SVG.services} />
               <button type="button" onClick={() => navigate("services", true)} aria-label="Kembali ke Hub" className="absolute left-[122px] top-[52px] grid h-[46px] w-[46px] place-items-center rounded-full text-[24px] text-white/75 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white">‹</button>
-              <div className="absolute left-[250px] top-[284px] w-[940px] motion-safe:animate-[hub-rise_650ms_ease-out_both]">
+              <div className="absolute left-[250px] top-[284px] w-[940px]">
                 <div ref={serviceScrollRef} onScroll={() => syncCardOnScroll("services")} onKeyDown={(event) => { if (event.key === "ArrowRight") { event.preventDefault(); scrollToCard("services", activeServiceIndex + 1); } if (event.key === "ArrowLeft") { event.preventDefault(); scrollToCard("services", activeServiceIndex - 1); } }} className="hub-clean-rail w-full overflow-x-auto overflow-y-hidden" role="region" aria-label="Slider layanan Craftivation, gunakan panah atau geser untuk berpindah" tabIndex={0} style={{ scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}>
                   <div className="relative flex w-max items-stretch gap-[34px] px-[82px]">
                     {services.map((service, index) => (
-                      <div key={service.id} data-service-index={index} className="shrink-0 snap-center" role="group" aria-label={`${service.name}, layanan ${index + 1} dari ${services.length}`}>
+                      <div key={service.id} data-service-index={index} className={"shrink-0 snap-center " + (flight?.closing && flight.kind === "services" && flight.index === index ? "opacity-0" : "")} role="group" aria-label={`${service.name}, layanan ${index + 1} dari ${services.length}`}>
                         <ServiceCard item={service} variant="large" />
                       </div>
                     ))}
@@ -438,7 +438,7 @@ export default function HubSection() {
               )}
             </div>
 
-            <div className={scene === "projects" ? "absolute inset-0 motion-safe:animate-[hub-appear_400ms_ease-out_both]" : "hidden"} aria-hidden={scene !== "projects"}>
+            <div className={scene === "projects" ? "absolute inset-0" : "hidden"} aria-hidden={scene !== "projects"}>
               <SourceArtboard src={SVG.project} />
               <button type="button" onClick={() => navigate("projects", true)} aria-label="Kembali ke Hub" className="absolute left-[266px] top-[60px] grid h-[46px] w-[46px] place-items-center rounded-full text-[24px] text-white/75 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white">‹</button>
               {projects.length > 1 && (
@@ -450,11 +450,11 @@ export default function HubSection() {
               )}
               {projects.length > 0 ? (
                 <>
-                  <div className="absolute left-[237.5px] top-[220px] w-[965px] motion-safe:animate-[hub-rise_650ms_ease-out_both]">
+                  <div className="absolute left-[237.5px] top-[220px] w-[965px]">
                     <div ref={projectScrollRef} onScroll={() => syncCardOnScroll("projects")} onKeyDown={(event) => { if (event.key === "ArrowRight") { event.preventDefault(); scrollToCard("projects", projectIndex + 1); } if (event.key === "ArrowLeft") { event.preventDefault(); scrollToCard("projects", projectIndex - 1); } }} className="hub-clean-rail w-full overflow-x-auto overflow-y-hidden" role="region" aria-label="Geser untuk melihat daftar proyek Craftivation" tabIndex={0} style={{ scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}>
                       <div className="relative flex w-max items-stretch gap-[34px] px-[50px]">
                         {projects.map((project, index) => (
-                          <div key={project.id} data-project-index={index} className="shrink-0 snap-center" role="group" aria-label={`${project.title}, proyek ${index + 1} dari ${projects.length}`}>
+                          <div key={project.id} data-project-index={index} className={"shrink-0 snap-center " + (flight?.closing && flight.kind === "projects" && flight.index === index ? "opacity-0" : "")} role="group" aria-label={`${project.title}, proyek ${index + 1} dari ${projects.length}`}>
                             <a href={project.href} tabIndex={index === projectIndex ? 0 : -1} className="block rounded-[29.326px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
                               <ProjectImage item={project} large />
                             </a>
