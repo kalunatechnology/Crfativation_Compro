@@ -8,13 +8,13 @@ export default function CTA() {
         src="/assets/cta-workshop.webp"
         alt="Workshop Craftivation Exhibition Contractor"
         fill
-        priority
+        sizes="100vw"
         unoptimized
       />
       <div className="cta__shade" aria-hidden="true" />
 
       <div className="cta__inner pageShell">
-        <div className="cta__copy">
+        <div className="cta__copy" data-home-reveal="rise">
           <h2 id="cta-title" className="cta__headline">
             Partner terbaik untuk
             <br />
@@ -36,7 +36,7 @@ export default function CTA() {
           </div>
         </div>
 
-        <div className="cta__mark" aria-hidden="true">
+        <div className="cta__mark" aria-hidden="true" data-home-reveal="scale">
           <div className="cta__cubeBox">
             <img
               src="/assets/craftivation-cube.webp"
