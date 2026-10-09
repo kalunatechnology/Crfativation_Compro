@@ -9,7 +9,7 @@ const footerLinks = [
   { label: "Project", href: "/#projects" },
   { label: "Approach", href: "/#approach" },
   { label: "About Us", href: "/about" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "#contact" },
 ];
 
 function WhatsappIcon() {
