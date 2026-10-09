@@ -334,15 +334,15 @@ export default function HubSection() {
     <section id="approach" aria-label="Pendekatan, layanan, dan proyek Craftivation" className="relative isolate scroll-mt-[70px] overflow-clip bg-[#010101] text-white">
       {/* Mobile and reduced-motion layout: document-order cards without fixed-position overlaps. */}
       <div className={"mx-auto max-w-[680px] px-5 pb-20 pt-24 " + (reducedMotion ? "lg:block" : "lg:hidden")}>
-        <h2 className="mx-auto max-w-[440px] text-center text-[clamp(27px,6.2vw,42px)] leading-[1.15] tracking-tight" style={{ fontFamily: "var(--font-arsenal)" }}>
+        <h2 data-home-reveal="rise" className="mx-auto max-w-[440px] text-center text-[clamp(27px,6.2vw,42px)] leading-[1.15] tracking-tight" style={{ fontFamily: "var(--font-arsenal)" }}>
           Redefining space within commercial needs
         </h2>
-        <div className="relative mx-auto mt-7 aspect-[1440/972] w-full overflow-hidden">
+        <div data-home-reveal="scale" className="relative mx-auto mt-7 aspect-[1440/972] w-full overflow-hidden">
           <Image src={SVG.stage} alt="Panggung 3D Craftivation" fill unoptimized sizes="(max-width: 680px) 90vw, 680px" className="object-contain" />
           <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[46.1%] h-auto w-[3.61%] -translate-x-1/2" />
         </div>
         {services.length > 0 && (
-          <div className="mt-8">
+          <div className="mt-8" data-home-reveal="rise">
             <h3 className="mb-5 text-2xl">Lihat Layanan Kami</h3>
             <div className="hub-clean-rail flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-3" role="region" aria-label="Geser daftar layanan Craftivation" tabIndex={0} style={{ paddingInline: "max(0px, calc((100% - min(84vw, 480px)) / 2))", scrollPaddingInline: "max(0px, calc((100% - min(84vw, 480px)) / 2))" }}>
               {services.map((s, index) => (
@@ -360,7 +360,7 @@ export default function HubSection() {
           </div>
         )}
         {projects.length > 0 && (
-          <div className="mt-12">
+          <div className="mt-12" data-home-reveal="rise">
             <h3 className="mb-5 text-2xl">Lihat Proyek Kami</h3>
             <div className="hub-clean-rail flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain pb-3" role="region" aria-label="Geser daftar proyek Craftivation" tabIndex={0} style={{ paddingInline: "max(0px, calc((100% - min(88vw, 565px)) / 2))", scrollPaddingInline: "max(0px, calc((100% - min(88vw, 565px)) / 2))" }}>
               {projects.map((project, index) => (
