@@ -34,7 +34,7 @@ export default function PortfolioSection() {
   const scrollPortfolio = (direction: "left" | "right") => portfolioTrackRef.current?.scrollBy({ left: direction === "left" ? -500 : 500, behavior: "smooth" });
   return (
 <section className="portofolioSection" id="projects" aria-labelledby="portfolio-title">
-          <div className="portofolioHeader">
+          <div className="portofolioHeader" data-home-reveal="rise">
             <h2 id="portfolio-title" className="portofolioTitle">
               Portofolio Kami
             </h2>
@@ -61,13 +61,13 @@ export default function PortfolioSection() {
           </div>
 
           {/* Horizontal Slider: width 1440px, height 558px */}
-          <div className="portofolioSlider" ref={portfolioTrackRef}>
+          <div className="portofolioSlider" ref={portfolioTrackRef} role="region" aria-label="Geser daftar proyek Craftivation" tabIndex={0}>
             <div className="portofolioTrack">
               {portfolioItems.map((item) => {
                 const projectKey = String(item.id);
                 const isLiked = !!likedItems[projectKey];
                 return (
-                  <article className="portofolioCard" key={projectKey}>
+                  <article className="portofolioCard" key={projectKey} data-home-reveal="card">
                     {/* Image box: 865.44px x 467px, border-radius: 29.33px */}
                     <div className="portofolioCard__image">
                       <Image src={item.image} alt={item.imageAlt || item.title} fill sizes="(max-width: 600px) 90vw, 865px" className="portofolioCard__imgTag" />
