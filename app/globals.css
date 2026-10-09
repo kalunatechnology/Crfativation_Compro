@@ -1783,3 +1783,335 @@ html {
   }
   html { scroll-behavior: auto; }
 }
+
+
+/* ==========================================================================
+   CRAFTIVATION / DEDICATED ABOUT PAGE
+   Reference: aboutus.svg 1440 × 3512 artboard, scaled responsively.
+   Page sections: burgundy photo hero (900px), existing white photo collage
+   (900px), original-photo horizontal values rail (~690px), CTA and footer.
+   These selectors are scoped so the original homepage stays unchanged.
+   ========================================================================== */
+.aboutPage {
+  background: #fff;
+}
+.aboutHero {
+  width: 100%;
+  min-height: 900px;
+  position: relative;
+  isolation: isolate;
+  color: #fff;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 78% 72% at -12% 64%, rgba(125, 19, 78, .28), transparent 75%),
+    radial-gradient(ellipse 70% 75% at 77% 1%, rgba(39, 0, 26, .35), transparent 82%),
+    #4B002B;
+}
+.aboutHero__shell {
+  width: min(calc(100% - 140px), 1300px);
+  margin-inline: auto;
+  padding-top: 184px;
+  display: grid;
+  grid-template-columns: minmax(0, 580px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(52px, 4.45vw, 64px);
+}
+.aboutHero__collage {
+  width: 100%;
+  aspect-ratio: 580 / 397;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 26px;
+  background: #595959;
+  animation: aboutEntrancePhoto 1.15s cubic-bezier(.22,1,.36,1) .1s both;
+}
+.aboutHero__photo {
+  position: relative;
+  isolation: isolate;
+  flex: 1 1 50%;
+  width: 100%;
+  overflow: hidden;
+}
+.aboutHero__photo > img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  filter: grayscale(1);
+  transform: scale(1.03);
+  transition: transform 1.2s cubic-bezier(.22,1,.36,1);
+}
+.aboutHero__photo--top > img { object-position: 54% 21%; }
+.aboutHero__photo--bottom > img { object-position: 43% 75%; }
+.aboutHero__collage:hover .aboutHero__photo > img { transform: scale(1.055); }
+.aboutHero__copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #f4eaf0;
+  animation: aboutEntranceCopy 1.1s cubic-bezier(.22,1,.36,1) .26s both;
+}
+.aboutHero__copy h1 {
+  margin: 0;
+  font-family: var(--font-jost), var(--font-sans), sans-serif;
+  font-size: clamp(33px, 3.1vw, 45px);
+  line-height: 1.22;
+  letter-spacing: -.025em;
+  font-weight: 400;
+}
+.aboutHero__copy p {
+  width: 100%;
+  max-width: 530px;
+  margin: 36px 0 0;
+  text-align: center;
+  font-family: var(--font-jost), var(--font-sans), sans-serif;
+  font-size: clamp(20px, 1.74vw, 25px);
+  line-height: 1.32;
+  letter-spacing: -.01em;
+  color: #eadbe5;
+}
+@keyframes aboutEntrancePhoto {
+  from { opacity: 0; transform: translate3d(-25px,25px,0) scale(.985); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+}
+@keyframes aboutEntranceCopy {
+  from { opacity: 0; transform: translate3d(24px,25px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+
+/* The middle photographic section already reproduces the exact original
+   about-artboard; only its page context / white background is enforced here. */
+.aboutPage > .tentangKamiSection {
+  background: #fff;
+}
+
+/* Third section. The 1440px artboard places the first 383px card at x~425,
+   with the third card deliberately clipped by the right viewport edge. */
+.aboutValues {
+  position: relative;
+  width: 100%;
+  min-height: 690px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  color: #121212;
+  background: #fff;
+}
+.aboutValues__layout {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: 46px;
+  align-items: center;
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding-left: 56px;
+}
+.aboutValues__intro {
+  min-width: 0;
+}
+.aboutValues__intro h2 {
+  margin: 0;
+  font-family: var(--font-jost), var(--font-sans), sans-serif;
+  font-weight: 400;
+  color: #0b0b0b;
+  font-size: clamp(37px, 3.3vw, 48px);
+  line-height: 1.19;
+  letter-spacing: -.032em;
+  text-wrap: pretty;
+}
+.aboutValues__controlRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 38px;
+}
+.aboutValues__arrow {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 43px;
+  height: 43px;
+  border: 1px solid #d8d8d8;
+  border-radius: 50%;
+  background: transparent;
+  color: #1e1e1e;
+  font-size: 23px;
+  font-family: var(--font-sans), sans-serif;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+.aboutValues__arrow:not(:disabled):hover {
+  background: #4B002B;
+  color: #fff;
+  border-color: #4B002B;
+}
+.aboutValues__arrow:disabled {
+  cursor: default;
+  opacity: .33;
+}
+.aboutValues__arrow:focus-visible,
+.aboutValues__rail:focus-visible {
+  outline: 2px solid #4B002B;
+  outline-offset: 3px;
+}
+.aboutValues__counter {
+  margin-left: 13px;
+  color: #737373;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.aboutValues__viewport {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+}
+.aboutValues__rail {
+  display: flex;
+  width: 100%;
+  gap: 22px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-inline: contain;
+  padding-right: 32px;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+.aboutValues__rail::-webkit-scrollbar {
+  display: none;
+}
+.aboutValues__card {
+  position: relative;
+  isolation: isolate;
+  flex: 0 0 383px;
+  width: 383px;
+  height: 501px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 25px;
+  background: #2c2c2c;
+  color: #fff;
+  scroll-snap-align: start;
+}
+.aboutValues__image {
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(1);
+  transition: transform 850ms cubic-bezier(.22,1,.36,1);
+}
+.aboutValues__card:first-child .aboutValues__image {
+  object-position: 46% center;
+}
+.aboutValues__card:hover .aboutValues__image {
+  transform: scale(1.045);
+}
+.aboutValues__cardShade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 46%, rgba(0,0,0,.10) 62%, rgba(0,0,0,.86) 100%);
+  pointer-events: none;
+}
+.aboutValues__card h3 {
+  position: absolute;
+  z-index: 2;
+  inset: auto 28px 48px 47px;
+  margin: 0;
+  color: #f6f6f6;
+  font-family: var(--font-arsenal), serif;
+  font-weight: 400;
+  font-size: clamp(23px, 2.05vw, 29px);
+  line-height: 1.17;
+  letter-spacing: -.015em;
+  text-wrap: pretty;
+}
+
+@media (min-width: 1441px) {
+  .aboutValues__layout {
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 1200px) {
+  .aboutHero__shell {
+    width: calc(100% - 80px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 36px;
+  }
+  .aboutHero__copy h1 { font-size: clamp(30px, 3.5vw, 43px); }
+  .aboutValues__layout {
+    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+    gap: 30px;
+    padding-left: 40px;
+  }
+  .aboutValues__intro h2 { font-size: clamp(35px, 3.8vw, 45px); }
+  .aboutValues__card { flex-basis: 340px; width: 340px; height: 475px; }
+  .aboutValues__card h3 { left: 31px; bottom: 39px; }
+}
+
+@media (max-width: 900px) {
+  .aboutHero { min-height: 0; }
+  .aboutHero__shell {
+    width: min(calc(100% - 52px), 670px);
+    padding-top: 138px;
+    padding-bottom: 98px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 42px;
+  }
+  .aboutHero__collage { width: 100%; }
+  .aboutHero__copy h1 { font-size: clamp(30px, 5.7vw, 43px); }
+  .aboutHero__copy p { margin-top: 20px; text-align: left; font-size: 20px; }
+  .aboutHero__desktopBreak { display: none; }
+  .aboutValues {
+    min-height: 0;
+    padding-block: 76px 80px;
+  }
+  .aboutValues__layout {
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: 0;
+    gap: 36px;
+  }
+  .aboutValues__intro {
+    padding-inline: clamp(22px, 5.2vw, 52px);
+  }
+  .aboutValues__intro h2 { max-width: 540px; font-size: clamp(34px, 5.5vw, 45px); }
+  .aboutValues__controlRow { margin-top: 22px; }
+  .aboutValues__rail { padding-left: clamp(22px, 5.2vw, 52px); scroll-padding-left: clamp(22px, 5.2vw, 52px); }
+  .aboutValues__card { flex-basis: min(74vw, 383px); width: min(74vw, 383px); height: clamp(390px, 75vw, 500px); }
+}
+
+@media (max-width: 480px) {
+  .aboutHero__shell {
+    width: calc(100% - 34px);
+    padding-top: 117px;
+    padding-bottom: 78px;
+    gap: 30px;
+  }
+  .aboutHero__collage { border-radius: 18px; }
+  .aboutHero__copy h1 { font-size: clamp(30px, 8vw, 38px); line-height: 1.17; }
+  .aboutHero__copy p { font-size: 17px; line-height: 1.45; }
+  .aboutValues { padding-block: 58px 66px; }
+  .aboutValues__intro h2 { font-size: clamp(31px, 8vw, 38px); }
+  .aboutValues__rail { gap: 15px; }
+  .aboutValues__card { flex-basis: min(82vw, 340px); width: min(82vw, 340px); height: 428px; border-radius: 22px; }
+  .aboutValues__card h3 { font-size: 25px; inset: auto 22px 31px 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aboutHero__collage,
+  .aboutHero__copy { animation: none !important; }
+  .aboutHero__photo > img,
+  .aboutValues__image { transition: none !important; transform: none !important; }
+  .aboutValues__rail { scroll-behavior: auto; }
+  .aboutValues__arrow { transition: none !important; }
+}
