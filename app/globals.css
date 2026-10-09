@@ -1350,3 +1350,330 @@ img {
     scroll-behavior: auto;
   }
 }
+
+
+/* ==========================================================================
+   CRAFTIVATION / HOMEPAGE MOTION SYSTEM
+   Shared easing + time hierarchy. Native scrolling, CSS transforms, original
+   illustration assets and SQLite-driven rails stay intact.
+   ========================================================================== */
+:root {
+  --home-ease: cubic-bezier(.22,1,.36,1);
+  --home-ease-soft: cubic-bezier(.2,.72,.2,1);
+  --home-duration: 800ms;
+}
+
+html {
+  scroll-padding-top: 70px;
+}
+
+/* A narrow progression line: the JavaScript controller only scales it. */
+.homeScrollProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 4;
+  pointer-events: none;
+  background: #c2af6b;
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* Branded first paint. The curtain lives inside Hero rather than over the
+   document, avoiding full-page scroll locks, missing hash targets and CLS. */
+.homeHero__image {
+  animation: homeHeroUnfold 3.4s cubic-bezier(.15,.6,.2,1) both;
+  transform-origin: 50% 55%;
+}
+.homeHero__shade {
+  animation: homeHeroShade 1.5s ease-out both;
+}
+.homeHero__title {
+  animation: homeRise 1s var(--home-ease) .94s both;
+}
+.homeHero__subtitle {
+  animation: homeRise .9s var(--home-ease) 1.09s both;
+}
+.homeHero__stats {
+  animation: homeRise .9s var(--home-ease) 1.2s both;
+}
+.homeHero__stat {
+  animation: homeStatEnter .78s var(--home-ease) both;
+}
+.homeHero__stat:nth-child(1) { animation-delay: 1.34s; }
+.homeHero__stat:nth-child(2) { animation-delay: 1.46s; }
+.homeHero__stat:nth-child(3) { animation-delay: 1.58s; }
+
+.homeHero__curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 23px;
+  background: #111013;
+  pointer-events: none;
+  animation: homeCurtainExit 1.25s cubic-bezier(.76,0,.24,1) forwards;
+}
+.homeHero__curtainMark {
+  font-family: var(--font-sans), sans-serif;
+  color: white;
+  font-size: clamp(20px, 3vw, 38px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: clamp(.18em, .6vw, .3em);
+  animation: homeCurtainBrand .7s ease both;
+}
+.homeHero__curtainTrack {
+  display: block;
+  height: 1px;
+  width: clamp(138px, 19vw, 254px);
+  background: rgba(255,255,255,.18);
+  overflow: hidden;
+}
+.homeHero__curtainTrack > span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: #c2af6b;
+  transform-origin: left;
+  animation: homeCurtainProgress .88s cubic-bezier(.3,0,.25,1) both;
+}
+.homeHero__curtainLabel {
+  color: rgba(255,255,255,.58);
+  font-size: 10px;
+  letter-spacing: .22em;
+}
+.homeHero__scrollCue {
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: clamp(30px, 4vh, 50px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  color: rgba(255,255,255,.86);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .19em;
+  white-space: nowrap;
+  text-decoration: none;
+  transform: translateX(-50%);
+  animation: homeScrollCueEnter 1s ease 1.85s both;
+}
+.homeHero__scrollCue > span:last-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 28px;
+  font-size: 18px;
+  line-height: 1;
+  animation: homeCueBob 2.8s ease-in-out 3s infinite;
+}
+.homeHero__scrollCue:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 8px;
+}
+
+@keyframes homeHeroUnfold {
+  from { opacity: .72; transform: scale(1.065); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes homeHeroShade {
+  from { opacity: .65; }
+  to { opacity: 1; }
+}
+@keyframes homeRise {
+  from { opacity: 0; transform: translate3d(0,28px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+@keyframes homeStatEnter {
+  from { opacity: 0; transform: translate3d(0,25px,0) scale(.975); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+}
+@keyframes homeCurtainBrand {
+  from { opacity: 0; transform: translate3d(0,8px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+@keyframes homeCurtainProgress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes homeCurtainExit {
+  0%, 54% { opacity: 1; transform: translate3d(0,0,0); visibility: visible; }
+  99% { opacity: 1; transform: translate3d(0,-100%,0); visibility: visible; }
+  100% { opacity: 0; transform: translate3d(0,-100%,0); visibility: hidden; }
+}
+@keyframes homeScrollCueEnter {
+  from { opacity: 0; transform: translate(-50%,12px); }
+  to { opacity: 1; transform: translate(-50%,0); }
+}
+@keyframes homeCueBob {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* Section entrances are opt-in: plain SSR HTML remains visible until the
+   motion director marks only offscreen elements pending. Each element reveals
+   once and is never hidden again when the user scrolls backwards. */
+[data-home-reveal] {
+  transition:
+    opacity var(--home-duration) var(--home-ease-soft),
+    transform 950ms var(--home-ease);
+}
+[data-home-reveal][data-home-state="pending"] {
+  opacity: 0;
+  transform: translate3d(0,28px,0);
+}
+[data-home-reveal="scale"][data-home-state="pending"] {
+  opacity: 0;
+  transform: translate3d(0,28px,0) scale(.945);
+}
+[data-home-reveal="card"][data-home-state="pending"] {
+  opacity: 0;
+  transform: translate3d(0,35px,0) scale(.975);
+}
+[data-home-reveal="fade"][data-home-state="pending"] {
+  opacity: 0;
+  transform: none;
+}
+[data-home-reveal][data-home-state="visible"] {
+  opacity: 1;
+  transform: none;
+}
+.portofolioCard[data-home-reveal] {
+  transition-duration: 900ms, 1050ms;
+}
+.portofolioTrack {
+  align-items: stretch;
+}
+.portofolioSlider {
+  scroll-padding-inline: max(var(--page-gutter), calc((100vw - 865.44px) / 2));
+}
+.portofolioSection::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  height: 56px;
+  background: linear-gradient(to bottom, rgba(0,0,0,.12), transparent);
+  pointer-events: none;
+}
+.portofolioHeader, .portofolioSlider {
+  position: relative;
+  z-index: 1;
+}
+.portofolioCard__image {
+  transition: box-shadow .65s var(--home-ease);
+}
+.portofolioCard__image:hover {
+  box-shadow: 0 31px 74px rgba(0,0,0,.24);
+}
+
+/* The About collage already has its own intersection-triggered stagger.
+   Image details settle after the wrapper enters, never replace original photos. */
+.tentangKamiPhoto__image {
+  transform: scale(1.015);
+  transition: transform 1.3s var(--home-ease);
+}
+.tentangKamiSection[data-revealed="true"] .tentangKamiPhoto__image {
+  transform: scale(1);
+}
+.tentangKamiSection[data-revealed="true"] .tentangKamiPhoto--top {
+  transition-delay: .03s;
+}
+.tentangKamiSection[data-revealed="true"] .tentangKamiPhoto--bottomLeft {
+  transition-delay: .17s;
+}
+.tentangKamiSection[data-revealed="true"] .tentangKamiPhoto--bottomRight {
+  transition-delay: .29s;
+}
+
+/* Final act: CTA copy before the workshop mark; the cube floats delicately. */
+.cta__headline {
+  line-height: 1.2;
+}
+.cta__mark[data-home-reveal] {
+  transition-delay: 130ms;
+}
+.cta__cubeImg {
+  animation: homeCubeFloat 6.2s ease-in-out infinite;
+}
+@keyframes homeCubeFloat {
+  0%,100% { transform: translate3d(0,0,0) rotate(0deg); }
+  50% { transform: translate3d(0,-7px,0) rotate(.8deg); }
+}
+.footer__quickLinks[data-home-reveal] {
+  transition-delay: 110ms;
+}
+.footer__bottom[data-home-reveal] {
+  transition-delay: 80ms;
+}
+
+@media (max-width: 960px) {
+  .homeHero__scrollCue { bottom: 25px; }
+  .portofolioSlider { scroll-padding-inline: 5vw; }
+  .portofolioTrack { padding-left: 5vw; padding-right: 5vw; gap: 22px; }
+  .portofolioCard__title { font-size: clamp(27px,5vw,45px); }
+  .portofolioCard__num { font-size: clamp(23px,3vw,32px); }
+}
+@media (max-width: 720px) {
+  .homeHero__curtain { gap: 16px; animation-duration: .9s; }
+  .homeHero__curtainMark { font-size: 20px; letter-spacing: .14em; }
+  .homeHero__title { animation-delay: .55s; }
+  .homeHero__subtitle { animation-delay: .68s; }
+  .homeHero__stats { animation-delay: .79s; }
+  .homeHero__stat:nth-child(1) { animation-delay: .88s; }
+  .homeHero__stat:nth-child(2) { animation-delay: .98s; }
+  .homeHero__stat:nth-child(3) { animation-delay: 1.08s; }
+  .homeHero__scrollCue { display: none; }
+  .portofolioTrack { gap: 16px; }
+  .portofolioHeader { align-items: center; gap: 14px; }
+  .portofolioArrows { flex-shrink: 0; }
+  .portofolioArrow { width: 38px; height: 38px; }
+  .portofolioCard__meta { gap: 12px; }
+  .portofolioCard__title { font-size: clamp(26px,6.4vw,37px); }
+  .portofolioCard__num { font-size: 23px; line-height: 1.2; }
+  .cta__cubeImg { animation: none; }
+  .cta__headline { line-height: 1.16; }
+  .footer__inner { padding-top: 65px; padding-bottom: 50px; }
+}
+@media (max-width: 450px) {
+  .portofolioTitle { font-size: 32px; line-height: 1.1; text-align: left; margin: 0; }
+  .portofolioCard__actionRow { gap: 12px; }
+  .portofolioCard__btn { width: 184px; font-size: 14px; }
+}
+
+/* Honor system-level accessibility preference across all acts. No forced
+   scroll-snap, reduced-motion opacity lock, or invisible content. */
+@media (prefers-reduced-motion: reduce) {
+  .homeHero__curtain { display: none !important; }
+  .homeHero__image,
+  .homeHero__shade,
+  .homeHero__title,
+  .homeHero__subtitle,
+  .homeHero__stats,
+  .homeHero__stat,
+  .homeHero__scrollCue,
+  .homeHero__scrollCue > span,
+  .cta__cubeImg {
+    animation: none !important;
+  }
+  [data-home-reveal] {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .tentangKamiPhoto__image {
+    transform: none !important;
+    transition: none !important;
+  }
+  html { scroll-behavior: auto; }
+}
