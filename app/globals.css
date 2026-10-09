@@ -1199,3 +1199,21 @@ img {
   height: 0;
   display: none;
 }
+
+/* Hub card expansion: animate a single card, then reveal the destination
+   scene. Shared transforms are Tailwind utilities in HubSection.tsx. */
+@keyframes hub-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes hub-rise {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-clean-rail {
+    scroll-behavior: auto;
+  }
+}
