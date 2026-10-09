@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const navItems = [
-  { label: "Portofolio", href: "#projects" },
+  { label: "Portofolio", href: "/projects" },
   { label: "Pendekatan", href: "/approach" },
   { label: "Tentang Kami", href: "/about" },
 ];
@@ -15,7 +15,7 @@ const navItems = [
  * <= 20px: charcoal transparan, teks/logo putih.
  * > 20px: putih solid, teks/logo gelap.
  */
-export default function HomepageNavbar({ variant = "home" }: { variant?: "home" | "about" | "approach" }) {
+export default function HomepageNavbar({ variant = "home" }: { variant?: "home" | "about" | "approach" | "projects" }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -49,7 +49,9 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
       className={`fixed inset-x-0 top-0 z-[1000] box-border h-[70px] w-full transition-[background-color,box-shadow,color] duration-[260ms] ease-in-out motion-reduce:transition-none ${
         scrolled
           ? "bg-white text-[#181818] shadow-[0_2px_16px_rgba(0,0,0,0.08)]"
-          : variant === "about"
+           : variant === "projects"
+            ? "bg-white text-[#181818] shadow-none"
+            : variant === "about"
             ? "bg-[rgba(75,0,43,0.94)] text-white shadow-none"
             : "bg-[rgba(0,0,0,0.62)] text-white shadow-none"
       }`}
@@ -68,7 +70,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
             height={32}
             priority
             className={`block h-8 w-[159px] object-contain object-left transition-[filter] duration-[260ms] motion-reduce:transition-none ${
-              scrolled ? "filter-none" : "brightness-0 invert"
+              scrolled || variant === "projects" ? "filter-none" : "brightness-0 invert"
             }`}
           />
         </a>
@@ -82,7 +84,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
             <a
               key={item.href}
               href={navHref(item.href)}
-              aria-current={((variant === "about" && item.href === "/about") || (variant === "approach" && item.href === "/approach")) ? "page" : undefined}
+              aria-current={((variant === "about" && item.href === "/about") || (variant === "approach" && item.href === "/approach") || (variant === "projects" && item.href === "/projects")) ? "page" : undefined}
               className="text-[16px] font-normal leading-[1.2] text-inherit no-underline transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none"
             >
               {item.label}
@@ -133,7 +135,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
         aria-label="Navigasi mobile"
         aria-hidden={!menuOpen}
         className={`absolute inset-x-0 top-[70px] flex max-h-[calc(100dvh-70px)] flex-col overflow-y-auto border-t px-[clamp(20px,3.4722vw,50px)] pb-6 pt-3 transition-[opacity,transform,visibility,background-color] duration-[220ms] ease-in-out motion-reduce:transition-none min-[961px]:hidden ${
-          scrolled
+          scrolled || variant === "projects"
             ? "border-black/10 bg-white text-[#181818] shadow-[0_15px_26px_rgba(0,0,0,0.08)]"
             : "border-white/15 bg-[rgba(0,0,0,0.94)] text-white"
         } ${
@@ -146,7 +148,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
           <a
             key={item.href}
             href={navHref(item.href)}
-            aria-current={((variant === "about" && item.href === "/about") || (variant === "approach" && item.href === "/approach")) ? "page" : undefined}
+            aria-current={((variant === "about" && item.href === "/about") || (variant === "approach" && item.href === "/approach") || (variant === "projects" && item.href === "/projects")) ? "page" : undefined}
             onClick={closeMenu}
             tabIndex={menuOpen ? 0 : -1}
             className="flex min-h-[50px] items-center text-[16px] font-normal text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
