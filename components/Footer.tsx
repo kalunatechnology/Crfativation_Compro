@@ -6,10 +6,10 @@ import Image from "next/image";
  * responsive rather than embedding a screenshot of the design.
  */
 const footerLinks = [
-  { label: "Project", href: "#projects" },
-  { label: "Approach", href: "#approach" },
-  { label: "About Us", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Project", href: "/#projects" },
+  { label: "Approach", href: "/#approach" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 function WhatsappIcon() {
@@ -81,7 +81,7 @@ export default function Footer() {
     <footer className="footer" aria-label="Informasi Craftivation">
       <div className="footer__inner pageShell">
         <div className="footer__brandBlock" data-home-reveal="rise">
-          <a className="footer__logoLink" href="#hero" aria-label="Craftivation — kembali ke beranda">
+          <a className="footer__logoLink" href="/" aria-label="Craftivation — kembali ke beranda">
             <Image
               className="footer__logo"
               src="/assets/logo-white.svg"
