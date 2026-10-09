@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 const navItems = [
   { label: "Portofolio", href: "#projects" },
   { label: "Pendekatan", href: "#approach" },
-  { label: "Tentang Kami", href: "#about" },
+  { label: "Tentang Kami", href: "/about" },
 ];
 
 /**
@@ -15,7 +15,7 @@ const navItems = [
  * <= 20px: charcoal transparan, teks/logo putih.
  * > 20px: putih solid, teks/logo gelap.
  */
-export default function HomepageNavbar() {
+export default function HomepageNavbar({ variant = "home" }: { variant?: "home" | "about" }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -41,18 +41,22 @@ export default function HomepageNavbar() {
   }, []);
 
   const closeMenu = () => setMenuOpen(false);
+  const navHref = (href: string) => variant === "about" && href.startsWith("#") ? "/" + href : href;
+  const logoHref = variant === "about" ? "/" : "#hero";
 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-[1000] box-border h-[70px] w-full transition-[background-color,box-shadow,color] duration-[260ms] ease-in-out motion-reduce:transition-none ${
         scrolled
           ? "bg-white text-[#181818] shadow-[0_2px_16px_rgba(0,0,0,0.08)]"
-          : "bg-[rgba(0,0,0,0.62)] text-white shadow-none"
+          : variant === "about"
+            ? "bg-[rgba(75,0,43,0.94)] text-white shadow-none"
+            : "bg-[rgba(0,0,0,0.62)] text-white shadow-none"
       }`}
     >
       <div className="mx-auto flex h-[70px] w-full max-w-[1600px] items-center justify-between gap-6 px-[clamp(20px,3.4722vw,50px)]">
         <a
-          href="#hero"
+          href={logoHref}
           onClick={closeMenu}
           aria-label="Craftivation - kembali ke bagian utama"
           className="flex h-8 w-[159px] shrink-0 items-center justify-start no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
@@ -77,7 +81,8 @@ export default function HomepageNavbar() {
           {navItems.map((item) => (
             <a
               key={item.href}
-              href={item.href}
+              href={navHref(item.href)}
+              aria-current={variant === "about" && item.href === "/about" ? "page" : undefined}
               className="text-[16px] font-normal leading-[1.2] text-inherit no-underline transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none"
             >
               {item.label}
@@ -140,7 +145,7 @@ export default function HomepageNavbar() {
         {navItems.map((item) => (
           <a
             key={item.href}
-            href={item.href}
+            href={navHref(item.href)}
             onClick={closeMenu}
             tabIndex={menuOpen ? 0 : -1}
             className="flex min-h-[50px] items-center text-[16px] font-normal text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
