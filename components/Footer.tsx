@@ -56,7 +56,7 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer__inner pageShell">
-        <div className="footer__brandBlock">
+        <div className="footer__brandBlock" data-home-reveal="rise">
           <Image
             className="footer__logo"
             src="/assets/logo-white.svg"
@@ -83,7 +83,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="footer__quickLinks">
+        <div className="footer__quickLinks" data-home-reveal="rise">
           <h3 className="footer__sectionTitle">QUICK LINKS</h3>
           <ul className="footer__nav">
             {footerLinks.map((item) => (
@@ -97,7 +97,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="footer__bottom pageShell">
+      <div className="footer__bottom pageShell" data-home-reveal="fade">
         <p className="footer__copy">© 2026 Craftivation. All Rights Reserved.</p>
         <div className="footer__socials" aria-label="Media Sosial Craftivation">
           <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram">
