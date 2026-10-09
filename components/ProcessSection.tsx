@@ -204,7 +204,7 @@ export default function ProcessSection() {
       aria-labelledby="metode-title"
       className={"metodeSection" + (enhanced ? " metodeSection--scroll" : "")}
     >
-      <div className="metodeSection__heading">
+      <div className="metodeSection__heading" data-home-reveal="rise">
         <h2 id="metode-title">Bagaimana cara kami bekerja?</h2>
       </div>
 
@@ -245,7 +245,7 @@ export default function ProcessSection() {
       {/* Progressive fallback: all steps remain discoverable and readable. */}
       <div className="metodeSection__panel">
         {methods.map((method, index) => (
-          <article key={method.number} className="metodeStage">
+          <article key={method.number} className="metodeStage" data-home-reveal="rise">
             <div className="metodeStage__art">
               <MethodStructure progress={index === 0 ? 0 : index === 1 ? 0.48 : 1} />
             </div>
