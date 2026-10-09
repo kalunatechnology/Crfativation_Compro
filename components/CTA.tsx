@@ -30,7 +30,7 @@ export default function CTA() {
             >
               Jadwalkan Konsultasi
             </a>
-            <a className="button button--outline" href="/#approach">
+            <a className="button button--outline" href="/approach">
               Lihat Jasa
             </a>
           </div>
