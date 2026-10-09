@@ -1988,6 +1988,12 @@ html {
 .aboutValues__rail::-webkit-scrollbar {
   display: none;
 }
+/* Trailing scroll space lets the last card snap fully into view. */
+.aboutValues__rail::after {
+  content: "";
+  flex: 0 0 max(0px, calc(100% - 383px));
+  pointer-events: none;
+}
 .aboutValues__card {
   position: relative;
   isolation: isolate;
@@ -2054,6 +2060,7 @@ html {
   }
   .aboutValues__intro h2 { font-size: clamp(35px, 3.8vw, 45px); }
   .aboutValues__card { flex-basis: 340px; width: 340px; height: 475px; }
+  .aboutValues__rail::after { flex-basis: max(0px, calc(100% - 340px)); }
   .aboutValues__card h3 { left: 31px; bottom: 39px; }
 }
 
@@ -2088,6 +2095,7 @@ html {
   .aboutValues__controlRow { margin-top: 22px; }
   .aboutValues__rail { padding-left: clamp(22px, 5.2vw, 52px); scroll-padding-left: clamp(22px, 5.2vw, 52px); }
   .aboutValues__card { flex-basis: min(74vw, 383px); width: min(74vw, 383px); height: clamp(390px, 75vw, 500px); }
+  .aboutValues__rail::after { flex-basis: max(0px, calc(100% - min(74vw, 383px))); }
 }
 
 @media (max-width: 480px) {
@@ -2104,6 +2112,7 @@ html {
   .aboutValues__intro h2 { font-size: clamp(31px, 8vw, 38px); }
   .aboutValues__rail { gap: 15px; }
   .aboutValues__card { flex-basis: min(82vw, 340px); width: min(82vw, 340px); height: 428px; border-radius: 22px; }
+  .aboutValues__rail::after { flex-basis: max(0px, calc(100% - min(82vw, 340px))); }
   .aboutValues__card h3 { font-size: 25px; inset: auto 22px 31px 26px; }
 }
 
