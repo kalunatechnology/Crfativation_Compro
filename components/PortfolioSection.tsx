@@ -48,7 +48,7 @@ export default function PortfolioSection() {
                   <article className="portofolioCard" key={projectKey} data-home-reveal="card">
                     {/* Image box: 865.44px x 467px, border-radius: 29.33px */}
                     <div className="portofolioCard__image">
-                      <Image src={item.image} alt={item.imageAlt || item.title} fill sizes="(max-width: 600px) 90vw, 865px" className="portofolioCard__imgTag" />
+                      <Image src={item.image} alt={item.imageAlt || item.title} fill unoptimized sizes="(max-width: 600px) 90vw, 865px" className="portofolioCard__imgTag" />
                     </div>
 
                     {/* Meta row: Title & Number */}
