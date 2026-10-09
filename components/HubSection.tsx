@@ -40,7 +40,7 @@ function ServiceCard({ item, variant, showLink = true }: { item: Service; varian
   const big = variant === "large";
   const iconSize = big ? 274 : 132;
   return (
-    <article
+    <div
       className={big
         ? "relative h-[466px] w-[776px] shrink-0 overflow-hidden rounded-[43.52px] bg-white text-[#1e1e1e] shadow-[0_10px_24px_rgba(0,0,0,0.17)]"
         : "relative h-[223px] w-[371.38px] shrink-0 overflow-hidden rounded-[20.825px] bg-white text-[#1e1e1e] shadow-[0_10px_22px_rgba(0,0,0,0.18)]"}
@@ -83,7 +83,7 @@ function ServiceCard({ item, variant, showLink = true }: { item: Service; varian
           >Lihat detail <span aria-hidden="true">↗</span></a>
         )}
       </div>
-    </article>
+    </div>
   );
 }
 
