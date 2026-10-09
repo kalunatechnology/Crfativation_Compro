@@ -408,13 +408,13 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Keep the static booth's intentionally hidden SVG assembly layers hidden.
+     Only disable motion; forcing opacity:1 would reveal every stage at once. */
   .metodeSection *,
   .metodeSection *::before,
   .metodeSection *::after {
     transition: none !important;
     animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
   }
 }
 
