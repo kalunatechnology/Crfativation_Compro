@@ -2422,7 +2422,7 @@ html {
     max-width: 360px;
     padding: 0;
   }
-  .approachArt { width: min(88vw, 360px); max-width: none; }
+  .approachArt { width: min(84vw, 340px); max-width: none; }
   .approachStep__copy, .approachStep--visualRight .approachStep__copy {
     order: 1;
     width: 100%;
@@ -2815,6 +2815,22 @@ html {
     overflow-x: auto;
     width: 100%;
   }
+}
+@media (max-width: 860px) {
+  .projectsExpertise { padding: 72px 0; }
+  .projectsExpertise__card { height: 440px; }
+  .projectsExpertise__group { gap: 18px; padding-right: 18px; }
+}
+@media (max-width: 650px) {
+  .projectsExpertise { padding: 56px 0; }
+  .projectsExpertise__track { animation-duration: 22s; }
+  .projectsExpertise__card {
+    flex: 0 0 min(74vw, 300px);
+    width: min(74vw, 300px);
+    height: 380px;
+    border-radius: 16px;
+  }
+  .projectsExpertise__card h2 { left: 22px; right: 18px; bottom: 26px; font-size: 22px; }
 }
 
 .projectsDetail {
