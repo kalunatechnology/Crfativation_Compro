@@ -72,7 +72,7 @@ function ServiceCard({ item, variant, showLink = true }: { item: Service; varian
         <p className={big
           ? "mt-[32px] line-clamp-4 max-w-[295px] text-[20px] leading-[1.3]"
           : "mt-[13px] line-clamp-4 text-[11.2px] leading-[1.27]"}
-          style={{ fontFamily: "var(--font-jost)" }}
+          style={{ fontFamily: "var(--font-sans)" }}
         >{item.description}</p>
         {showLink && item.href && (
           <a

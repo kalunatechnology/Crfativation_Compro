@@ -1,26 +1,49 @@
 import type { Metadata } from "next";
-import { Arsenal, Jost, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ReactNode } from "react";
 
-const arsenal = Arsenal({
+const arsenal = localFont({
+  src: [
+    {
+      path: "../public/fonts/arsenal/Arsenal-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/arsenal/Arsenal-Italic.woff2",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../public/fonts/arsenal/Arsenal-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/arsenal/Arsenal-BoldItalic.woff2",
+      weight: "700",
+      style: "italic",
+    },
+  ],
   variable: "--font-arsenal",
-  subsets: ["latin"],
-  weight: ["400", "700"],
   display: "swap",
 });
 
-const jost = Jost({
-  variable: "--font-jost",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
+const plusJakarta = localFont({
+  src: [
+    {
+      path: "../public/fonts/plus-jakarta-sans/PlusJakartaSans-Variable.woff2",
+      weight: "200 800",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/plus-jakarta-sans/PlusJakartaSans-Italic-Variable.woff2",
+      weight: "200 800",
+      style: "italic",
+    },
+  ],
   variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -29,13 +52,13 @@ export const metadata: Metadata = {
   description:
     "Craftivation membantu brand merancang dan mengeksekusi booth, exhibition, dan brand activation untuk kebutuhan komersial.",
   icons: {
-    icon: "/assets/logo-white.svg",
+    icon: "/assets/icon-craftivation.svg",
   },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="id" className={`${arsenal.variable} ${jost.variable} ${plusJakarta.variable}`}>
+    <html lang="id" className={`${arsenal.variable} ${plusJakarta.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );
