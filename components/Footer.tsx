@@ -88,35 +88,32 @@ export default function Footer() {
               alt="Craftivation Exhibition Contractor"
               width={374}
               height={77}
-              sizes="(max-width: 600px) 80vw, 374px"
+              sizes="(max-width: 600px) 60vw, 240px"
             />
           </a>
+        </div>
 
-          <div className="footer__details">
-            <h2 className="footer__sectionTitle">CRAFTIVATION WORKSHOP</h2>
-            <p className="footer__address">Alamat Bogor</p>
-
-            <h3 className="footer__eyebrow">CONTACT</h3>
-            <div className="footer__contactLinks">
-              <a
-                href="https://wa.me/6282322308719"
-                className="footer__contactItem"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Hubungi Craftivation melalui WhatsApp di +62 823-2230-8719"
-              >
-                <span className="footer__contactIcon" aria-hidden="true"><WhatsappIcon /></span>
-                <span>+62 823-2230-8719</span>
-              </a>
-              <a href="mailto:corporate@craftivation.com" className="footer__contactItem">
-                <span className="footer__contactIcon" aria-hidden="true"><EmailIcon /></span>
-                <span className="footer__email">corporate@craftivation.com</span>
-              </a>
-            </div>
+        <div className="footer__col footer__contact" data-home-reveal="rise">
+          <h2 className="footer__sectionTitle">CONTACT</h2>
+          <div className="footer__contactLinks">
+            <a
+              href="https://wa.me/6282322308719"
+              className="footer__contactItem"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Hubungi Craftivation melalui WhatsApp di +62 823-2230-8719"
+            >
+              <span className="footer__contactIcon" aria-hidden="true"><WhatsappIcon /></span>
+              <span>+62 823-2230-8719</span>
+            </a>
+            <a href="mailto:corporate@craftivation.com" className="footer__contactItem">
+              <span className="footer__contactIcon" aria-hidden="true"><EmailIcon /></span>
+              <span className="footer__email">corporate@craftivation.com</span>
+            </a>
           </div>
         </div>
 
-        <nav className="footer__quickLinks" aria-label="Navigasi footer" data-home-reveal="rise">
+        <nav className="footer__col footer__quickLinks" aria-label="Navigasi footer" data-home-reveal="rise">
           <h2 className="footer__sectionTitle">QUICK LINKS</h2>
           <ul className="footer__nav">
             {footerLinks.map((item) => (
@@ -128,6 +125,11 @@ export default function Footer() {
             ))}
           </ul>
         </nav>
+
+        <div className="footer__col footer__workshop" data-home-reveal="rise">
+          <h2 className="footer__sectionTitle">CRAFTIVATION WORKSHOP</h2>
+          <p className="footer__address">Alamat Bogor</p>
+        </div>
       </div>
 
       <div className="footer__bottom pageShell" data-home-reveal="fade">

@@ -58,25 +58,19 @@ const defaults = [
 ] as const;
 
 function BoothStage({ kind }: { kind: (typeof stages)[number]["art"] }) {
-  const images = kind === "kenali"
-    ? ["kenali"] : kind === "kreasi"
-      ? ["kenali", "kreasi"] : ["kenali", "kreasi", "implikasi"];
-
   return (
     <div className={"approachArt approachArt--" + kind} aria-hidden="true">
-      {images.map((frame, idx) => (
-        <Image
-          key={frame}
-          src={"/assets/approach-" + frame + ".svg"}
-          alt=""
-          width={780}
-          height={860}
-          unoptimized
-          sizes="(max-width: 700px) 82vw, (max-width: 1100px) 37vw, 400px"
-          className={"approachArt__frame approachArt__frame--" + (idx === 0 ? "blueprint" : frame === "kreasi" ? "structure" : "finish")}
-          draggable={false}
-        />
-      ))}
+      <Image
+        src={"/assets/approach-" + kind + ".gif"}
+        alt={`Animasi tahapan ${kind}`}
+        width={760}
+        height={760}
+        unoptimized
+        priority={kind === "kenali"}
+        sizes="(max-width: 700px) 92vw, (max-width: 1100px) 48vw, 480px"
+        className="approachArt__gif"
+        draggable={false}
+      />
     </div>
   );
 }

@@ -29,7 +29,7 @@ const expertise = [
     alt: "Tim kontraktor bekerja pada proses fabrikasi booth",
   },
   {
-    title: "Instalasi dan pengiriman tepat waktu",
+    title: "Instalasi dan tepat waktu",
     image: "/assets/project-installation.svg",
     alt: "Tim profesional bekerja mengerjakan instalasi",
   },
@@ -82,13 +82,21 @@ export default function ProjectsPage() {
         <ProjectsGallery />
 
         <section className="projectsExpertise" aria-label="Keunggulan Craftivation">
-          <div className="projectsExpertise__track" role="region" aria-label="Geser untuk melihat keunggulan Craftivation" tabIndex={0}>
-            {expertise.map((item, index) => (
-              <article className="projectsExpertise__card" key={item.title} data-home-reveal="card">
-                <Image src={item.image} alt={item.alt} fill unoptimized sizes="(max-width: 650px) 72vw, 380px" />
-                <span className="projectsExpertise__shade" aria-hidden="true" />
-                <h2>{item.title}</h2>
-              </article>
+          <div className="projectsExpertise__track" role="region" aria-label="Keunggulan Craftivation" tabIndex={0}>
+            {[0, 1, 2, 3].map((groupIndex) => (
+              <div
+                className="projectsExpertise__group"
+                key={groupIndex}
+                aria-hidden={groupIndex > 0 ? "true" : undefined}
+              >
+                {expertise.map((item, index) => (
+                  <article className="projectsExpertise__card" key={`${item.title}-${index}`}>
+                    <Image src={item.image} alt={item.alt} fill unoptimized sizes="(max-width: 650px) 72vw, 380px" />
+                    <span className="projectsExpertise__shade" aria-hidden="true" />
+                    <h2>{item.title}</h2>
+                  </article>
+                ))}
+              </div>
             ))}
           </div>
         </section>
