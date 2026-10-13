@@ -1,7 +1,40 @@
-import type { ProjectInput, ServiceInput } from "@/lib/types";
+import type { CompanyStatInput, ProjectInput, ServiceInput } from "@/lib/types";
 
 // Data awal (seed) untuk SQLite. Dipakai saat tabel masih kosong
 // dan sebagai fallback tampilan bila API belum bisa diakses.
+
+export const dummyStats: CompanyStatInput[] = [
+  {
+    key: "booths_built",
+    value: 100,
+    suffix: "+",
+    prefix: "",
+    labelLine1: "Booth",
+    labelLine2: "Dibangun",
+    sortOrder: 1,
+    isActive: true,
+  },
+  {
+    key: "clients_satisfied",
+    value: 52,
+    suffix: "+",
+    prefix: "",
+    labelLine1: "Klien",
+    labelLine2: "Terpuaskan",
+    sortOrder: 2,
+    isActive: true,
+  },
+  {
+    key: "events_joined",
+    value: 34,
+    suffix: "+",
+    prefix: "",
+    labelLine1: "Event",
+    labelLine2: "Diikuti",
+    sortOrder: 3,
+    isActive: true,
+  },
+];
 
 export const dummyServices: ServiceInput[] = [
   {

@@ -38,9 +38,12 @@ export default function CTA() {
 
         <div className="cta__mark" aria-hidden="true" data-home-reveal="scale">
           <div className="cta__cubeBox">
-            <img
-              src="/assets/craftivation-cube.webp"
-              alt="Craftivation Cube 3D"
+            <Image
+              src="/assets/cta-booth-room.webp"
+              alt="Craftivation 3D Exhibition Booth Model"
+              width={512}
+              height={436}
+              unoptimized
               className="cta__cubeImg"
             />
           </div>

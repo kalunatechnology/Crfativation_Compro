@@ -33,10 +33,14 @@ export default function HomepageMotion() {
         if (seen.has(node)) return;
         seen.add(node);
         const rect = node.getBoundingClientRect();
-        const onScreen = rect.top < window.innerHeight * 0.91 &&
+        const onScreen = rect.top < window.innerHeight * 0.92 &&
           rect.bottom > 0 && rect.left < window.innerWidth && rect.right > 0;
-        if (preference.matches || onScreen) reveal(node);
-        else {
+        if (preference.matches) {
+          node.dataset.homeState = "visible";
+        } else if (onScreen) {
+          node.dataset.homeState = "visible";
+          observer?.observe(node);
+        } else {
           node.dataset.homeState = "pending";
           observer?.observe(node);
         }
@@ -51,9 +55,14 @@ export default function HomepageMotion() {
       observer?.disconnect();
       observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) reveal(entry.target as HTMLElement);
+          const node = entry.target as HTMLElement;
+          if (preference.matches) {
+            node.dataset.homeState = "visible";
+          } else {
+            node.dataset.homeState = entry.isIntersecting ? "visible" : "pending";
+          }
         });
-      }, { threshold: 0.06, rootMargin: "0px 0px -7% 0px" });
+      }, { threshold: 0.08, rootMargin: "0px 0px -30px 0px" });
       requestScan();
     };
 

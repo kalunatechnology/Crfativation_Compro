@@ -6,10 +6,10 @@ import Image from "next/image";
  * responsive rather than embedding a screenshot of the design.
  */
 const footerLinks = [
-  { label: "Project", href: "/projects" },
-  { label: "Approach", href: "/approach" },
-  { label: "About Us", href: "/about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Portofolio", href: "/projects" },
+  { label: "Pendekatan", href: "/approach" },
+  { label: "Tentang Kami", href: "/about" },
+  { label: "Kontak", href: "#contact" },
 ];
 
 function WhatsappIcon() {
@@ -94,7 +94,7 @@ export default function Footer() {
         </div>
 
         <div className="footer__col footer__contact" data-home-reveal="rise">
-          <h2 className="footer__sectionTitle">CONTACT</h2>
+          <h2 className="footer__sectionTitle">KONTAK</h2>
           <div className="footer__contactLinks">
             <a
               href="https://wa.me/6282322308719"
@@ -114,7 +114,7 @@ export default function Footer() {
         </div>
 
         <nav className="footer__col footer__quickLinks" aria-label="Navigasi footer" data-home-reveal="rise">
-          <h2 className="footer__sectionTitle">QUICK LINKS</h2>
+          <h2 className="footer__sectionTitle">TAUTAN CEPAT</h2>
           <ul className="footer__nav">
             {footerLinks.map((item) => (
               <li key={item.href}>
@@ -127,7 +127,7 @@ export default function Footer() {
         </nav>
 
         <div className="footer__col footer__workshop" data-home-reveal="rise">
-          <h2 className="footer__sectionTitle">CRAFTIVATION WORKSHOP</h2>
+          <h2 className="footer__sectionTitle">WORKSHOP CRAFTIVATION</h2>
           <p className="footer__address">Alamat Bogor</p>
         </div>
       </div>

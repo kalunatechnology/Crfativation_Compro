@@ -39,3 +39,10 @@ API mutasi proyek (POST/PATCH/DELETE) yang sudah ada perlu dilindungi autentikas
 ## Penambahan proyek
 
 Gunakan mekanisme pengelolaan database/API proyek yang telah disiapkan. Jangan menambah duplikasi daftar proyek pada file `app/projects/page.tsx`, `ProjectsGallery.tsx`, atau aset SVG. `data/dummy.ts` adalah seed awal dan fallback saja.
+
+## Manajemen Statistik Hero (Company Stats)
+
+Angka statistik pada kartu kaca Hero Section dikelola melalui tabel SQLite `company_stats` dan endpoint **GET / PUT / POST /api/stats**:
+- **Field**: `id`, `key` (mis. `booths_built`, `clients_satisfied`, `events_joined`), `value` (angka integer: `100`, `52`, `34`), `suffix` (`+`), `prefix` (`""`), `label_line1`, `label_line2`, `sort_order`, `is_active`.
+- **Seed & Fallback**: `dummyStats` di `data/dummy.ts` menyediakan nilai awal saat tabel baru dibuat atau jika koneksi API terganggu.
+- **Repository Pattern**: Dikelola secara bersih di `lib/repositories/stats.ts` dan diakses melalui hook `lib/useStats.ts`.

@@ -1,12 +1,18 @@
-import Image from "next/image";
+"use client";
 
-/** Hero and translucent glass statistic cards. */
+import Image from "next/image";
+import { useStats } from "@/lib/useStats";
+import AnimatedStat from "@/components/AnimatedStat";
+
+/** Hero and translucent glass statistic cards connected to SQLite. */
 export default function HeroSection() {
+  const { items: stats } = useStats();
+
   return (
 <section
   id="hero"
   aria-labelledby="hero-title"
-  className="homeHero relative isolate h-[100svh] min-h-[720px] overflow-hidden bg-[#161616] text-white lg:min-h-[800px]"
+  className="homeHero relative isolate flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-[#161616] text-white py-20 px-4"
 >
   {/* Background Image */}
   <Image
@@ -21,16 +27,15 @@ export default function HeroSection() {
 
   {/* Background Overlay */}
   <div
-    className="homeHero__shade absolute inset-0 z-10 bg-black/30"
+    className="homeHero__shade absolute inset-0 z-10 bg-black/35"
     aria-hidden="true"
   />
 
   {/* Headline & Statistics */}
   <div
     className="
-      absolute inset-x-0 top-[37%] z-20
-      flex flex-col items-center px-4 text-center
-      sm:top-[44%] lg:top-[45.5%]
+      relative z-20 flex w-full max-w-[1000px]
+      flex-col items-center text-center
     "
   >
     {/* Main Headline */}
@@ -38,11 +43,10 @@ export default function HeroSection() {
       id="hero-title"
       className="
         homeHero__title max-w-[960px]
-        text-[29px] font-normal leading-[1.2]
-        tracking-[-0.035em]
-        sm:text-[34px]
-        lg:text-[40px]
+        font-normal leading-[1.2]
+        tracking-[-0.025em]
       "
+      style={{ fontFamily: "var(--font-arsenal)" }}
     >
       Mitra booth dengan pengalaman brand terbaik
     </h1>
@@ -50,9 +54,9 @@ export default function HeroSection() {
     {/* Subtitle */}
     <p
       className="
-        homeHero__subtitle mt-6 text-[11px] font-normal
+        homeHero__subtitle mt-4 text-[11px] font-normal
         uppercase tracking-[0.13em]
-        sm:text-[13px] lg:text-[14px]
+        sm:mt-6 sm:text-[13px] lg:text-[14px]
       "
     >
       YOUR TRUSTED EXHIBITION CONTRACTOR
@@ -62,33 +66,29 @@ export default function HeroSection() {
     <div
       aria-label="Statistik Craftivation"
       className="
-        homeHero__stats mt-[95px] grid w-full max-w-[695.29px]
+        homeHero__stats mt-8 grid w-full max-w-[695.29px]
         grid-cols-3 gap-[8px]
-        sm:mt-[105px] sm:gap-[15px]
-        lg:mt-[128px]
+        sm:mt-12 sm:gap-[15px]
+        lg:mt-16
       "
     >
-      {[
-        { number: "0+", line1: "Booth", line2: "Dibangun" },
-        { number: "0+", line1: "Klien", line2: "Terpuaskan" },
-        { number: "0+", line1: "Event", line2: "Diikuti" },
-      ].map((item, index) => (
+      {stats.map((item, index) => (
         <div
-          key={index}
+          key={`${item.id || item.key}-${item.value}`}
           className="
-            homeHero__stat relative flex h-[112px] min-w-0
-            flex-col items-center justify-center
-            gap-1 overflow-hidden
+            homeHero__stat relative flex min-w-0
+            h-[112px] flex-row items-center
+            justify-start gap-3 overflow-hidden
             border border-white/10
             bg-black/25
-            px-1 text-white
+            px-4 text-white
 
             backdrop-blur-[24px]
             backdrop-saturate-150
 
             sm:h-[107.36px]
-            sm:flex-row sm:gap-4 sm:px-2
-            lg:gap-6
+            sm:gap-5 sm:px-6
+            lg:gap-7 lg:px-7
           "
         >
           {/* Glass Reflection */}
@@ -112,32 +112,27 @@ export default function HeroSection() {
             "
           />
 
-          {/* Number */}
-          <strong
-            className="
-              relative z-10 shrink-0
-              text-[32px] font-light
-              leading-none tracking-[-0.06em]
-              sm:text-[44px]
-              lg:text-[50px]
-            "
-          >
-            {item.number}
-          </strong>
+          {/* Number with synchronized count-up delay */}
+          <AnimatedStat
+            value={item.value}
+            prefix={item.prefix}
+            suffix={item.suffix}
+            delay={1300 + index * 140}
+          />
 
-          {/* Label */}
+          {/* Label – rata kiri, berdampingan dengan angka */}
           <span
             className="
-              relative z-10 text-center
+              relative z-10 text-left
               text-[11px] font-normal
-              leading-[1.3]
-              sm:text-left sm:text-[13px]
-              lg:text-[16px]
+              leading-[1.35] opacity-80
+              sm:text-[13px]
+              lg:text-[15px]
             "
           >
-            {item.line1}
+            {item.labelLine1}
             <br />
-            {item.line2}
+            {item.labelLine2}
           </span>
         </div>
       ))}

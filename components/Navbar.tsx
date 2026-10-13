@@ -47,7 +47,7 @@ export default function Navbar() {
             </a>
           ))}
           <a className="siteNav__contactBtn" href="#contact">
-            Contact Us
+            Hubungi Kami
           </a>
         </nav>
 
@@ -78,7 +78,7 @@ export default function Navbar() {
           className="siteNav__mobileContact"
           onClick={() => setMenuOpen(false)}
         >
-          Contact Us
+          Hubungi Kami
         </a>
       </nav>
     </header>

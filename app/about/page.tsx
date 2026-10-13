@@ -32,23 +32,15 @@ export default function AboutPage() {
         <section id="about-top" className="aboutHero" aria-labelledby="about-hero-title">
           <div className="aboutHero__shell">
             <div className="aboutHero__collage" aria-label="Suasana pengalaman brand yang menjadi inspirasi Craftivation">
-              <div className="aboutHero__photo aboutHero__photo--top">
+              <div className="aboutHero__photo">
                 <Image
                   src="/assets/about-hero-source.svg"
-                  alt="Pengunjung berinteraksi di area komersial dengan meja dan kursi"
+                  alt="Suasana pengalaman brand dan aktivitas pengunjung di area komersial"
                   fill
                   priority
                   unoptimized
-                  sizes="(max-width: 860px) 90vw, 585px"
-                />
-              </div>
-              <div className="aboutHero__photo aboutHero__photo--bottom">
-                <Image
-                  src="/assets/about-hero-source.svg"
-                  alt="Aktivitas pengunjung dan bar kopi dalam sebuah ruang brand"
-                  fill
-                  unoptimized
-                  sizes="(max-width: 860px) 90vw, 585px"
+                  sizes="(max-width: 900px) 90vw, 580px"
+                  className="object-cover"
                 />
               </div>
             </div>

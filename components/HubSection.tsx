@@ -9,13 +9,14 @@ import type { Project, Service } from "@/lib/types";
  * Original, full-resolution artboards are extracted directly from hub.svg.
  * All vector typography, the central stage, decorative paths and shadows stay SVG.
  * Only CMS-editable cards/photos are rendered above the original artboards.
- * No CSS blur, no rasterized screenshots, no external animation library.
+ * Interaction is driven directly by user clicks (no scroll hijacking or 460svh locking),
+ * allowing natural page scrolling and instant, responsive card views.
  */
 const SVG = {
   intro: "/assets/hub-svg-intro.svg",
   stage: "/assets/hub-svg-stage.svg",
   services: "/assets/hub-svg-services.svg",
-  project: "/assets/hub-svg-project.svg",
+  project: "/assets/hub-svg-project.svg?v=2",
   modular: "/assets/hub-svg-modular.webp",
   versatile: "/assets/hub-svg-versatile.webp",
   coffee: "/assets/hub-svg-coffee.webp",
@@ -113,7 +114,7 @@ function SourceArtboard({ src }: { src: string }) {
       alt=""
       fill
       unoptimized
-      priority={false}
+      priority
       sizes="1440px"
       className="pointer-events-none select-none object-fill"
       draggable={false}
@@ -122,38 +123,135 @@ function SourceArtboard({ src }: { src: string }) {
   );
 }
 
-
 type HubCardKind = "services" | "projects";
+type HubScene = "intro" | "services" | "projects";
 type MobileDetail = { kind: HubCardKind; index: number };
 
-const cardPositions = {
-  services: { from: { left: 144, top: 297, width: 371.38, height: 223 }, to: { left: 332, top: 284, width: 776, height: 466 } },
-  projects: { from: { left: 947, top: 487, width: 403, height: 218 }, to: { left: 287.5, top: 220, width: 865, height: 467 } },
+type CardFlight = {
+  kind: HubCardKind;
+  closing: boolean;
+  moving: boolean;
+  startLeft?: number;
 };
 
-// All desktop transitions are tied to vertical scroll progress. Clicking a
-// card travels along the same timeline as wheeling / touchpad / dragging.
-const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
-const smooth = (n: number) => { const t = clamp01(n); return t * t * (3 - 2 * t); };
-const between = (p: number, a: number, b: number) => smooth((p - a) / (b - a));
-const STORY = {
-  servicesIn: [0.12, 0.28],
-  servicesOut: [0.52, 0.67],
-  projectsIn: [0.73, 0.88],
-} as const;
+const cardPositions = {
+  services: {
+    from: { left: 144, top: 297, width: 371.38, height: 223 },
+    to: { left: 332, top: 284, width: 776, height: 466 },
+  },
+  projects: {
+    from: { left: 947, top: 487, width: 403, height: 218 },
+    to: { left: 287.5, top: 220, width: 865, height: 467 },
+  },
+};
 
 export default function HubSection() {
   const [scale, setScale] = useState(1);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [services, setServices] = useState<Service[]>(demoServices);
   const [projects, setProjects] = useState<Project[]>(demoProjects);
-  const desktopRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0);
+  const [activeScene, setActiveScene] = useState<HubScene>("intro");
+  const [flight, setFlight] = useState<CardFlight | null>(null);
+  const [chromeVisible, setChromeVisible] = useState(false);
   const [mobileDetail, setMobileDetail] = useState<MobileDetail | null>(null);
   const [projectIndex, setProjectIndex] = useState(0);
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const serviceScrollRef = useRef<HTMLDivElement>(null);
   const projectScrollRef = useRef<HTMLDivElement>(null);
+  const flightRafRef = useRef<number | null>(null);
+  const flightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const chromeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function finishFlight(toKind?: HubCardKind) {
+    if (flightTimerRef.current) {
+      clearTimeout(flightTimerRef.current);
+      flightTimerRef.current = null;
+    }
+    setFlight(null);
+
+    // Setelah kartu membesar, baru 100ms elemen lainnya (navigasi, pagination, slide berikutnya) muncul halus
+    if (toKind) {
+      if (chromeTimerRef.current) clearTimeout(chromeTimerRef.current);
+      chromeTimerRef.current = setTimeout(() => {
+        setChromeVisible(true);
+      }, 100);
+    }
+  }
+
+  function navigate(kind: HubCardKind, closing = false) {
+    if (flight) return;
+
+    if (closing) {
+      // Hilangkan kontrol slide ekstra terlebih dahulu agar animasi kembali sangat slim & rapi
+      setChromeVisible(false);
+      if (chromeTimerRef.current) clearTimeout(chromeTimerRef.current);
+
+      let startLeft: number | undefined;
+      if (kind === "services") {
+        const scrollLeft = serviceScrollRef.current?.scrollLeft ?? 0;
+        startLeft = 332 + activeServiceIndex * 810 - scrollLeft;
+      } else {
+        const scrollLeft = projectScrollRef.current?.scrollLeft ?? 0;
+        startLeft = 287.5 + projectIndex * 899 - scrollLeft;
+      }
+
+      if (reducedMotion) {
+        setActiveScene("intro");
+        return;
+      }
+
+      setTimeout(() => {
+        setActiveScene("intro");
+        setFlight({ kind, closing: true, moving: false, startLeft });
+
+        if (flightRafRef.current) cancelAnimationFrame(flightRafRef.current);
+        flightRafRef.current = requestAnimationFrame(() => {
+          flightRafRef.current = requestAnimationFrame(() => {
+            setFlight(prev => prev ? { ...prev, moving: true } : null);
+          });
+        });
+        flightTimerRef.current = setTimeout(() => finishFlight(), 700);
+      }, 60);
+      return;
+    }
+
+    // Opening:
+    setChromeVisible(false);
+    if (chromeTimerRef.current) clearTimeout(chromeTimerRef.current);
+
+    if (kind === "services") {
+      setActiveServiceIndex(0);
+      if (serviceScrollRef.current) serviceScrollRef.current.scrollLeft = 0;
+    } else {
+      setProjectIndex(0);
+      if (projectScrollRef.current) projectScrollRef.current.scrollLeft = 0;
+    }
+
+    if (reducedMotion) {
+      setActiveScene(kind);
+      setChromeVisible(true);
+      return;
+    }
+
+    setActiveScene(kind);
+    setFlight({ kind, closing: false, moving: false });
+
+    if (flightRafRef.current) cancelAnimationFrame(flightRafRef.current);
+    flightRafRef.current = requestAnimationFrame(() => {
+      flightRafRef.current = requestAnimationFrame(() => {
+        setFlight(prev => prev ? { ...prev, moving: true } : null);
+      });
+    });
+    flightTimerRef.current = setTimeout(() => finishFlight(kind), 650);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (flightRafRef.current) cancelAnimationFrame(flightRafRef.current);
+      if (flightTimerRef.current) clearTimeout(flightTimerRef.current);
+      if (chromeTimerRef.current) clearTimeout(chromeTimerRef.current);
+    };
+  }, []);
 
   // Keep data fully controlled by SQLite, with dummy.ts as a network-failure fallback.
   useEffect(() => {
@@ -177,31 +275,22 @@ export default function HubSection() {
     return () => controller.abort();
   }, []);
 
+  // Viewport scale measurement for pixel-perfect 1440x972 desktop artboard fitting
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updateMotion = () => setReducedMotion(motionQuery.matches);
     updateMotion();
     motionQuery.addEventListener("change", updateMotion);
-    let raf = 0;
+
     const measure = () => {
-      raf = 0;
       setScale(Math.min(document.documentElement.clientWidth / 1440, window.innerHeight / 972));
-      const node = desktopRef.current;
-      if (!node) return;
-      const rect = node.getBoundingClientRect();
-      const distance = Math.max(1, rect.height - window.innerHeight);
-      const next = clamp01(-rect.top / distance);
-      setProgress(previous => Math.abs(previous - next) > 0.0005 ? next : previous);
     };
-    const schedule = () => { if (!raf) raf = requestAnimationFrame(measure); };
-    schedule();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    measure();
+    window.addEventListener("resize", measure);
+
     return () => {
-      if (raf) cancelAnimationFrame(raf);
       motionQuery.removeEventListener("change", updateMotion);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", measure);
     };
   }, []);
 
@@ -252,90 +341,50 @@ export default function HubSection() {
     if (projectScrollRef.current) projectScrollRef.current.scrollLeft = 0;
   }, [projects]);
 
-
-  // Vertical wheel always advances the story; the horizontal rails remain
-  // swipeable, trackpad-draggable, arrow-key controlled, or Shift+wheel.
-  useEffect(() => {
-    const rails = [serviceScrollRef.current, projectScrollRef.current];
-    const unbind = rails.filter((rail): rail is HTMLDivElement => Boolean(rail)).map(rail => {
-      const wheel = (event: WheelEvent) => {
-        if (!event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-        event.preventDefault();
-        rail.scrollLeft += event.deltaY;
-      };
-      rail.addEventListener("wheel", wheel, { passive: false });
-      return () => rail.removeEventListener("wheel", wheel);
-    });
-    return () => unbind.forEach(dispose => dispose());
-  }, [reducedMotion]);
-
-  const servicesEntering = progress > STORY.servicesIn[0] && progress < STORY.servicesIn[1];
-  const servicesLeaving = progress > STORY.servicesOut[0] && progress < STORY.servicesOut[1];
-  const projectsEntering = progress > STORY.projectsIn[0] && progress < STORY.projectsIn[1];
-  const introVisible = progress < STORY.servicesIn[1] ||
-    (progress >= STORY.servicesOut[0] && progress < STORY.projectsIn[1]);
-  const servicesVisible = progress >= STORY.servicesIn[1] && progress < STORY.servicesOut[0];
-  const projectsVisible = progress >= STORY.projectsIn[1];
-  const serviceAmount = servicesEntering
-    ? between(progress, ...STORY.servicesIn)
-    : servicesLeaving ? 1 - between(progress, ...STORY.servicesOut) : 0;
-  const projectAmount = projectsEntering ? between(progress, ...STORY.projectsIn) : 0;
-
-  function flightTransform(kind: HubCardKind, amount: number) {
-    const { from, to } = cardPositions[kind];
-    const t = clamp01(amount);
-    const dx = (from.left - to.left) * (1 - t);
-    const dy = (from.top - to.top) * (1 - t);
-    const sx = from.width / to.width + (1 - from.width / to.width) * t;
-    const sy = from.height / to.height + (1 - from.height / to.height) * t;
-    return `translate3d(${dx}px, ${dy}px, 0) scale(${sx}, ${sy})`;
-  }
-
-  function toProgress(target: number, behavior: ScrollBehavior = reducedMotion ? "instant" : "smooth") {
-    const element = desktopRef.current;
-    if (!element) return;
-    const start = window.scrollY + element.getBoundingClientRect().top;
-    const travel = Math.max(0, element.offsetHeight - window.innerHeight);
-    window.scrollTo({ top: start + travel * target, behavior });
-  }
-
-  function goToScene(kind: HubCardKind) {
-    if (kind === "projects") {
-      // Intro artboards are identical at 0 and .73; skip the service act
-      // when the user clicks the lower project card directly.
-      if (progress < STORY.projectsIn[0] - 0.01) {
-        toProgress(STORY.projectsIn[0], "instant");
-        requestAnimationFrame(() => requestAnimationFrame(() => toProgress(0.92, "smooth")));
-      } else toProgress(0.92);
-    } else if (progress > STORY.servicesOut[0]) {
-      toProgress(STORY.servicesIn[0], "instant");
-      requestAnimationFrame(() => requestAnimationFrame(() => toProgress(0.34, "smooth")));
-    } else {
-      toProgress(0.34);
-    }
-  }
-
-  function goBack(kind: HubCardKind) {
-    toProgress(kind === "services" ? 0.69 : 0.70);
-  }
-
+  // Support Escape key to quickly return to intro hub view
   useEffect(() => {
     const keydown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       if (mobileDetail) setMobileDetail(null);
-      else if (projectsVisible) goBack("projects");
-      else if (servicesVisible) goBack("services");
+      else if (flight) finishFlight();
+      else if (activeScene !== "intro") navigate(activeScene as HubCardKind, true);
     };
     window.addEventListener("keydown", keydown);
     return () => window.removeEventListener("keydown", keydown);
-  });
+  }, [mobileDetail, activeScene, flight]);
+
+  const flightGeometry = flight ? cardPositions[flight.kind] : null;
+  let flightTransform = "none";
+  let flightLeft = flightGeometry?.to.left ?? 0;
+  let flightTop = flightGeometry?.to.top ?? 0;
+  let flightWidth = flightGeometry?.to.width ?? 0;
+  let flightHeight = flightGeometry?.to.height ?? 0;
+
+  if (flight && flightGeometry) {
+    const { from, to } = flightGeometry;
+    const scaleX = from.width / to.width;
+    const scaleY = from.height / to.height;
+    const dx = from.left - to.left;
+    const dy = from.top - to.top;
+
+    if (!flight.closing) {
+      flightTransform = flight.moving
+        ? "translate3d(0px, 0px, 0px) scale(1, 1)"
+        : `translate3d(${dx}px, ${dy}px, 0px) scale(${scaleX}, ${scaleY})`;
+    } else {
+      const initialDx = flight.startLeft !== undefined ? flight.startLeft - to.left : 0;
+      flightTransform = flight.moving
+        ? `translate3d(${dx}px, ${dy}px, 0px) scale(${scaleX}, ${scaleY})`
+        : `translate3d(${initialDx}px, 0px, 0px) scale(1, 1)`;
+    }
+  }
 
   return (
     <section id="approach" aria-label="Pendekatan, layanan, dan proyek Craftivation" className="relative isolate scroll-mt-[70px] overflow-clip bg-[#010101] text-white">
-      {/* Mobile and reduced-motion layout: document-order cards without fixed-position overlaps. */}
-      <div className={"mx-auto max-w-[680px] px-5 pb-20 pt-24 " + (reducedMotion ? "lg:block" : "lg:hidden")}>
-        <h2 data-home-reveal="rise" className="mx-auto max-w-[440px] text-center text-[clamp(27px,6.2vw,42px)] leading-[1.15] tracking-tight" style={{ fontFamily: "var(--font-arsenal)" }}>
-          Redefining space within commercial needs
+      {/* Mobile layout: document-order cards without fixed-position overlaps. */}
+      <div className="mx-auto max-w-[680px] px-5 pb-20 pt-24 lg:hidden">
+        <h2 data-home-reveal="rise" className="mx-auto max-w-[480px] text-center text-[clamp(22px,4.8vw,32px)] leading-[1.18] tracking-tight" style={{ fontFamily: "var(--font-arsenal)" }}>
+          Mendefinisikan ruang untuk kebutuhan komersial Anda
         </h2>
         <div data-home-reveal="scale" className="relative mx-auto mt-7 aspect-[1440/972] w-full overflow-hidden">
           <Image src={SVG.stage} alt="Panggung 3D Craftivation" fill unoptimized sizes="(max-width: 680px) 90vw, 680px" className="object-contain" />
@@ -378,7 +427,7 @@ export default function HubSection() {
       </div>
 
       {mobileDetail && openMobileItem && (
-        <div role="dialog" aria-modal="true" aria-label={mobileDetail.kind === "services" ? "Detail layanan" : "Detail proyek"} className={"fixed inset-0 z-[110] grid place-items-center overflow-y-auto bg-black/90 px-4 py-12 motion-safe:animate-[hub-appear_350ms_ease-out_both] " + (reducedMotion ? "lg:grid" : "lg:hidden")}>
+        <div role="dialog" aria-modal="true" aria-label={mobileDetail.kind === "services" ? "Detail layanan" : "Detail proyek"} className="fixed inset-0 z-[110] grid place-items-center overflow-y-auto bg-black/90 px-4 py-12 motion-safe:animate-[hub-appear_350ms_ease-out_both] lg:hidden">
           <div className="relative w-full max-w-[560px] rounded-[28px] bg-white p-6 text-[#1e1e1e] shadow-2xl motion-safe:animate-[hub-rise_500ms_ease-out_both]">
             <button type="button" autoFocus onClick={() => setMobileDetail(null)} aria-label="Tutup detail" className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-[#1e1e1e] text-xl text-white">×</button>
             {mobileDetail.kind === "services" ? (
@@ -390,7 +439,7 @@ export default function HubSection() {
             ) : (
               <>
                 <div className="relative mt-7 aspect-[865/467] overflow-hidden rounded-2xl"><Image src={imageFor((openMobileItem as Project).image)} alt={(openMobileItem as Project).imageAlt || (openMobileItem as Project).title} fill unoptimized sizes="500px" className="object-cover" /></div>
-                <p className="mt-5 text-sm text-[#777]">{(openMobileItem as Project).client}</p>
+                <p className="mt-5 text-sm text-[#777]">{((openMobileItem as Project).client)}</p>
                 <h3 className="mt-2 text-3xl">{(openMobileItem as Project).title}</h3>
                 <p className="mt-3 text-base leading-relaxed">{(openMobileItem as Project).description}</p>
               </>
@@ -400,109 +449,343 @@ export default function HubSection() {
         </div>
       )}
 
-      {/* Desktop scroll story: card transforms are scrubbed by real page scrolling. */}
-      <div ref={desktopRef} className={"relative h-[460svh] " + (reducedMotion ? "hidden" : "hidden lg:block")}>
-        <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010101]">
-          <div className="absolute left-1/2 top-1/2 h-[972px] w-[1440px] origin-center" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
-            <div className={introVisible ? "absolute inset-0" : "hidden"} aria-hidden={!introVisible}>
-              <SourceArtboard src={SVG.intro} />
-              <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-[720px] top-[448px] -translate-x-1/2" />
-              {currentService && (
-                <button type="button" onClick={() => goToScene("services")} disabled={servicesEntering || servicesLeaving || projectsEntering} aria-label={`Perbesar layanan ${currentService.name}`} className={`absolute left-[144px] top-[297px] rounded-[21px] text-left outline-none transition-transform duration-500 ease-out hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-white ${servicesEntering || servicesLeaving ? "opacity-0" : ""}`}>
-                  <ServiceCard item={currentService} variant="small" showLink={false} />
-                </button>
-              )}
-              {chosen && (
-                <button type="button" onClick={() => goToScene("projects")} disabled={servicesEntering || servicesLeaving || projectsEntering} aria-label={`Perbesar proyek ${chosen.title}`} className={`absolute left-[947px] top-[487px] block rounded-[29px] outline-none transition-transform duration-500 ease-out hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-white ${projectsEntering ? "opacity-0" : ""}`}>
-                  <ProjectImage item={chosen} />
-                </button>
-              )}
-              <button type="button" onClick={() => goToScene("services")} disabled={!services.length || servicesEntering || servicesLeaving || projectsEntering} aria-label="Lihat layanan kami" className="absolute left-[136px] top-[217px] h-[55px] w-[250px] focus-visible:outline-2 focus-visible:outline-white" />
-              <button type="button" onClick={() => goToScene("projects")} disabled={!projects.length || servicesEntering || servicesLeaving || projectsEntering} aria-label="Lihat proyek kami" className="absolute left-[1170px] top-[426px] h-[60px] w-[245px] focus-visible:outline-2 focus-visible:outline-white" />
-            </div>
+      {/* Desktop layout: standard viewport height without scroll hijacking or pin. Appears directly on natural scroll, clicks switch views with fluid card zoom. */}
+      <div className="relative hidden h-[100svh] min-h-[720px] w-full overflow-hidden bg-[#010101] lg:block">
+        <div className="absolute left-1/2 top-1/2 h-[972px] w-[1440px] origin-center" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
+          
+          {/* SCENE 1: INTRO (Main Hub Stage) */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-700 ease-out ${activeScene === "intro" ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+            aria-label="Tampilan utama Hub Craftivation"
+            aria-hidden={activeScene !== "intro"}
+          >
+            <SourceArtboard src={SVG.intro} />
+            <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-[720px] top-[448px] -translate-x-1/2" />
+            
+            {/* Service Card Button */}
+            {currentService && (
+              <button
+                type="button"
+                onClick={() => navigate("services")}
+                aria-label={`Lihat layanan ${currentService.name}`}
+                className="group absolute left-[144px] top-[297px] cursor-pointer rounded-[21px] text-left outline-none transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_35px_rgba(0,0,0,0.5)] focus-visible:ring-2 focus-visible:ring-white"
+                style={{ opacity: flight && flight.kind === "services" ? 0 : 1 }}
+              >
+                <ServiceCard item={currentService} variant="small" showLink={false} />
+                <span className="pointer-events-none absolute inset-0 rounded-[21px] border border-white/0 transition-colors group-hover:border-white/20" />
+              </button>
+            )}
 
-            <div className={servicesVisible ? "absolute inset-0" : "hidden"} aria-hidden={!servicesVisible}>
-              <SourceArtboard src={SVG.services} />
-              <button type="button" onClick={() => goBack("services")} aria-label="Kembali ke Hub" className="absolute left-[122px] top-[52px] grid h-[46px] w-[46px] place-items-center rounded-full text-[24px] text-white/75 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white">‹</button>
-              <div className="absolute left-[250px] top-[284px] w-[940px]">
-                <div ref={serviceScrollRef} onScroll={() => syncCardOnScroll("services")} onKeyDown={(event) => { if (event.key === "ArrowRight") { event.preventDefault(); scrollToCard("services", activeServiceIndex + 1); } if (event.key === "ArrowLeft") { event.preventDefault(); scrollToCard("services", activeServiceIndex - 1); } }} className="hub-clean-rail w-full overflow-x-auto overflow-y-hidden" role="region" aria-label="Slider layanan Craftivation, gunakan panah atau geser untuk berpindah" tabIndex={0} style={{ scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}>
-                  <div className="relative flex w-max items-stretch gap-[34px] px-[82px]">
-                    {services.map((service, index) => (
-                      <div key={service.id} data-service-index={index} className="shrink-0 snap-center" role="group" aria-label={`${service.name}, layanan ${index + 1} dari ${services.length}`}>
+            {/* Project Card Button */}
+            {chosen && (
+              <button
+                type="button"
+                onClick={() => navigate("projects")}
+                aria-label={`Lihat proyek ${chosen.title}`}
+                className="group absolute left-[947px] top-[487px] block cursor-pointer rounded-[29px] outline-none transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_35px_rgba(0,0,0,0.5)] focus-visible:ring-2 focus-visible:ring-white"
+                style={{ opacity: flight && flight.kind === "projects" ? 0 : 1 }}
+              >
+                <ProjectImage item={chosen} />
+                <span className="pointer-events-none absolute inset-0 rounded-[29px] border border-white/0 transition-colors group-hover:border-white/20" />
+              </button>
+            )}
+
+            {/* Clickable Title Hotspots */}
+            <button
+              type="button"
+              onClick={() => navigate("services")}
+              disabled={!services.length}
+              aria-label="Buka daftar layanan kami"
+              title="Klik untuk melihat layanan kami"
+              className="absolute left-[136px] top-[217px] h-[55px] w-[250px] cursor-pointer rounded-lg focus-visible:outline-2 focus-visible:outline-white"
+            />
+            <button
+              type="button"
+              onClick={() => navigate("projects")}
+              disabled={!projects.length}
+              aria-label="Buka daftar proyek kami"
+              title="Klik untuk melihat proyek kami"
+              className="absolute left-[1170px] top-[426px] h-[60px] w-[245px] cursor-pointer rounded-lg focus-visible:outline-2 focus-visible:outline-white"
+            />
+          </div>
+
+          {/* SCENE 2: SERVICES VIEW */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-600 ease-out ${activeScene === "services" ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+            aria-label="Daftar Layanan Craftivation"
+            aria-hidden={activeScene !== "services"}
+          >
+            <SourceArtboard src={SVG.services} />
+            
+            {/* Back to Hub Button (Clean circular button, no text collision) */}
+            <button
+              type="button"
+              onClick={() => navigate("services", true)}
+              aria-label="Kembali ke Hub"
+              className={`absolute left-[122px] top-[52px] z-30 grid h-[46px] w-[46px] place-items-center rounded-full text-[24px] text-white/75 transition-all duration-300 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white cursor-pointer ${
+                chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+              }`}
+            >
+              ‹
+            </button>
+
+            <div className="absolute left-[250px] top-[284px] w-[940px]">
+              <div
+                ref={serviceScrollRef}
+                onScroll={() => syncCardOnScroll("services")}
+                onKeyDown={(event) => {
+                  if (event.key === "ArrowRight") { event.preventDefault(); scrollToCard("services", activeServiceIndex + 1); }
+                  if (event.key === "ArrowLeft") { event.preventDefault(); scrollToCard("services", activeServiceIndex - 1); }
+                }}
+                className="hub-clean-rail w-full overflow-x-auto overflow-y-hidden"
+                role="region"
+                aria-label="Slider layanan Craftivation, gunakan tombol panah atau tombol navigasi untuk berpindah"
+                tabIndex={0}
+                style={{ scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}
+              >
+                <div className="relative flex w-max items-stretch gap-[34px] px-[82px]">
+                  {services.map((service, index) => {
+                    const isMainCard = index === activeServiceIndex;
+                    if (isMainCard) {
+                      // Kartu utama: selama flight disembunyikan agar digantikan flying card.
+                      // Saat flight selesai, langsung aktif di posisinya TANPA translate shift atau delay (100% smooth, anti-kedip).
+                      return (
+                        <div
+                          key={service.id}
+                          data-service-index={index}
+                          className="shrink-0 snap-center"
+                          style={{
+                            opacity: flight && flight.kind === "services" ? 0 : 1,
+                            transition: "none",
+                          }}
+                          role="group"
+                          aria-label={`${service.name}, layanan ${index + 1} dari ${services.length}`}
+                        >
+                          <ServiceCard item={service} variant="large" />
+                        </div>
+                      );
+                    }
+
+                    // Kartu kedua dan seterusnya: muncul 100ms setelah kartu utama selesai membesar
+                    return (
+                      <div
+                        key={service.id}
+                        data-service-index={index}
+                        className={`shrink-0 snap-center transition-all duration-400 ease-out ${
+                          chromeVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"
+                        }`}
+                        role="group"
+                        aria-label={`${service.name}, layanan ${index + 1} dari ${services.length}`}
+                      >
                         <ServiceCard item={service} variant="large" />
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
-                {services.length === 0 && <p className="pt-20 text-center text-2xl text-white/70">Layanan akan segera hadir.</p>}
               </div>
-              {services.length > 1 && (
-                <nav aria-label="Navigasi slider layanan" className="absolute left-[326px] top-[215px] flex items-center gap-[14px] motion-safe:animate-[hub-appear_650ms_ease-out_both]">
-                  <button type="button" onClick={() => scrollToCard("services", activeServiceIndex - 1)} disabled={activeServiceIndex === 0} aria-label="Layanan sebelumnya" className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35">‹</button>
-                  <button type="button" onClick={() => scrollToCard("services", activeServiceIndex + 1)} disabled={activeServiceIndex === services.length - 1} aria-label="Layanan berikutnya" className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35">›</button>
-                  <span className="ml-[12px] min-w-[74px] text-[16px] tabular-nums tracking-[.1em] text-white/65">{String(activeServiceIndex + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}</span>
-                </nav>
-              )}
+              {services.length === 0 && <p className="pt-20 text-center text-2xl text-white/70">Layanan akan segera hadir.</p>}
             </div>
 
-            <div className={projectsVisible ? "absolute inset-0" : "hidden"} aria-hidden={!projectsVisible}>
-              <SourceArtboard src={SVG.project} />
-              <button type="button" onClick={() => goBack("projects")} aria-label="Kembali ke Hub" className="absolute left-[266px] top-[60px] grid h-[46px] w-[46px] place-items-center rounded-full text-[24px] text-white/75 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white">‹</button>
-              {projects.length > 1 && (
-                <nav aria-label="Navigasi slider proyek" className="absolute left-[284px] top-[155px] flex items-center gap-[14px] motion-safe:animate-[hub-appear_650ms_ease-out_both]">
-                  <button type="button" onClick={() => scrollToCard("projects", projectIndex - 1)} disabled={projectIndex === 0} aria-label="Proyek sebelumnya" className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35">‹</button>
-                  <button type="button" onClick={() => scrollToCard("projects", projectIndex + 1)} disabled={projectIndex === projects.length - 1} aria-label="Proyek berikutnya" className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35">›</button>
-                  <span className="ml-[12px] min-w-[74px] text-[16px] tabular-nums tracking-[.1em] text-white/65">{String(projectIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
-                </nav>
-              )}
-              {projects.length > 0 ? (
-                <>
-                  <div className="absolute left-[237.5px] top-[220px] w-[965px]">
-                    <div ref={projectScrollRef} onScroll={() => syncCardOnScroll("projects")} onKeyDown={(event) => { if (event.key === "ArrowRight") { event.preventDefault(); scrollToCard("projects", projectIndex + 1); } if (event.key === "ArrowLeft") { event.preventDefault(); scrollToCard("projects", projectIndex - 1); } }} className="hub-clean-rail w-full overflow-x-auto overflow-y-hidden" role="region" aria-label="Geser untuk melihat daftar proyek Craftivation" tabIndex={0} style={{ scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}>
-                      <div className="relative flex w-max items-stretch gap-[34px] px-[50px]">
-                        {projects.map((project, index) => (
-                          <div key={project.id} data-project-index={index} className="shrink-0 snap-center" role="group" aria-label={`${project.title}, proyek ${index + 1} dari ${projects.length}`}>
-                            <a href={project.href} tabIndex={index === projectIndex ? 0 : -1} className="block rounded-[29.326px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+            {/* Slider Pagination Controls (Muncul 100ms setelah kartu membesar) */}
+            {services.length > 1 && (
+              <nav
+                aria-label="Navigasi slider layanan"
+                className={`absolute left-[326px] top-[215px] flex items-center gap-[14px] transition-all duration-300 ${
+                  chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => scrollToCard("services", activeServiceIndex - 1)}
+                  disabled={activeServiceIndex === 0}
+                  aria-label="Layanan sebelumnya"
+                  className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35 cursor-pointer"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollToCard("services", activeServiceIndex + 1)}
+                  disabled={activeServiceIndex === services.length - 1}
+                  aria-label="Layanan berikutnya"
+                  className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35 cursor-pointer"
+                >
+                  ›
+                </button>
+                <span className="ml-[12px] min-w-[74px] text-[16px] tabular-nums tracking-[.1em] text-white/65">
+                  {String(activeServiceIndex + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
+                </span>
+              </nav>
+            )}
+          </div>
+
+          {/* SCENE 3: PROJECTS VIEW */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-600 ease-out ${activeScene === "projects" ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+            aria-label="Daftar Proyek Craftivation"
+            aria-hidden={activeScene !== "projects"}
+          >
+            <SourceArtboard src={SVG.project} />
+            
+            {/* Back to Hub Button (Clean circular button, no text collision) */}
+            <button
+              type="button"
+              onClick={() => navigate("projects", true)}
+              aria-label="Kembali ke Hub"
+              className={`absolute left-[284px] top-[70px] z-30 grid h-[46px] w-[46px] place-items-center rounded-full text-[24px] text-white/75 transition-all duration-300 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white cursor-pointer ${
+                chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+              }`}
+            >
+              ‹
+            </button>
+
+            {/* Slider Pagination Controls (Muncul 100ms setelah kartu membesar) */}
+            {projects.length > 1 && (
+              <nav
+                aria-label="Navigasi slider proyek"
+                className={`absolute left-[284px] top-[155px] flex items-center gap-[14px] transition-all duration-300 ${
+                  chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => scrollToCard("projects", projectIndex - 1)}
+                  disabled={projectIndex === 0}
+                  aria-label="Proyek sebelumnya"
+                  className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35 cursor-pointer"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollToCard("projects", projectIndex + 1)}
+                  disabled={projectIndex === projects.length - 1}
+                  aria-label="Proyek berikutnya"
+                  className="grid h-12 w-12 place-items-center rounded-full text-[30px] leading-none text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white disabled:cursor-default disabled:opacity-35 cursor-pointer"
+                >
+                  ›
+                </button>
+                <span className="ml-[12px] min-w-[74px] text-[16px] tabular-nums tracking-[.1em] text-white/65">
+                  {String(projectIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+                </span>
+              </nav>
+            )}
+
+            {projects.length > 0 ? (
+              <>
+                <div className="absolute left-[237.5px] top-[220px] w-[965px]">
+                  <div
+                    ref={projectScrollRef}
+                    onScroll={() => syncCardOnScroll("projects")}
+                    onKeyDown={(event) => {
+                      if (event.key === "ArrowRight") { event.preventDefault(); scrollToCard("projects", projectIndex + 1); }
+                      if (event.key === "ArrowLeft") { event.preventDefault(); scrollToCard("projects", projectIndex - 1); }
+                    }}
+                    className="hub-clean-rail w-full overflow-x-auto overflow-y-hidden"
+                    role="region"
+                    aria-label="Geser untuk melihat daftar proyek Craftivation"
+                    tabIndex={0}
+                    style={{ scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", touchAction: "pan-x" }}
+                  >
+                    <div className="relative flex w-max items-stretch gap-[34px] px-[50px]">
+                      {projects.map((project, index) => {
+                        const isMainCard = index === projectIndex;
+                        if (isMainCard) {
+                          // Kartu proyek utama: langsung aktif tanpa translate shift atau delay transisi
+                          return (
+                            <div
+                              key={project.id}
+                              data-project-index={index}
+                              className="shrink-0 snap-center"
+                              style={{
+                                opacity: flight && flight.kind === "projects" ? 0 : 1,
+                                transition: "none",
+                              }}
+                              role="group"
+                              aria-label={`${project.title}, proyek ${index + 1} dari ${projects.length}`}
+                            >
+                              <a href={project.href} tabIndex={0} className="block rounded-[29.326px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+                                <ProjectImage item={project} large />
+                              </a>
+                            </div>
+                          );
+                        }
+
+                        // Kartu kedua dan seterusnya: muncul 100ms setelah kartu utama selesai membesar
+                        return (
+                          <div
+                            key={project.id}
+                            data-project-index={index}
+                            className={`shrink-0 snap-center transition-all duration-400 ease-out ${
+                              chromeVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"
+                            }`}
+                            role="group"
+                            aria-label={`${project.title}, proyek ${index + 1} dari ${projects.length}`}
+                          >
+                            <a href={project.href} tabIndex={-1} className="block rounded-[29.326px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
                               <ProjectImage item={project} large />
                             </a>
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
                   </div>
-                  {chosen && (
-                    <div className="motion-safe:animate-[hub-appear_700ms_ease-out_both]">
-                      <span className="absolute left-[174px] top-[440px] text-[25px] font-normal tabular-nums">{chosen.number || String(projectIndex + 1).padStart(2, "0")}</span>
-                      <span className="absolute left-[1202px] top-[440px] max-w-[215px] truncate text-[25px] font-normal">{chosen.client}</span>
-                      <h3 className="absolute left-1/2 top-[729px] w-[1100px] -translate-x-1/2 text-center text-[48px] leading-[1.12] tracking-[-.026em]" style={{ fontFamily: "var(--font-arsenal)" }}>{chosen.title}</h3>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <p className="absolute left-1/2 top-1/2 -translate-x-1/2 text-2xl text-white/70">Proyek akan segera hadir.</p>
-              )}
-            </div>
-
-
-            {currentService && (servicesEntering || servicesLeaving) && (
-              <div role="presentation" aria-hidden="true"
-                className="pointer-events-none absolute z-30 origin-top-left transform-gpu will-change-transform"
-                style={{ left: cardPositions.services.to.left, top: cardPositions.services.to.top,
-                  width: cardPositions.services.to.width, height: cardPositions.services.to.height,
-                  transform: flightTransform("services", serviceAmount) }}>
-                <ServiceCard item={currentService} variant="large" showLink={false} />
-              </div>
-            )}
-            {chosen && projectsEntering && (
-              <div role="presentation" aria-hidden="true"
-                className="pointer-events-none absolute z-30 origin-top-left transform-gpu will-change-transform"
-                style={{ left: cardPositions.projects.to.left, top: cardPositions.projects.to.top,
-                  width: cardPositions.projects.to.width, height: cardPositions.projects.to.height,
-                  transform: flightTransform("projects", projectAmount) }}>
-                <ProjectImage item={chosen} large />
-              </div>
+                </div>
+                {chosen && (
+                  <div
+                    className={`absolute left-[287.5px] top-[705px] w-[865px] flex items-center justify-between transition-all duration-400 ${
+                      chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+                    }`}
+                  >
+                    <span className="min-w-[60px] text-[22px] font-normal tabular-nums text-white/55">
+                      {chosen.number || String(projectIndex + 1).padStart(2, "0")}
+                    </span>
+                    <h3
+                      className="max-w-[620px] truncate text-center text-[38px] font-normal leading-tight tracking-[-0.025em] text-white"
+                      style={{ fontFamily: "var(--font-arsenal)" }}
+                    >
+                      {chosen.title}
+                    </h3>
+                    <span className="min-w-[60px] max-w-[220px] truncate text-right text-[22px] font-normal text-white/75">
+                      {chosen.client}
+                    </span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="absolute left-1/2 top-1/2 -translate-x-1/2 text-2xl text-white/70">Proyek akan segera hadir.</p>
             )}
           </div>
+
+          {/* FLIGHT ZOOM OVERLAY: Smooth physical zoom between intro stage and slider view */}
+          {flight && (
+            <div
+              className="pointer-events-none absolute z-50 will-change-transform"
+              style={{
+                left: `${flightLeft}px`,
+                top: `${flightTop}px`,
+                width: `${flightWidth}px`,
+                height: `${flightHeight}px`,
+                transformOrigin: "top left",
+                transform: flightTransform,
+                transition: flight.moving
+                  ? "transform 650ms cubic-bezier(0.2, 0.9, 0.25, 1)"
+                  : "none",
+              }}
+              onTransitionEnd={(event) => {
+                if (event.target !== event.currentTarget) return;
+                finishFlight(flight.closing ? undefined : flight.kind);
+              }}
+            >
+              {flight.kind === "services" && currentService && (
+                <ServiceCard item={currentService} variant="large" showLink={true} />
+              )}
+              {flight.kind === "projects" && chosen && (
+                <ProjectImage item={chosen} large />
+              )}
+            </div>
+          )}
+
         </div>
       </div>
     </section>

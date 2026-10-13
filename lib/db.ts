@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
-import { dummyProjects, dummyServices } from "@/data/dummy";
+import { dummyProjects, dummyServices, dummyStats } from "@/data/dummy";
 
 // Optional path for persistent SQLite volumes on a stateful host. Defaults to
 // the exact legacy database path so existing projects and migration history stay intact.
@@ -42,6 +42,18 @@ function init(db: Database.Database) {
       is_active   INTEGER NOT NULL DEFAULT 1
     );
 
+    CREATE TABLE IF NOT EXISTS company_stats (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      key         TEXT NOT NULL UNIQUE,
+      value       INTEGER NOT NULL DEFAULT 0,
+      suffix      TEXT NOT NULL DEFAULT '+',
+      prefix      TEXT NOT NULL DEFAULT '',
+      label_line1 TEXT NOT NULL,
+      label_line2 TEXT NOT NULL,
+      sort_order  INTEGER NOT NULL DEFAULT 0,
+      is_active   INTEGER NOT NULL DEFAULT 1
+    );
+
     CREATE TABLE IF NOT EXISTS craftivation_seed_migrations (
       key        TEXT PRIMARY KEY,
       applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -72,6 +84,16 @@ function init(db: Database.Database) {
     })();
   }
 
+  if (count("company_stats") === 0) {
+    const insert = db.prepare(
+      `INSERT INTO company_stats (key, value, suffix, prefix, label_line1, label_line2, sort_order, is_active)
+       VALUES (@key, @value, @suffix, @prefix, @labelLine1, @labelLine2, @sortOrder, @isActive)`
+    );
+    db.transaction(() => {
+      for (const s of dummyStats) insert.run({ ...s, isActive: s.isActive ? 1 : 0 });
+    })();
+  }
+
   // One-time, additive upgrade for installations created when MidCafe was
   // the only seeded example. The two projects already shown in the portfolio
   // are now represented in SQLite too, without overwriting edited rows.
@@ -95,6 +117,24 @@ function init(db: Database.Database) {
         }
       }
       db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(migrationKey);
+    })();
+  }
+
+  // Seed company stats for existing databases that were created before the company_stats table
+  const statsMigrationKey = "hero-company-stats-v1";
+  const statsMigrationApplied = db
+    .prepare("SELECT key FROM craftivation_seed_migrations WHERE key = ?")
+    .get(statsMigrationKey);
+  if (!statsMigrationApplied) {
+    db.transaction(() => {
+      const insert = db.prepare(
+        `INSERT OR IGNORE INTO company_stats (key, value, suffix, prefix, label_line1, label_line2, sort_order, is_active)
+         VALUES (@key, @value, @suffix, @prefix, @labelLine1, @labelLine2, @sortOrder, @isActive)`
+      );
+      for (const stat of dummyStats) {
+        insert.run({ ...stat, isActive: stat.isActive ? 1 : 0 });
+      }
+      db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(statsMigrationKey);
     })();
   }
 }

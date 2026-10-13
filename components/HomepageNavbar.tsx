@@ -85,20 +85,20 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
               key={item.href}
               href={navHref(item.href)}
               aria-current={((variant === "about" && item.href === "/about") || (variant === "approach" && item.href === "/approach") || (variant === "projects" && item.href === "/projects")) ? "page" : undefined}
-              className="text-[16px] font-normal leading-[1.2] text-inherit no-underline transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none"
+              className="font-[family-name:var(--font-arsenal)] text-[18px] font-normal leading-[1.2] text-inherit no-underline transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none"
             >
               {item.label}
             </a>
           ))}
           <a
             href="#contact"
-            className={`inline-flex h-[41px] w-[140px] items-center justify-center border border-current bg-transparent px-[10px] text-center text-[16px] font-normal leading-[1.2] text-inherit no-underline transition-[background-color,color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none ${
+            className={`font-[family-name:var(--font-arsenal)] inline-flex h-[42px] px-5 items-center justify-center border border-current bg-transparent text-center text-[18px] font-normal leading-[1.2] text-inherit no-underline transition-[background-color,color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none ${
               scrolled
                 ? "hover:bg-[#181818] hover:text-white"
                 : "hover:bg-white/15"
             }`}
           >
-            Contact Us
+            Hubungi Kami
           </a>
         </nav>
 
@@ -151,7 +151,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
             aria-current={((variant === "about" && item.href === "/about") || (variant === "approach" && item.href === "/approach") || (variant === "projects" && item.href === "/projects")) ? "page" : undefined}
             onClick={closeMenu}
             tabIndex={menuOpen ? 0 : -1}
-            className="flex min-h-[50px] items-center text-[16px] font-normal text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+            className="font-[family-name:var(--font-arsenal)] flex min-h-[48px] items-center text-[18px] font-normal text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
           >
             {item.label}
           </a>
@@ -160,9 +160,9 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
           href="#contact"
           onClick={closeMenu}
           tabIndex={menuOpen ? 0 : -1}
-          className="mt-3 flex h-11 min-h-11 items-center justify-center border border-current text-[16px] font-normal text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+          className="font-[family-name:var(--font-arsenal)] mt-3 flex h-11 min-h-11 items-center justify-center border border-current text-[18px] font-normal text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
         >
-          Contact Us
+          Hubungi Kami
         </a>
       </nav>
       <span className="homeScrollProgress" aria-hidden="true" />
