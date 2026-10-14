@@ -25,13 +25,13 @@ const expertise = [
   },
   {
     title: "Profesional, cekatan dan bertanggungjawab",
-    image: "/assets/project-professional.svg",
-    alt: "Tim kontraktor bekerja pada proses fabrikasi booth",
+    image: "/assest/Photo 1.png",
+    alt: "Pekerja tim instalasi Craftivation",
   },
   {
     title: "Instalasi dan tepat waktu",
-    image: "/assets/project-installation.svg",
-    alt: "Tim profesional bekerja mengerjakan instalasi",
+    image: "/assest/Photo 2.png",
+    alt: "Proses fabrikasi dan instalasi presisi oleh tim Craftivation",
   },
 ] as const;
 

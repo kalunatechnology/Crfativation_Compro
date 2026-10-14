@@ -66,10 +66,10 @@ export default function HeroSection() {
     <div
       aria-label="Statistik Craftivation"
       className="
-        homeHero__stats mt-8 grid w-full max-w-[695.29px]
-        grid-cols-3 gap-[8px]
-        sm:mt-12 sm:gap-[15px]
-        lg:mt-16
+        homeHero__stats mt-8 grid w-full max-w-[780px]
+        grid-cols-3 gap-2
+        sm:mt-12 sm:gap-3.5
+        lg:mt-16 lg:gap-4
       "
     >
       {stats.map((item, index) => (
@@ -77,18 +77,16 @@ export default function HeroSection() {
           key={`${item.id || item.key}-${item.value}`}
           className="
             homeHero__stat relative flex min-w-0
-            h-[112px] flex-row items-center
-            justify-start gap-3 overflow-hidden
+            h-[96px] sm:h-[104px] lg:h-[110px]
+            flex-row items-center justify-center
+            gap-1.5 sm:gap-3 lg:gap-3.5
+            overflow-hidden
             border border-white/10
             bg-black/25
-            px-4 text-white
+            px-2 sm:px-4 lg:px-5 text-white
 
             backdrop-blur-[24px]
             backdrop-saturate-150
-
-            sm:h-[107.36px]
-            sm:gap-5 sm:px-6
-            lg:gap-7 lg:px-7
           "
         >
           {/* Glass Reflection */}
@@ -124,10 +122,9 @@ export default function HeroSection() {
           <span
             className="
               relative z-10 text-left
-              text-[11px] font-normal
-              leading-[1.35] opacity-80
-              sm:text-[13px]
-              lg:text-[15px]
+              text-[10px] sm:text-[12px] lg:text-[13.5px]
+              font-normal leading-[1.25] opacity-85
+              whitespace-nowrap shrink-0
             "
           >
             {item.labelLine1}

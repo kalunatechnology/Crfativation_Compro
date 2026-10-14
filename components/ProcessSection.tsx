@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import MethodRoom from "@/components/MethodRoom";
 
@@ -15,6 +16,7 @@ const methods = [
     subtitle: "Kami mendengar, sebelum mulai membuat",
     description:
       "Kami menyelaraskan keahlian teknis kami dengan ide cemerlang anda melalui sesi konsultasi mendalam dan observasi venue yang teliti.",
+    gif: "/assets/approach-kenali.gif",
   },
   {
     number: "02",
@@ -22,6 +24,7 @@ const methods = [
     subtitle: "Kami berkreasi dengan konsep mutakhir",
     description:
       "Mulai dari gambar tiga dimensi, hingga fabrikasi, kami menjamin seluruh produksi dilakukan dengan teliti dan berkualitas tinggi",
+    gif: "/assets/approach-kreasi.gif",
   },
   {
     number: "03",
@@ -29,6 +32,7 @@ const methods = [
     subtitle: "Tidak hanya membangun, kami memberi bukti",
     description:
       "Instalasi kami lakukan dengan ringkas, presisi dan diiringi evaluasi performa pasca acara sebagai garansi dari integritas kami.",
+    gif: "/assets/approach-implikasi.gif",
   },
 ] as const;
 
@@ -119,8 +123,6 @@ export default function ProcessSection() {
   }, [enhanced]);
 
   const currentMobileMethod = methods[mobileActiveIndex];
-  const currentMobileProgress =
-    mobileActiveIndex === 0 ? 0 : mobileActiveIndex === 1 ? 0.48 : 1;
 
   return (
     <section
@@ -168,6 +170,21 @@ export default function ProcessSection() {
 
       {/* MOBILE & TABLET INTERACTIVE EXPERIENCE (< 1024px) */}
       <div className="metodeSection__mobileView lg:hidden">
+        {/* Hidden preloads for instant tab switching without loading flicker */}
+        <div className="hidden" aria-hidden="true">
+          {methods.map((method) => (
+            <Image
+              key={`preload-${method.gif}`}
+              src={method.gif}
+              alt=""
+              width={10}
+              height={10}
+              unoptimized
+              priority
+            />
+          ))}
+        </div>
+
         {/* Step Tab Buttons */}
         <div className="metodeMobileTabs" role="tablist" aria-label="Tahapan metode kerja">
           {methods.map((method, index) => {
@@ -198,7 +215,19 @@ export default function ProcessSection() {
           className="metodeMobileCard"
         >
           <div className="metodeMobileCard__art">
-            <MethodRoom progress={currentMobileProgress} />
+            <div className="metodeMobileCard__gifWrap">
+              <Image
+                key={currentMobileMethod.gif}
+                src={currentMobileMethod.gif}
+                alt={`Animasi tahapan ${currentMobileMethod.title}`}
+                width={760}
+                height={760}
+                unoptimized
+                priority
+                className="metodeMobileCard__gif"
+                draggable={false}
+              />
+            </div>
           </div>
 
           <div className="metodeMobileCard__copy">

@@ -90,7 +90,7 @@ export default function AnimatedStat({ value, prefix, suffix, delay = 0 }: Anima
   return (
     <strong
       ref={containerRef as React.RefObject<HTMLElement>}
-      className="relative z-10 shrink-0 text-[32px] font-light leading-none tracking-[-0.06em] tabular-nums sm:text-[44px] lg:text-[50px]"
+      className="relative z-10 shrink-0 text-[24px] font-light leading-none tracking-[-0.04em] tabular-nums sm:text-[36px] lg:text-[44px]"
       style={{ fontVariantNumeric: "tabular-nums", fontFeatureSettings: '"tnum" 1' }}
       aria-label={`${prefix}${value}${suffix}`}
     >

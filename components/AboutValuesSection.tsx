@@ -16,13 +16,13 @@ const values = [
   },
   {
     title: "Profesional, cekatan dan bertanggungjawab",
-    image: "/assets/about-workshop-top.avif",
-    alt: "Tenaga profesional Craftivation mengerjakan instalasi di workshop",
+    image: "/assest/Photo 1.png",
+    alt: "Pekerja tim instalasi Craftivation",
   },
   {
     title: "Instalasi dan pengiriman tepat waktu",
-    image: "/assets/about-workshop-detail.avif",
-    alt: "Pekerjaan fabrikasi dan instalasi presisi oleh tim Craftivation",
+    image: "/assest/Photo 2.png",
+    alt: "Proses fabrikasi dan workshop detail oleh tim Craftivation",
   },
 ] as const;
 
