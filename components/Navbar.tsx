@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useContactModal } from "@/components/ContactModal";
 
 const navItems = [
   { label: "Portofolio", href: "#projects" },
@@ -12,6 +13,7 @@ const navItems = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { openModal } = useContactModal();
 
   useEffect(() => {
     const updateNavbar = () => setScrolled(window.scrollY > 20);
@@ -46,9 +48,13 @@ export default function Navbar() {
               {item.label}
             </a>
           ))}
-          <a className="siteNav__contactBtn" href="#contact">
+          <button
+            type="button"
+            className="siteNav__contactBtn"
+            onClick={openModal}
+          >
             Hubungi Kami
-          </a>
+          </button>
         </nav>
 
         <button
@@ -73,13 +79,16 @@ export default function Navbar() {
             {item.label}
           </a>
         ))}
-        <a
-          href="#contact"
+        <button
+          type="button"
           className="siteNav__mobileContact"
-          onClick={() => setMenuOpen(false)}
+          onClick={() => {
+            setMenuOpen(false);
+            openModal();
+          }}
         >
           Hubungi Kami
-        </a>
+        </button>
       </nav>
     </header>
   );

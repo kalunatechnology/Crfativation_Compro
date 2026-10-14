@@ -41,7 +41,7 @@ const defaults = [
     slug: "modular",
     title: "Modular",
     description: "Paket booth praktis dan minimalis untuk kebutuhan jangka pendek brand Anda.",
-    image: "/assets/approach-modular.svg",
+    image: "/assets/craftivation-room.webp",
   },
   {
     slug: "versatile",

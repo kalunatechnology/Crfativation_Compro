@@ -5,17 +5,27 @@ import HomepageNavbar from "@/components/HomepageNavbar";
 import ProjectsGallery from "@/components/ProjectsGallery";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
+import { SITE_URL, buildBreadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Project & Portofolio | Craftivation Exhibition Contractor",
+  title: "Portofolio Proyek | Craftivation Exhibition Contractor",
   description:
-    "Jelajahi berbagai proyek booth, exhibition, dan brand activation Craftivation. Portofolio ditampilkan langsung dari database proyek aktif.",
+    "Jelajahi berbagai proyek booth, exhibition, dan brand activation Craftivation. Portofolio kontraktor pameran profesional di Indonesia.",
+  alternates: {
+    canonical: `${SITE_URL}/projects`,
+  },
   openGraph: {
-    title: "Project & Portofolio Craftivation",
-    description: "Solusi booth Craftivation untuk beragam brand.",
+    title: "Portofolio Proyek | Craftivation Exhibition Contractor",
+    description: "Solusi booth Craftivation untuk beragam brand terkemuka.",
+    url: `${SITE_URL}/projects`,
     type: "website",
+    images: ["/assets/hero-booth.webp"],
   },
 };
+
+const breadcrumbs = buildBreadcrumbJsonLd([
+  { name: "Portofolio Proyek", path: "/projects" },
+]);
 
 const expertise = [
   {
@@ -41,6 +51,12 @@ const expertise = [
 export default function ProjectsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbs).replace(/</g, "\\u003c"),
+        }}
+      />
       <HomepageMotion />
       <HomepageNavbar variant="projects" />
       <main className="homepage projectsPage">

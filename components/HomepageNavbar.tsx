@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useContactModal } from "@/components/ContactModal";
 
 const navItems = [
   { label: "Portofolio", href: "/projects" },
@@ -18,6 +19,7 @@ const navItems = [
 export default function HomepageNavbar({ variant = "home" }: { variant?: "home" | "about" | "approach" | "projects" }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { openModal } = useContactModal();
 
   useEffect(() => {
     const updateNavbar = () => setScrolled(window.scrollY > 20);
@@ -90,16 +92,17 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
               {item.label}
             </a>
           ))}
-          <a
-            href="#contact"
-            className={`font-[family-name:var(--font-arsenal)] inline-flex h-[42px] px-5 items-center justify-center border border-current bg-transparent text-center text-[18px] font-normal leading-[1.2] text-inherit no-underline transition-[background-color,color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none ${
+          <button
+            type="button"
+            onClick={openModal}
+            className={`font-[family-name:var(--font-arsenal)] inline-flex h-[42px] px-5 items-center justify-center border border-current bg-transparent text-center text-[18px] font-normal leading-[1.2] text-inherit cursor-pointer no-underline transition-[background-color,color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none ${
               scrolled
                 ? "hover:bg-[#181818] hover:text-white"
                 : "hover:bg-white/15"
             }`}
           >
             Hubungi Kami
-          </a>
+          </button>
         </nav>
 
         {/* Mobile: tombol tiga garis berubah menjadi X saat menu dibuka. */}
@@ -156,14 +159,17 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
             {item.label}
           </a>
         ))}
-        <a
-          href="#contact"
-          onClick={closeMenu}
+        <button
+          type="button"
+          onClick={() => {
+            closeMenu();
+            openModal();
+          }}
           tabIndex={menuOpen ? 0 : -1}
-          className="font-[family-name:var(--font-arsenal)] mt-3 flex h-11 min-h-11 items-center justify-center border border-current text-[18px] font-normal text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+          className="font-[family-name:var(--font-arsenal)] mt-3 flex h-11 min-h-11 w-full items-center justify-center border border-current bg-transparent text-[18px] font-normal text-inherit cursor-pointer no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
         >
           Hubungi Kami
-        </a>
+        </button>
       </nav>
       <span className="homeScrollProgress" aria-hidden="true" />
     </header>

@@ -2,6 +2,15 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ReactNode } from "react";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  rootStructuredData,
+} from "@/lib/seo";
+import { ContactModalProvider } from "@/components/ContactModal";
 
 const arsenal = localFont({
   src: [
@@ -48,18 +57,80 @@ const plusJakarta = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Craftivation | Exhibition Contractor",
-  description:
-    "Craftivation membantu brand merancang dan mengeksekusi booth, exhibition, dan brand activation untuk kebutuhan komersial.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: "PT SINERGI MUDA ARSA (ARSALYNK)",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: "/",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/assets/hero-booth.webp",
+        width: 1200,
+        height: 630,
+        alt: "Craftivation Exhibition Contractor - Desain dan Fabrikasi Booth Pameran",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/assets/hero-booth.webp"],
+  },
   icons: {
-    icon: "/assets/icon-craftivation.svg",
+    icon: [
+      { url: "/assets/icon-craftivation.svg" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/assets/icon-craftivation.svg",
+    apple: "/assets/icon-craftivation.svg",
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" className={`${arsenal.variable} ${plusJakarta.variable}`}>
-      <body className="antialiased">{children}</body>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(rootStructuredData).replace(/</g, "\\u003c"),
+          }}
+        />
+      </head>
+      <body className="antialiased">
+        <ContactModalProvider>{children}</ContactModalProvider>
+      </body>
     </html>
   );
 }
+

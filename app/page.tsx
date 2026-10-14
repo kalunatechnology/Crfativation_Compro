@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import HomepageNavbar from "@/components/HomepageNavbar";
 import HomepageMotion from "@/components/HomepageMotion";
 import HeroSection from "@/components/HeroSection";
@@ -7,6 +8,13 @@ import PortfolioSection from "@/components/PortfolioSection";
 import AboutSection from "@/components/AboutSection";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
+import { SITE_URL } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: SITE_URL,
+  },
+};
 
 /** Composed homepage; interaction stays inside its section components. */
 export default function Home() {

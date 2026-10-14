@@ -42,7 +42,7 @@ export const dummyServices: ServiceInput[] = [
     name: "Modular",
     description:
       "Paket booth praktis dan minimalis untuk kebutuhan jangka pendek brand Anda.",
-    image: "/assets/hub-modular.svg",
+    image: "/assets/craftivation-room.webp",
     href: "#contact",
     sortOrder: 1,
     isActive: true,

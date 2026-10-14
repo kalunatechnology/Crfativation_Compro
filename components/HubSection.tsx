@@ -17,16 +17,18 @@ const SVG = {
   stage: "/assets/hub-svg-stage.svg",
   services: "/assets/hub-svg-services.svg",
   project: "/assets/hub-svg-project.svg?v=2",
-  modular: "/assets/hub-svg-modular.webp",
+  modular: "/assets/craftivation-room.webp",
   versatile: "/assets/hub-svg-versatile.webp",
   coffee: "/assets/hub-svg-coffee.webp",
 };
 
 const aliases: Record<string, string> = {
-  "/assets/hub-modular.svg": SVG.modular,
-  "/assets/hub-modular.webp": SVG.modular,
-  "/assets/hub-modular-reference.avif": SVG.modular,
-  "/assets/hub-modular-icon.avif": SVG.modular,
+  "/assets/hub-modular.svg": "/assets/craftivation-room.webp",
+  "/assets/hub-modular.webp": "/assets/craftivation-room.webp",
+  "/assets/hub-modular-reference.avif": "/assets/craftivation-room.webp",
+  "/assets/hub-modular-icon.avif": "/assets/craftivation-room.webp",
+  "/assets/approach-modular.svg": "/assets/craftivation-room.webp",
+  "/assets/hub-svg-modular.webp": "/assets/craftivation-room.webp",
   "/assets/hub-versatile.svg": SVG.versatile,
   "/assets/hub-versatile.webp": SVG.versatile,
   "/assets/approach-enterprise.svg": "/assets/approach-enterprise.svg",
@@ -483,7 +485,7 @@ export default function HubSection() {
               <div className="relative h-[223px] w-[371.38px] shrink-0 overflow-hidden rounded-[24px] bg-white text-[#1e1e1e] shadow-[0_12px_28px_rgba(0,0,0,0.22)] flex items-center px-8 gap-6">
                 <div className="relative h-[120px] w-[120px] shrink-0">
                   <Image
-                    src="/assets/craftivation-cube.webp"
+                    src="/assets/craftivation-room.webp"
                     alt="Layanan Craftivation"
                     fill
                     unoptimized

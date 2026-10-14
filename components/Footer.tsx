@@ -106,9 +106,9 @@ export default function Footer() {
               <span className="footer__contactIcon" aria-hidden="true"><WhatsappIcon /></span>
               <span>+62 823-2230-8719</span>
             </a>
-            <a href="mailto:corporate@craftivation.com" className="footer__contactItem">
+            <a href="mailto:craftivation.studio@gmail.com" className="footer__contactItem">
               <span className="footer__contactIcon" aria-hidden="true"><EmailIcon /></span>
-              <span className="footer__email">corporate@craftivation.com</span>
+              <span className="footer__email">craftivation.studio@gmail.com</span>
             </a>
           </div>
         </div>
