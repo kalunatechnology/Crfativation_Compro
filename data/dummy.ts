@@ -57,6 +57,16 @@ export const dummyServices: ServiceInput[] = [
     sortOrder: 2,
     isActive: true,
   },
+  {
+    slug: "enterprise",
+    name: "Enterprise",
+    description:
+      "Paket booth premium, material terbaik, untuk pengalaman brand yang maksimal.",
+    image: "/assets/approach-enterprise.svg",
+    href: "#contact",
+    sortOrder: 3,
+    isActive: true,
+  },
 ];
 
 export const dummyProjects: ProjectInput[] = [

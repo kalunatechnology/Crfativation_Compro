@@ -29,6 +29,8 @@ const aliases: Record<string, string> = {
   "/assets/hub-modular-icon.avif": SVG.modular,
   "/assets/hub-versatile.svg": SVG.versatile,
   "/assets/hub-versatile.webp": SVG.versatile,
+  "/assets/approach-enterprise.svg": "/assets/approach-enterprise.svg",
+  "/assets/hub-enterprise.svg": "/assets/approach-enterprise.svg",
   "/assets/hub-midcafe.webp": SVG.coffee,
   "/assets/portfolio-coffeebooth.webp": SVG.coffee,
 };
@@ -453,60 +455,84 @@ export default function HubSection() {
       <div className="relative hidden h-[100svh] min-h-[720px] w-full overflow-hidden bg-[#010101] lg:block">
         <div className="absolute left-1/2 top-1/2 h-[972px] w-[1440px] origin-center" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
           
-          {/* SCENE 1: INTRO (Main Hub Stage) */}
+          {/* SCENE 1: INTRO (Main Hub Stage - Matching Image 2 Design) */}
           <div
             className={`absolute inset-0 transition-opacity duration-700 ease-out ${activeScene === "intro" ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
             aria-label="Tampilan utama Hub Craftivation"
             aria-hidden={activeScene !== "intro"}
           >
-            <SourceArtboard src={SVG.intro} />
+            <SourceArtboard src={SVG.stage} />
             <Image src="/assets/hub-pillar-mark.svg" alt="" width={52} height={40} unoptimized aria-hidden="true" className="pointer-events-none absolute left-[720px] top-[448px] -translate-x-1/2" />
-            
-            {/* Service Card Button */}
-            {currentService && (
-              <button
-                type="button"
-                onClick={() => navigate("services")}
-                aria-label={`Lihat layanan ${currentService.name}`}
-                className="group absolute left-[144px] top-[297px] cursor-pointer rounded-[21px] text-left outline-none transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_35px_rgba(0,0,0,0.5)] focus-visible:ring-2 focus-visible:ring-white"
-                style={{ opacity: flight && flight.kind === "services" ? 0 : 1 }}
-              >
-                <ServiceCard item={currentService} variant="small" showLink={false} />
-                <span className="pointer-events-none absolute inset-0 rounded-[21px] border border-white/0 transition-colors group-hover:border-white/20" />
-              </button>
-            )}
 
-            {/* Project Card Button */}
+            {/* Top Headline as shown in Image 2 */}
+            <h2
+              className="absolute left-1/2 top-[138px] -translate-x-1/2 text-center text-[38px] font-normal tracking-[-0.015em] text-white whitespace-nowrap select-none"
+              style={{ fontFamily: "var(--font-arsenal)" }}
+            >
+              Redefining space within commercial needs
+            </h2>
+            
+            {/* Service Card Button - Matching Image 2 Left Card */}
+            <button
+              type="button"
+              onClick={() => navigate("services")}
+              aria-label="Lihat Layanan Kami"
+              className="group absolute left-[144px] top-[297px] cursor-pointer rounded-[24px] text-left outline-none transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.55)] focus-visible:ring-2 focus-visible:ring-white"
+              style={{ opacity: flight && flight.kind === "services" ? 0 : 1 }}
+            >
+              <div className="relative h-[223px] w-[371.38px] shrink-0 overflow-hidden rounded-[24px] bg-white text-[#1e1e1e] shadow-[0_12px_28px_rgba(0,0,0,0.22)] flex items-center px-8 gap-6">
+                <div className="relative h-[120px] w-[120px] shrink-0">
+                  <Image
+                    src="/assets/craftivation-cube.webp"
+                    alt="Layanan Craftivation"
+                    fill
+                    unoptimized
+                    sizes="120px"
+                    className="object-contain"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <span
+                    className="block text-[34px] font-normal leading-[1.08] tracking-[-0.025em] text-[#161616]"
+                    style={{ fontFamily: "var(--font-arsenal)" }}
+                  >
+                    Layanan<br />Kami
+                  </span>
+                </div>
+              </div>
+              <span className="pointer-events-none absolute inset-0 rounded-[24px] border border-white/0 transition-colors group-hover:border-white/20" />
+            </button>
+
+            {/* Project Card Button - Matching Image 2 Right Card */}
             {chosen && (
               <button
                 type="button"
                 onClick={() => navigate("projects")}
-                aria-label={`Lihat proyek ${chosen.title}`}
-                className="group absolute left-[947px] top-[487px] block cursor-pointer rounded-[29px] outline-none transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_35px_rgba(0,0,0,0.5)] focus-visible:ring-2 focus-visible:ring-white"
+                aria-label="Lihat Proyek Kami"
+                className="group absolute left-[947px] top-[487px] block cursor-pointer rounded-[29px] outline-none transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.55)] focus-visible:ring-2 focus-visible:ring-white"
                 style={{ opacity: flight && flight.kind === "projects" ? 0 : 1 }}
               >
-                <ProjectImage item={chosen} />
+                <div className="relative h-[218px] w-[403px] overflow-hidden rounded-[29.326px] shadow-[0_12px_28px_rgba(0,0,0,0.25)]">
+                  <Image
+                    src={imageFor(chosen.image)}
+                    alt={chosen.imageAlt || chosen.title}
+                    fill
+                    unoptimized
+                    sizes="403px"
+                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/45 flex items-center justify-center transition-colors group-hover:bg-black/35">
+                    <span
+                      className="text-[34px] font-normal tracking-[-0.02em] text-white"
+                      style={{ fontFamily: "var(--font-arsenal)" }}
+                    >
+                      Proyek Kami
+                    </span>
+                  </div>
+                </div>
                 <span className="pointer-events-none absolute inset-0 rounded-[29px] border border-white/0 transition-colors group-hover:border-white/20" />
               </button>
             )}
-
-            {/* Clickable Title Hotspots */}
-            <button
-              type="button"
-              onClick={() => navigate("services")}
-              disabled={!services.length}
-              aria-label="Buka daftar layanan kami"
-              title="Klik untuk melihat layanan kami"
-              className="absolute left-[136px] top-[217px] h-[55px] w-[250px] cursor-pointer rounded-lg focus-visible:outline-2 focus-visible:outline-white"
-            />
-            <button
-              type="button"
-              onClick={() => navigate("projects")}
-              disabled={!projects.length}
-              aria-label="Buka daftar proyek kami"
-              title="Klik untuk melihat proyek kami"
-              className="absolute left-[1170px] top-[426px] h-[60px] w-[245px] cursor-pointer rounded-lg focus-visible:outline-2 focus-visible:outline-white"
-            />
           </div>
 
           {/* SCENE 2: SERVICES VIEW */}

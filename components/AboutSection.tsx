@@ -79,7 +79,7 @@ export default function AboutSection() {
 
         {/* ================= TEKS: Tengah ================= */}
         <div
-          className={`w-full text-center max-w-[1000px] mx-auto px-2 transition-all ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          className={`w-full text-center max-w-[1080px] mx-auto px-4 transition-all ease-[cubic-bezier(0.16,1,0.3,1)] ${
             isVisible
               ? "opacity-100 translate-y-0 scale-100"
               : "opacity-0 translate-y-10 scale-[0.97]"
@@ -89,20 +89,23 @@ export default function AboutSection() {
             transitionDelay: isVisible ? "60ms" : "0ms",
           }}
         >
-          <h2
-            id="about-title"
-            className="text-3xl sm:text-4xl lg:text-[42px] font-serif tracking-tight text-[#111111] leading-tight lg:whitespace-nowrap"
-            style={{ fontFamily: "var(--font-arsenal)" }}
-          >
-            Craftivation adalah kontraktor pameran profesional.
-          </h2>
+        <h2
+          id="about-title"
+          className="text-2xl sm:text-4xl lg:text-[42px] font-serif tracking-tight text-[#111111] leading-[1.15]"
+          style={{ fontFamily: "var(--font-arsenal)" }}
+        >
+          Craftivation adalah kontraktor pameran profesional.
+        </h2>
+
+
           <p
-            className="mt-4 sm:mt-6 text-sm sm:text-base text-[#444444] leading-relaxed max-w-[640px] mx-auto font-light whitespace-normal"
-            style={{ fontFamily: "var(--font-arsenal)" }}
+            className="mt-5 sm:mt-6 text-base sm:text-lg lg:text-2xl text-[#444444] leading-[1.5] max-w-[850px] mx-auto font-normal tracking-[-0.01em] whitespace-normal"
+            style={{ fontFamily: "var(--font-sans)" }}
           >
             Kami menangani setiap proyek dengan presisi dan perhatian terhadap detail, guna
             memastikan setiap klien mendapatkan pengalaman yang lancar dan berkelas.
           </p>
+
         </div>
 
         {/* ================= FOTO 2 & 3: Kiri Bawah & Kanan Bawah ================= */}

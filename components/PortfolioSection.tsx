@@ -1,21 +1,82 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useProjects } from "@/lib/useProjects";
 
 export default function PortfolioSection() {
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
+  const [activeIndex, setActiveIndex] = useState(0);
   const { items: portfolioItems } = useProjects();
 
   const portfolioTrackRef = useRef<HTMLDivElement>(null);
+
   const toggleLike = (number: string) =>
     setLikedItems((previous) => ({ ...previous, [number]: !previous[number] }));
-  const scrollPortfolio = (direction: "left" | "right") =>
-    portfolioTrackRef.current?.scrollBy({
-      left: direction === "left" ? -500 : 500,
+
+  // Centers the target card in the middle of the viewport
+  const scrollToCard = useCallback((index: number) => {
+    const container = portfolioTrackRef.current;
+    if (!container) return;
+    const cards = container.querySelectorAll<HTMLElement>(".portofolioCard");
+    const targetCard = cards[index];
+    if (!targetCard) return;
+
+    const containerWidth = container.clientWidth;
+    const cardLeft = targetCard.offsetLeft;
+    const cardWidth = targetCard.offsetWidth;
+    const targetScrollLeft = cardLeft - (containerWidth - cardWidth) / 2;
+
+    container.scrollTo({
+      left: Math.max(0, targetScrollLeft),
       behavior: "smooth",
     });
+    setActiveIndex(index);
+  }, []);
+
+  // Sync active index when user scrolls manually via touch, drag or wheel
+  const syncActiveIndex = useCallback(() => {
+    const container = portfolioTrackRef.current;
+    if (!container) return;
+    const cards = container.querySelectorAll<HTMLElement>(".portofolioCard");
+    if (!cards.length) return;
+
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    cards.forEach((card, index) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(containerCenter - cardCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    setActiveIndex(closestIndex);
+  }, []);
+
+  const scrollPortfolio = (direction: "left" | "right") => {
+    const total = portfolioItems.length;
+    if (total === 0) return;
+    const nextIndex =
+      direction === "right"
+        ? Math.min(total - 1, activeIndex + 1)
+        : Math.max(0, activeIndex - 1);
+    scrollToCard(nextIndex);
+  };
+
+  const handleCardClick = (index: number, e: React.MouseEvent) => {
+    // If user clicks a card that is not yet centered, glide it to the center first for optimal UX
+    if (activeIndex !== index) {
+      e.preventDefault();
+      scrollToCard(index);
+    }
+  };
+
+  const isAtStart = activeIndex === 0;
+  const isAtEnd = activeIndex >= portfolioItems.length - 1;
 
   return (
     <section className="portofolioSection" id="projects" aria-labelledby="portfolio-title">
@@ -30,6 +91,7 @@ export default function PortfolioSection() {
             type="button"
             className="portofolioArrow"
             onClick={() => scrollPortfolio("left")}
+            disabled={isAtStart}
             aria-label="Proyek sebelumnya"
           >
             ←
@@ -38,6 +100,7 @@ export default function PortfolioSection() {
             type="button"
             className="portofolioArrow"
             onClick={() => scrollPortfolio("right")}
+            disabled={isAtEnd}
             aria-label="Proyek selanjutnya"
           >
             →
@@ -52,15 +115,22 @@ export default function PortfolioSection() {
         role="region"
         aria-label="Geser daftar proyek Craftivation"
         tabIndex={0}
+        onScroll={syncActiveIndex}
       >
         <div className="portofolioTrack">
-          {portfolioItems.map((item) => {
+          {portfolioItems.map((item, index) => {
             const projectKey = String(item.id);
             const isLiked = !!likedItems[projectKey];
             const projectUrl = `/projects#${item.slug || item.id}`;
+            const isActive = activeIndex === index;
 
             return (
-              <article className="portofolioCard" key={projectKey} data-home-reveal="card">
+              <article
+                className={`portofolioCard ${isActive ? "is-active" : ""}`}
+                key={projectKey}
+                data-home-reveal="card"
+                onClick={(e) => handleCardClick(index, e)}
+              >
                 {/* Image box with rich hover affordance indicating it's clickable */}
                 <Link
                   href={projectUrl}
@@ -96,7 +166,10 @@ export default function PortfolioSection() {
                   <button
                     type="button"
                     className={`portofolioCard__like ${isLiked ? "is-liked" : ""}`}
-                    onClick={() => toggleLike(projectKey)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLike(projectKey);
+                    }}
                     aria-label={isLiked ? "Hapus favorit" : "Sukai proyek"}
                   >
                     {isLiked ? "♥" : "♡"}
