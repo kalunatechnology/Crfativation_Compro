@@ -34,7 +34,7 @@ export default function HeroSection() {
   {/* Headline & Statistics */}
   <div
     className="
-      relative z-20 flex w-full max-w-[1000px]
+      relative z-20 flex w-full max-w-[1140px]
       flex-col items-center text-center
     "
   >
@@ -42,9 +42,9 @@ export default function HeroSection() {
     <h1
       id="hero-title"
       className="
-        homeHero__title max-w-[960px]
-        font-normal leading-[1.2]
-        tracking-[-0.025em]
+        homeHero__title max-w-[1080px]
+        font-normal leading-[1.08]
+        tracking-[-0.03em]
       "
       style={{ fontFamily: "var(--font-arsenal)" }}
     >
@@ -54,9 +54,9 @@ export default function HeroSection() {
     {/* Subtitle */}
     <p
       className="
-        homeHero__subtitle mt-4 text-[11px] font-normal
-        uppercase tracking-[0.13em]
-        sm:mt-6 sm:text-[13px] lg:text-[14px]
+        homeHero__subtitle mt-5 text-[12px] font-normal
+        uppercase tracking-[0.14em]
+        sm:mt-7 sm:text-[14px] lg:text-[16px]
       "
     >
       YOUR TRUSTED EXHIBITION CONTRACTOR
