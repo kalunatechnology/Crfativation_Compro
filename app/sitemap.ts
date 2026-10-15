@@ -5,7 +5,6 @@ import { projectsRepo } from "@/lib/repositories/projects";
 // Tanggal rilis / update konten situs
 const STATIC_LAST_MODIFIED = new Date("2026-10-14");
 
-export const revalidate = 3600; // Regenerasi berkala setiap jam
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
