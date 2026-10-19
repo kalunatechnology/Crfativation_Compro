@@ -54,7 +54,7 @@ export const SITE_NAVIGATION_ITEMS = [
     name: "Hubungi Kami",
     href: "/#contact",
     description:
-      "Jadwalkan konsultasi proyek booth pameran Anda bersama tim ahli Craftivation via WhatsApp +62 823-2230-8719 atau email resmi.",
+      "Jadwalkan konsultasi proyek booth pameran Anda bersama tim ahli Craftivation via WhatsApp +62 823-2230-8719 atau email resmi corporate@craftivation.com.",
   },
 ] as const;
 
@@ -151,8 +151,14 @@ export const rootStructuredData = {
         height: 630,
       },
       description: SITE_DESCRIPTION,
-      email: "craftivation.studio@gmail.com",
+      email: "corporate@craftivation.com",
       telephone: "+62 823-2230-8719",
+      sameAs: [
+        "https://www.instagram.com/craftivation.io",
+        "https://www.threads.com/@craftivation.io",
+        "https://www.linkedin.com/company/craftivationio/",
+        "https://www.facebook.com/share/1A1biMXH2d/?mibextid=wwXIfr",
+      ],
       contactPoint: [
         {
           "@type": "ContactPoint",
@@ -169,7 +175,7 @@ export const rootStructuredData = {
         },
         {
           "@type": "ContactPoint",
-          email: "craftivation.studio@gmail.com",
+          email: "corporate@craftivation.com",
           contactType: "sales",
           areaServed: "ID",
           availableLanguage: ["Indonesian", "English"],
@@ -186,12 +192,26 @@ export const rootStructuredData = {
         "@type": "Country",
         name: "Indonesia",
       },
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Bogor",
-        addressRegion: "Jawa Barat",
-        addressCountry: "ID",
-      },
+      address: [
+        {
+          "@type": "PostalAddress",
+          name: "Business Office",
+          streetAddress: "Menara Rajawali 26th Floor, Jl. DR. Ide Anak Agung Gde Agung",
+          addressLocality: "Jakarta Selatan",
+          addressRegion: "DKI Jakarta",
+          postalCode: "12950",
+          addressCountry: "ID",
+        },
+        {
+          "@type": "PostalAddress",
+          name: "Production Workshop",
+          streetAddress: "Kavling Tiga Belas, Jl. Djaman Nairin, Sasak Panjang, Tajurhalang",
+          addressLocality: "Bogor",
+          addressRegion: "Jawa Barat",
+          postalCode: "16936",
+          addressCountry: "ID",
+        },
+      ],
       knowsAbout: SITE_KEYWORDS,
       hasOfferCatalog: {
         "@type": "OfferCatalog",

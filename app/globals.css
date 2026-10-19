@@ -1530,9 +1530,9 @@ img {
 
 .footer__inner {
   display: grid;
-  grid-template-columns: minmax(0, 516fr) minmax(0, 403fr) minmax(0, 301fr);
+  grid-template-columns: minmax(0, 360fr) minmax(0, 280fr) minmax(0, 580fr);
   align-items: start;
-  column-gap: 0;
+  column-gap: 36px;
   padding-top: 62px;
   padding-bottom: 26px;
 }
@@ -1576,6 +1576,55 @@ img {
   line-height: 1.35;
   letter-spacing: .06em;
   color: #F1E9E9;
+}
+
+.footer__locations {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  width: 100%;
+}
+
+.footer__locationGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer__addressLink {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 14px;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: .005em;
+  color: #DCDCDC;
+  text-decoration: none;
+  transition: opacity 200ms ease, color 200ms ease, transform 300ms cubic-bezier(.22,1,.36,1);
+}
+
+.footer__addressLink:hover {
+  opacity: .95;
+  color: #FFFFFF;
+  transform: translateX(3px);
+}
+
+.footer__addressText {
+  flex: 1;
+}
+
+.footer__addressArrow {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #F1E9E9;
+  transition: transform 200ms ease;
+}
+
+.footer__addressLink:hover .footer__addressArrow {
+  transform: translateX(4px);
 }
 
 .footer__address {
@@ -1741,7 +1790,13 @@ img {
   }
 
   .footer__brandBlock { margin-bottom: 0; }
-  .footer__workshop { grid-column: 1 / -1; }
+  .footer__locations,
+  .footer__workshop {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
   .footer__socials { gap: 17px; }
 }
 
@@ -1755,6 +1810,12 @@ img {
 
   .footer__logoLink { width: min(220px, 70vw); }
   .footer__sectionTitle { font-size: 15.5px; }
+  .footer__locations,
+  .footer__workshop {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .footer__addressLink { margin-top: 10px; font-size: 15px; }
   .footer__address { margin-top: 16px; font-size: 17px; }
   .footer__contactItem { font-size: 17px; }
 

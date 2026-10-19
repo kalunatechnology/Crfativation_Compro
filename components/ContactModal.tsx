@@ -74,15 +74,6 @@ function ContactModal({
 }) {
   if (!isOpen) return null;
 
-  const handleWorkshopClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    onClose();
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      e.preventDefault();
-      contactSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <div
       role="dialog"
@@ -148,20 +139,21 @@ function ContactModal({
 
             {/* Area Interaktif Tombol 2: Kirim Email */}
             <a
-              href="mailto:craftivation.studio@gmail.com"
-              title="Kirim Email: craftivation.studio@gmail.com"
-              aria-label="Kirim Email ke craftivation.studio@gmail.com"
+              href="mailto:corporate@craftivation.com"
+              title="Kirim Email: corporate@craftivation.com"
+              aria-label="Kirim Email ke corporate@craftivation.com"
               className="group absolute left-[7.89%] top-[67.67%] w-[84.21%] h-[11.31%] rounded-[10px] border border-[#4B002B]/15 bg-transparent transition-all duration-200 hover:border-[#4B002B] hover:bg-[#4B002B]/[0.06] hover:shadow-[0_2px_12px_rgba(75,0,43,0.12)] active:scale-[0.98] cursor-pointer"
             >
-              <span className="sr-only">Kirim Email: craftivation.studio@gmail.com</span>
+              <span className="sr-only">Kirim Email: corporate@craftivation.com</span>
             </a>
 
             {/* Area Interaktif Tombol 3: Kunjungi Workshop */}
             <a
-              href="#contact"
-              onClick={handleWorkshopClick}
-              title="Kunjungi Workshop Craftivation Bogor"
-              aria-label="Kunjungi Workshop Craftivation Bogor"
+              href="https://share.google/Ff9TjKAXUJAPW4JWO"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Kunjungi Workshop Craftivation (Buka Google Maps)"
+              aria-label="Kunjungi Workshop Craftivation di Google Maps"
               className="group absolute left-[7.89%] top-[83.14%] w-[84.21%] h-[11.31%] rounded-[10px] border border-[#4B002B]/15 bg-transparent transition-all duration-200 hover:border-[#4B002B] hover:bg-[#4B002B]/[0.06] hover:shadow-[0_2px_12px_rgba(75,0,43,0.12)] active:scale-[0.98] cursor-pointer"
             >
               <span className="sr-only">Kunjungi Workshop Craftivation</span>

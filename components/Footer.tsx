@@ -52,10 +52,10 @@ function LinkedinIcon() {
   );
 }
 
-function XIcon() {
+function ThreadsIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M6.321 6.016c-.27-.18-1.166-.802-1.166-.802.756-1.081 1.753-1.502 3.132-1.502.975 0 1.803.327 2.394.948s.928 1.509 1.005 2.644q.492.207.905.484c1.109.745 1.719 1.86 1.719 3.137 0 2.716-2.226 5.075-6.256 5.075C4.594 16 1 13.987 1 7.994 1 2.034 4.482 0 8.044 0 9.69 0 13.55.243 15 5.036l-1.36.353C12.516 1.974 10.163 1.43 8.006 1.43c-3.565 0-5.582 2.171-5.582 6.79 0 4.143 2.254 6.343 5.63 6.343 2.777 0 4.847-1.443 4.847-3.556 0-1.438-1.208-2.127-1.27-2.127-.236 1.234-.868 3.31-3.644 3.31-1.618 0-3.013-1.118-3.013-2.582 0-2.09 1.984-2.847 3.55-2.847.586 0 1.294.04 1.663.114 0-.637-.54-1.728-1.9-1.728-1.25 0-1.566.405-1.967.868ZM8.716 8.19c-2.04 0-2.304.87-2.304 1.416 0 .878 1.043 1.168 1.6 1.168 1.02 0 2.067-.282 2.232-2.423a6.2 6.2 0 0 0-1.528-.161"/>
     </svg>
   );
 }
@@ -69,11 +69,26 @@ function FacebookIcon() {
 }
 
 const socials = [
-  { name: "Instagram", href: "https://instagram.com", icon: <InstagramIcon /> },
-  { name: "YouTube", href: "https://youtube.com", icon: <YoutubeIcon /> },
-  { name: "LinkedIn", href: "https://linkedin.com", icon: <LinkedinIcon /> },
-  { name: "X", href: "https://x.com", icon: <XIcon /> },
-  { name: "Facebook", href: "https://facebook.com", icon: <FacebookIcon /> },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/craftivation.io?cplk=MXVrZ3RlNDB4czN6Mw==",
+    icon: <InstagramIcon />,
+  },
+  {
+    name: "Threads",
+    href: "https://www.threads.com/@craftivation.io?igshid=NTc4MTIwNjQ2YQ==",
+    icon: <ThreadsIcon />,
+  },
+  {
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/company/craftivationio/",
+    icon: <LinkedinIcon />,
+  },
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/share/1A1biMXH2d/?mibextid=wwXIfr",
+    icon: <FacebookIcon />,
+  },
 ];
 
 export default function Footer() {
@@ -106,9 +121,9 @@ export default function Footer() {
               <span className="footer__contactIcon" aria-hidden="true"><WhatsappIcon /></span>
               <span>+62 823-2230-8719</span>
             </a>
-            <a href="mailto:craftivation.studio@gmail.com" className="footer__contactItem">
+            <a href="mailto:corporate@craftivation.com" className="footer__contactItem">
               <span className="footer__contactIcon" aria-hidden="true"><EmailIcon /></span>
-              <span className="footer__email">craftivation.studio@gmail.com</span>
+              <span className="footer__email">corporate@craftivation.com</span>
             </a>
           </div>
         </div>
@@ -126,9 +141,38 @@ export default function Footer() {
           </ul>
         </nav>
 
-        <div className="footer__col footer__workshop" data-home-reveal="rise">
-          <h2 className="footer__sectionTitle">WORKSHOP CRAFTIVATION</h2>
-          <p className="footer__address">Alamat Bogor</p>
+        <div className="footer__col footer__locations" data-home-reveal="rise">
+          <div className="footer__locationGroup">
+            <h2 className="footer__sectionTitle">BUSINESS OFFICE</h2>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Menara+Rajawali+Mega+Kuningan+Jakarta"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer__addressLink"
+              aria-label="Buka lokasi Business Office Menara Rajawali di Google Maps"
+            >
+              <span className="footer__addressText">
+                Menara Rajawali 26th Floor Jl. DR. Ide Anak Agung Gde Agung, Jakarta, Indonesia 12950
+              </span>
+              <span className="footer__addressArrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <div className="footer__locationGroup">
+            <h2 className="footer__sectionTitle">PRODUCTION WORKSHOP</h2>
+            <a
+              href="https://maps.app.goo.gl/wMhkBfd8HkyLqMyDA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer__addressLink"
+              aria-label="Buka lokasi Production Workshop di Google Maps"
+            >
+              <span className="footer__addressText">
+                Kavling Tiga Belas, Jl. Djaman Nairin, Sasak Panjang, Tajurhalang, Kab. Bogor, Jawa Barat 16936
+              </span>
+              <span className="footer__addressArrow" aria-hidden="true">→</span>
+            </a>
+          </div>
         </div>
       </div>
 
