@@ -1,29 +1,39 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useProjects } from "@/lib/useProjects";
 import type { Project } from "@/lib/types";
+import ProjectDetailModal from "@/components/ProjectDetailModal";
 
 const PAGE_SIZE = 6;
 
 /**
  * Single SQLite project collection shared with homepage.
- * The six pieces in the SVG are layout examples, never hard-coded CMS entries.
- * Live isActive/sortOrder/image/number/title determine what is actually shown.
+ * Pop up project details matching pop up project details.svg
  */
 export default function ProjectsGallery() {
   const { items, status } = useProjects();
   const [limit, setLimit] = useState(PAGE_SIZE);
   const [selected, setSelected] = useState<Project | null>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
 
+  // Sync with URL hash if present (e.g. /projects#exhibition-project or /projects#03)
   useEffect(() => {
-    const node = dialog.current;
-    if (!node) return;
-    if (selected && !node.open) node.showModal();
-    if (!selected && node.open) node.close();
-  }, [selected]);
+    if (!items.length) return;
+    const hash = window.location.hash.replace(/^#/, "");
+    if (hash) {
+      const match = items.find(
+        (p) =>
+          p.slug === hash ||
+          String(p.id) === hash ||
+          p.number === hash ||
+          p.number === hash.padStart(2, "0")
+      );
+      if (match) {
+        setSelected(match);
+      }
+    }
+  }, [items]);
 
   const visible = items.slice(0, limit);
   const remaining = Math.max(0, items.length - limit);
@@ -52,7 +62,7 @@ export default function ProjectsGallery() {
                 >
                   <span className="projectsIndex__imageWrap">
                     <Image
-                      src={project.image?.trim() || "/assets/project-hero.svg"}
+                      src={project.image?.trim() || "/assets/portfolio-coffeebooth.webp"}
                       alt={project.imageAlt?.trim() || project.title}
                       fill
                       unoptimized
@@ -86,41 +96,13 @@ export default function ProjectsGallery() {
         )}
       </section>
 
-      <dialog
-        ref={dialog}
-        className="projectsDetail"
-        aria-label={selected ? "Detail proyek " + selected.title : "Detail proyek"}
+      {/* Modern Pop Up Project Details matching pop up project details.svg */}
+      <ProjectDetailModal
+        project={selected}
+        allProjects={items}
         onClose={() => setSelected(null)}
-        onClick={event => { if (event.target === event.currentTarget) setSelected(null); }}
-      >
-        {selected && (
-          <div className="projectsDetail__panel">
-            <button className="projectsDetail__close" type="button" aria-label="Tutup detail proyek" onClick={() => setSelected(null)}>×</button>
-            <div className="projectsDetail__picture">
-              <Image
-                src={selected.image?.trim() || "/assets/project-hero.svg"}
-                alt={selected.imageAlt?.trim() || selected.title}
-                fill
-                unoptimized
-                sizes="(max-width: 760px) 94vw, 730px"
-                className="projectsDetail__image"
-              />
-            </div>
-            <div className="projectsDetail__content">
-              <span className="projectsDetail__eyebrow">CRAFTIVATION PROJECT {selected.number || ""}</span>
-              <h3>{selected.title}</h3>
-              {selected.client && <p className="projectsDetail__client">Klien: {selected.client}</p>}
-              {selected.description && <p className="projectsDetail__description">{selected.description}</p>}
-              <a
-                className="projectsDetail__consult"
-                href={"https://wa.me/6282322308719?text=" + encodeURIComponent("Halo Craftivation, saya ingin berdiskusi tentang proyek serupa " + selected.title)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >Diskusikan Proyek Serupa ↗</a>
-            </div>
-          </div>
-        )}
-      </dialog>
+        onSelectProject={(project) => setSelected(project)}
+      />
     </>
   );
 }

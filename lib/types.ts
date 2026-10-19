@@ -23,6 +23,8 @@ export interface Project {
   href: string;
   sortOrder: number;
   isActive: boolean;
+  year?: string;
+  size?: string;
 }
 
 export interface CompanyStat {

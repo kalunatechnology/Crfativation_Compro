@@ -13,6 +13,8 @@ interface Row {
   href: string;
   sort_order: number;
   is_active: number;
+  year?: string;
+  size?: string;
 }
 
 const toProject = (r: Row): Project => ({
@@ -27,6 +29,8 @@ const toProject = (r: Row): Project => ({
   href: r.href,
   sortOrder: r.sort_order,
   isActive: r.is_active === 1,
+  year: r.year || "2026",
+  size: r.size || (r.slug === "gamefinity-brand-activation" ? "48m²" : r.slug === "exhibition-project" ? "36m²" : "30m²"),
 });
 
 const toParams = (p: ProjectInput) => ({ ...p, isActive: p.isActive ? 1 : 0 });

@@ -3,10 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import { useProjects } from "@/lib/useProjects";
+import ProjectDetailModal from "@/components/ProjectDetailModal";
+import type { Project } from "@/lib/types";
 
 export default function PortfolioSection() {
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { items: portfolioItems } = useProjects();
 
   const portfolioTrackRef = useRef<HTMLDivElement>(null);
@@ -134,6 +137,12 @@ export default function PortfolioSection() {
                 {/* Image box with rich hover affordance indicating it's clickable */}
                 <Link
                   href={projectUrl}
+                  onClick={(e) => {
+                    if (isActive) {
+                      e.preventDefault();
+                      setSelectedProject(item);
+                    }
+                  }}
                   className="portofolioCard__image"
                   aria-label={`Lihat detail proyek ${item.title}`}
                 >
@@ -155,7 +164,16 @@ export default function PortfolioSection() {
 
                 {/* Meta row: Title & Number */}
                 <div className="portofolioCard__meta">
-                  <Link href={projectUrl} className="portofolioCard__titleLink">
+                  <Link
+                    href={projectUrl}
+                    onClick={(e) => {
+                      if (isActive) {
+                        e.preventDefault();
+                        setSelectedProject(item);
+                      }
+                    }}
+                    className="portofolioCard__titleLink"
+                  >
                     <h3 className="portofolioCard__title">{item.title}</h3>
                   </Link>
                   <span className="portofolioCard__num">{item.number}</span>
@@ -190,6 +208,14 @@ export default function PortfolioSection() {
           </span>
         </Link>
       </div>
+
+      {/* Pop up project details modal matching pop up project details.svg */}
+      <ProjectDetailModal
+        project={selectedProject}
+        allProjects={portfolioItems}
+        onClose={() => setSelectedProject(null)}
+        onSelectProject={(project) => setSelectedProject(project)}
+      />
     </section>
   );
 }

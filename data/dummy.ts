@@ -100,10 +100,12 @@ export const dummyProjects: ProjectInput[] = [
     slug: "exhibition-project",
     number: "03",
     title: "Exhibition Project",
-    client: "Exhibition",
-    description: "Booth pameran dengan area display produk untuk kebutuhan komersial.",
+    client: "Mini Bean Co.",
+    description:
+      "Modern coffee booth & kiosk dengan desain modular L-shape counter, shelving display bertingkat, dan area servis interaktif untuk pameran komersial.",
     image: "/assets/portfolio-exhibition.webp",
-    imageAlt: "Booth exhibition dengan display produk komersial",
+    imageAlt:
+      "Booth Mini Bean Co exhibition dengan counter biru dan shelving display",
     href: "#projects",
     sortOrder: 3,
     isActive: true,
