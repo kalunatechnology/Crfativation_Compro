@@ -143,6 +143,23 @@ function init(db: Database.Database) {
       db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(statsMigrationKey);
     })();
   }
+
+  // Gallery images migration: pastikan gambar tambahan untuk proyek terisi jika masih kosong
+  const galleryMigrationKey = "projects-gallery-images-v2";
+  const galleryMigrationApplied = db
+    .prepare("SELECT key FROM craftivation_seed_migrations WHERE key = ?")
+    .get(galleryMigrationKey);
+  if (!galleryMigrationApplied) {
+    db.transaction(() => {
+      const updateImages = db.prepare("UPDATE projects SET images = ? WHERE slug = ?");
+      for (const p of dummyProjects) {
+        if (p.images && p.images.length > 0) {
+          updateImages.run(JSON.stringify(p.images), p.slug);
+        }
+      }
+      db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(galleryMigrationKey);
+    })();
+  }
 }
 
 export function getDb(): Database.Database {

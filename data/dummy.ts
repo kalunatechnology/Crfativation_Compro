@@ -83,7 +83,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 1,
     isActive: true,
-    images: [],
+    images: ["/assets/portfolio-coffeebooth-2.webp"],
   },
   {
     slug: "gamefinity-brand-activation",
@@ -96,7 +96,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 2,
     isActive: true,
-    images: [],
+    images: ["/assets/portfolio-gamefinity-2.webp"],
   },
   {
     slug: "exhibition-project",
@@ -111,6 +111,6 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 3,
     isActive: true,
-    images: [],
+    images: ["/assets/portfolio-exhibition-2.webp"],
   },
 ];
