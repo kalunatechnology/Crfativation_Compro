@@ -9,7 +9,7 @@ const footerLinks = [
   { label: "Portofolio", href: "/projects" },
   { label: "Pendekatan", href: "/approach" },
   { label: "Tentang Kami", href: "/about" },
-  { label: "Kontak", href: "#contact" },
+  { label: "Kontak", href: "/contact" },
 ];
 
 function WhatsappIcon() {

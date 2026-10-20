@@ -24,35 +24,37 @@
   --page-max: 1340px;
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
 
-html {
-  scroll-behavior: smooth;
-  background: var(--black-base);
-}
+  html {
+    scroll-behavior: smooth;
+    background: var(--black-base);
+  }
 
-body {
-  margin: 0;
-  background: var(--black-base);
-  color: var(--white);
-  font-family: var(--font-sans);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+  body {
+    margin: 0;
+    background: var(--black-base);
+    color: var(--white);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-button, a {
-  -webkit-tap-highlight-color: transparent;
-}
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+  }
 
-img {
-  display: block;
+  img {
+    display: block;
+  }
 }
 
 .pageShell {
@@ -472,7 +474,7 @@ img {
   display: grid;
   place-items: center;
   padding: 24px 16px 12px;
-  background: linear-gradient(180deg, #FAFAFA 0%, #FFFFFF 100%);
+  background: #FFFFFF;
   min-height: 260px;
 }
 
@@ -486,6 +488,9 @@ img {
 }
 
 @media (min-width: 640px) {
+  .metodeMobileCard__art {
+    min-height: 320px;
+  }
   .metodeMobileCard__gifWrap {
     width: min(100%, 340px);
   }

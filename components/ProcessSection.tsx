@@ -32,7 +32,7 @@ const methods = [
     subtitle: "Tidak hanya membangun, kami memberi bukti",
     description:
       "Instalasi kami lakukan dengan ringkas, presisi dan diiringi evaluasi performa pasca acara sebagai garansi dari integritas kami.",
-    gif: "/assets/approach-implikasi.gif",
+    gif: "/assets/GIF Complete.gif",
   },
 ] as const;
 

@@ -16,7 +16,7 @@ const navItems = [
  * <= 20px: charcoal transparan, teks/logo putih.
  * > 20px: putih solid, teks/logo gelap.
  */
-export default function HomepageNavbar({ variant = "home" }: { variant?: "home" | "about" | "approach" | "projects" }) {
+export default function HomepageNavbar({ variant = "home" }: { variant?: "home" | "about" | "approach" | "projects" | "contact" }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { openModal } = useContactModal();
@@ -51,7 +51,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
       className={`fixed inset-x-0 top-0 z-[1000] box-border h-[70px] w-full transition-[background-color,box-shadow,color] duration-[260ms] ease-in-out motion-reduce:transition-none ${
         scrolled
           ? "bg-white text-[#181818] shadow-[0_2px_16px_rgba(0,0,0,0.08)]"
-           : variant === "projects"
+          : variant === "projects" || variant === "contact"
             ? "bg-white text-[#181818] shadow-none"
             : variant === "about"
             ? "bg-[rgba(75,0,43,0.94)] text-white shadow-none"
@@ -72,7 +72,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
             height={32}
             priority
             className={`block h-8 w-[159px] object-contain object-left transition-[filter] duration-[260ms] motion-reduce:transition-none ${
-              scrolled || variant === "projects" ? "filter-none" : "brightness-0 invert"
+              scrolled || variant === "projects" || variant === "contact" ? "filter-none" : "brightness-0 invert"
             }`}
           />
         </a>
@@ -138,7 +138,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
         aria-label="Navigasi mobile"
         aria-hidden={!menuOpen}
         className={`absolute inset-x-0 top-[70px] flex max-h-[calc(100dvh-70px)] flex-col overflow-y-auto border-t px-[clamp(20px,3.4722vw,50px)] pb-6 pt-3 transition-[opacity,transform,visibility,background-color] duration-[220ms] ease-in-out motion-reduce:transition-none min-[961px]:hidden ${
-          scrolled || variant === "projects"
+          scrolled || variant === "projects" || variant === "contact"
             ? "border-black/10 bg-white text-[#181818] shadow-[0_15px_26px_rgba(0,0,0,0.08)]"
             : "border-white/15 bg-[rgba(0,0,0,0.94)] text-white"
         } ${

@@ -15,7 +15,20 @@ interface Row {
   is_active: number;
   year?: string;
   size?: string;
+  images?: string | null;
 }
+
+const parseImages = (raw?: string | null): string[] => {
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.filter((v): v is string => typeof v === "string" && v.trim() !== "")
+      : [];
+  } catch {
+    return [];
+  }
+};
 
 const toProject = (r: Row): Project => ({
   id: r.id,
@@ -31,9 +44,14 @@ const toProject = (r: Row): Project => ({
   isActive: r.is_active === 1,
   year: r.year || "2026",
   size: r.size || (r.slug === "gamefinity-brand-activation" ? "48m²" : r.slug === "exhibition-project" ? "36m²" : "30m²"),
+  images: parseImages(r.images),
 });
 
-const toParams = (p: ProjectInput) => ({ ...p, isActive: p.isActive ? 1 : 0 });
+const toParams = (p: ProjectInput) => ({
+  ...p,
+  isActive: p.isActive ? 1 : 0,
+  images: JSON.stringify(Array.isArray(p.images) ? p.images : []),
+});
 
 export const projectsRepo = {
   list(includeInactive = false): Project[] {
@@ -52,8 +70,8 @@ export const projectsRepo = {
   create(input: ProjectInput): Project {
     const info = getDb()
       .prepare(
-        `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active)
-         VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive)`
+        `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, images)
+         VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @images)`
       )
       .run(toParams(input));
     return this.get(Number(info.lastInsertRowid))!;
@@ -68,7 +86,7 @@ export const projectsRepo = {
       .prepare(
         `UPDATE projects SET slug=@slug, number=@number, title=@title, client=@client,
          description=@description, image=@image, image_alt=@imageAlt, href=@href,
-         sort_order=@sortOrder, is_active=@isActive WHERE id=@id`
+         sort_order=@sortOrder, is_active=@isActive, images=@images WHERE id=@id`
       )
       .run({ ...toParams(merged), id });
     return this.get(id);

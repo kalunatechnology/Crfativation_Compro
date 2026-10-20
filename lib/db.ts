@@ -60,6 +60,12 @@ function init(db: Database.Database) {
     );
   `);
 
+  // Additive migration: kolom gallery gambar tambahan (JSON array) untuk slider pop up detail.
+  const projectCols = db.prepare("PRAGMA table_info(projects)").all() as { name: string }[];
+  if (!projectCols.some(c => c.name === "images")) {
+    db.exec("ALTER TABLE projects ADD COLUMN images TEXT NOT NULL DEFAULT '[]'");
+  }
+
   // Seed hanya jika tabel kosong.
   const count = (table: string) =>
     (db.prepare(`SELECT COUNT(*) AS c FROM ${table}`).get() as { c: number }).c;
@@ -76,11 +82,11 @@ function init(db: Database.Database) {
 
   if (count("projects") === 0) {
     const insert = db.prepare(
-      `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active)
-       VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive)`
+      `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, images)
+       VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @images)`
     );
     db.transaction(() => {
-      for (const p of dummyProjects) insert.run({ ...p, isActive: p.isActive ? 1 : 0 });
+      for (const p of dummyProjects) insert.run({ ...p, isActive: p.isActive ? 1 : 0, images: JSON.stringify(p.images ?? []) });
     })();
   }
 
@@ -113,7 +119,7 @@ function init(db: Database.Database) {
            VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive)`
         );
         for (const project of dummyProjects.slice(1)) {
-          insert.run({ ...project, isActive: project.isActive ? 1 : 0 });
+          insert.run({ ...project, isActive: project.isActive ? 1 : 0, images: JSON.stringify(project.images ?? []) });
         }
       }
       db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(migrationKey);

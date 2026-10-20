@@ -52,9 +52,9 @@ export const SITE_NAVIGATION_ITEMS = [
   },
   {
     name: "Hubungi Kami",
-    href: "/#contact",
+    href: "/contact",
     description:
-      "Jadwalkan konsultasi proyek booth pameran Anda bersama tim ahli Craftivation via WhatsApp +62 823-2230-8719 atau email resmi corporate@craftivation.com.",
+      "Konsultasikan proyek booth pameran Anda bersama tim ahli Craftivation via WhatsApp +62 823-2230-8719, email, atau kunjungi kantor dan workshop kami.",
   },
 ] as const;
 

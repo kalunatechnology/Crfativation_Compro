@@ -25,6 +25,8 @@ export interface Project {
   isActive: boolean;
   year?: string;
   size?: string;
+  /** Gambar tambahan untuk slider di pop up detail (selain `image` utama). */
+  images?: string[];
 }
 
 export interface CompanyStat {
