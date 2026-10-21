@@ -18,6 +18,11 @@ export default function robots(): MetadataRoute.Robots {
         allow: ["/", ...RENDER_API_PATHS],
         disallow: ["/api/"],
       },
+      // Pastikan crawler favicon & gambar Google tidak pernah terblokir.
+      {
+        userAgent: ["Googlebot-Favicon", "Googlebot-Image"],
+        allow: "/",
+      },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

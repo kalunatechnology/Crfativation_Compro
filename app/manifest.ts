@@ -9,10 +9,16 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     display: "standalone",
     lang: "id",
+    scope: "/",
     background_color: "#FAF8F7",
+    theme_color: "#FAF8F7",
     icons: [
-      { src: "/icon.png", sizes: "any", type: "image/png" },
-      { src: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+      { src: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { src: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { src: "/favicon-192x192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/favicon-512x512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/favicon-192x192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+      { src: "/favicon-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }
