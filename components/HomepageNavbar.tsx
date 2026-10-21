@@ -45,6 +45,10 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
   const closeMenu = () => setMenuOpen(false);
   const navHref = (href: string) => variant !== "home" && href.startsWith("#") && href !== "#contact" ? "/" + href : href;
   const logoHref = variant === "home" ? "#hero" : "/";
+  const openContact = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    openModal();
+  };
 
   return (
     <header
@@ -92,9 +96,9 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
               {item.label}
             </a>
           ))}
-          <button
-            type="button"
-            onClick={openModal}
+          <a
+            href="/contact"
+            onClick={openContact}
             className={`font-[family-name:var(--font-arsenal)] inline-flex h-[42px] px-5 items-center justify-center border border-current bg-transparent text-center text-[18px] font-normal leading-[1.2] text-inherit cursor-pointer no-underline transition-[background-color,color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none ${
               scrolled
                 ? "hover:bg-[#181818] hover:text-white"
@@ -102,7 +106,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
             }`}
           >
             Hubungi Kami
-          </button>
+          </a>
         </nav>
 
         {/* Mobile: tombol tiga garis berubah menjadi X saat menu dibuka. */}

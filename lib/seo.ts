@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
+
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.craftivation.id";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.craftivation.com";
 
 export const SITE_NAME = "Craftivation";
 
@@ -58,6 +60,69 @@ export const SITE_NAVIGATION_ITEMS = [
   },
 ] as const;
 
+/**
+ * Tanggal pembaruan konten situs (satu sumber untuk sitemap, dateModified JSON-LD, dll.).
+ * Ubah hanya saat konten benar-benar berubah agar sinyal freshness akurat.
+ */
+export const SITE_LAST_MODIFIED = "2026-10-21";
+
+export const DEFAULT_OG_IMAGE = {
+  url: "/assets/hero-booth.webp",
+  width: 1200,
+  height: 630,
+  alt: "Craftivation Exhibition Contractor - Desain dan Fabrikasi Booth Pameran",
+};
+
+const absoluteUrl = (path: string) =>
+  path === "/" ? SITE_URL : `${SITE_URL}${path}`;
+
+/**
+ * Metadata per halaman yang lengkap. Next.js mengganti (bukan menggabung) objek
+ * openGraph/twitter dari layout, jadi siteName, locale, gambar, dan twitter card
+ * harus diulang di setiap halaman. Helper ini menjamin semuanya konsisten.
+ * `title` pendek: template layout menambahkan " | Craftivation".
+ */
+export function buildPageMetadata({
+  title,
+  description,
+  path,
+  ogTitle,
+  ogDescription,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  ogTitle?: string;
+  ogDescription?: string;
+}): Metadata {
+  const fullTitle = ogTitle ?? `${title} | Craftivation Exhibition Contractor`;
+  const fullDescription = ogDescription ?? description;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: absoluteUrl(path),
+      languages: { "id-ID": absoluteUrl(path), "x-default": absoluteUrl(path) },
+    },
+    openGraph: {
+      type: "website",
+      locale: "id_ID",
+      siteName: SITE_NAME,
+      url: absoluteUrl(path),
+      title: fullTitle,
+      description: fullDescription,
+      images: [DEFAULT_OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description: fullDescription,
+      images: [DEFAULT_OG_IMAGE.url],
+    },
+  };
+}
+
 export type BreadcrumbItem = {
   name: string;
   path: string;
@@ -68,16 +133,67 @@ export type BreadcrumbItem = {
  */
 export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {
   const all: BreadcrumbItem[] = [{ name: "Beranda", path: "/" }, ...items];
+  const current = items[items.length - 1];
 
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    ...(current ? { "@id": `${absoluteUrl(current.path)}#breadcrumb` } : {}),
     itemListElement: all.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `${SITE_URL}${item.path === "/" ? "" : item.path}`,
+      item: absoluteUrl(item.path),
     })),
+  };
+}
+
+/**
+ * Satu @graph per halaman: WebPage (atau subtipe: AboutPage, ContactPage,
+ * CollectionPage) + BreadcrumbList, saling terhubung lewat @id ke entitas
+ * WebSite & Organization di layout. Memberi Google konteks hierarki situs.
+ */
+export function buildPageGraph({
+  path,
+  name,
+  description,
+  type = "WebPage",
+  breadcrumbs,
+}: {
+  path: string;
+  name: string;
+  description: string;
+  type?: "WebPage" | "AboutPage" | "ContactPage" | "CollectionPage";
+  breadcrumbs: BreadcrumbItem[];
+}) {
+  const url = absoluteUrl(path);
+  const { "@context": _ctx, ...breadcrumb } = buildBreadcrumbJsonLd(breadcrumbs);
+  void _ctx;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": type,
+        "@id": `${url}#webpage`,
+        url,
+        name,
+        description,
+        inLanguage: "id-ID",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        about: { "@id": `${SITE_URL}/#organization` },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        breadcrumb: { "@id": `${url}#breadcrumb` },
+        primaryImageOfPage: {
+          "@type": "ImageObject",
+          url: `${SITE_URL}${DEFAULT_OG_IMAGE.url}`,
+          width: DEFAULT_OG_IMAGE.width,
+          height: DEFAULT_OG_IMAGE.height,
+        },
+        dateModified: SITE_LAST_MODIFIED,
+      },
+      breadcrumb,
+    ],
   };
 }
 
@@ -106,7 +222,7 @@ export const rootStructuredData = {
       alternateName: [
         "Craftivation Exhibition Contractor",
         "Craftivation Indonesia",
-        "craftivation.id",
+        "craftivation.com",
       ],
       description: SITE_DESCRIPTION,
       inLanguage: "id-ID",
@@ -138,10 +254,10 @@ export const rootStructuredData = {
       logo: {
         "@type": "ImageObject",
         "@id": `${SITE_URL}/#logo`,
-        url: `${SITE_URL}/assets/logo-black.svg`,
-        contentUrl: `${SITE_URL}/assets/logo-black.svg`,
-        width: 374,
-        height: 77,
+        url: `${SITE_URL}/icon.png`,
+        contentUrl: `${SITE_URL}/icon.png`,
+        width: 512,
+        height: 512,
         caption: "Craftivation Exhibition Contractor",
       },
       image: {
@@ -253,8 +369,16 @@ export const rootStructuredData = {
         ],
       },
     },
+  ],
+};
 
-    // 4. WebPage Root Entity
+/**
+ * Structured data khusus homepage: WebPage root. Sebelumnya berada di rootStructuredData
+ * sehingga ikut tercetak di semua halaman dengan URL beranda (salah).
+ */
+export const homeStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
     {
       "@type": "WebPage",
       "@id": `${SITE_URL}/#webpage`,
@@ -265,6 +389,13 @@ export const rootStructuredData = {
       about: { "@id": `${SITE_URL}/#organization` },
       mainEntity: { "@id": `${SITE_URL}/#organization` },
       inLanguage: "id-ID",
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}${DEFAULT_OG_IMAGE.url}`,
+        width: DEFAULT_OG_IMAGE.width,
+        height: DEFAULT_OG_IMAGE.height,
+      },
+      dateModified: SITE_LAST_MODIFIED,
       hasPart: SITE_NAVIGATION_ITEMS.map((item) => ({
         "@type": "WebPage",
         name: item.name,

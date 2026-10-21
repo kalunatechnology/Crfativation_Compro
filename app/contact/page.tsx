@@ -4,44 +4,25 @@ import HomepageNavbar from "@/components/HomepageNavbar";
 import HomepageMotion from "@/components/HomepageMotion";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
-import { SITE_URL, buildBreadcrumbJsonLd } from "@/lib/seo";
+import { buildPageMetadata, buildPageGraph } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Hubungi Kami | Craftivation Exhibition Contractor",
+export const metadata: Metadata = buildPageMetadata({
+  title: "Hubungi Kami",
   description:
     "Jadwalkan konsultasi proyek booth pameran Anda bersama tim ahli Craftivation via WhatsApp +62 823-2230-8719, email resmi corporate@craftivation.com, atau kunjungi kantor Menara Rajawali Jakarta dan workshop Bogor.",
-  alternates: {
-    canonical: `${SITE_URL}/contact`,
-  },
-  openGraph: {
-    title: "Hubungi Kami | Craftivation Exhibition Contractor",
-    description:
-      "Konsultasikan konsep booth, exhibition stand, dan aktivasi brand Anda bersama Craftivation. Solusi fabrikasi presisi dari ide hingga instalasi.",
-    url: `${SITE_URL}/contact`,
-    type: "website",
-    images: ["/assets/hero-booth.webp"],
-  },
-};
+  path: "/contact",
+  ogDescription:
+    "Konsultasikan konsep booth, exhibition stand, dan aktivasi brand Anda bersama Craftivation. Solusi fabrikasi presisi dari ide hingga instalasi.",
+});
 
-const breadcrumbs = buildBreadcrumbJsonLd([
-  { name: "Hubungi Kami", path: "/contact" },
-]);
-
-const contactPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "ContactPage",
-  "@id": `${SITE_URL}/contact#webpage`,
-  url: `${SITE_URL}/contact`,
+const pageGraph = buildPageGraph({
+  path: "/contact",
+  type: "ContactPage",
   name: "Hubungi Kami | Craftivation Exhibition Contractor",
   description:
     "Layanan kontak dan konsultasi resmi Craftivation untuk kebutuhan desain booth pameran, fabrikasi stan komersial, dan aktivasi brand di Indonesia.",
-  isPartOf: {
-    "@id": `${SITE_URL}/#website`,
-  },
-  mainEntity: {
-    "@id": `${SITE_URL}/#organization`,
-  },
-};
+  breadcrumbs: [{ name: "Hubungi Kami", path: "/contact" }],
+});
 
 export default function ContactPage() {
   return (
@@ -49,13 +30,7 @@ export default function ContactPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbs).replace(/</g, "\\u003c"),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(contactPageSchema).replace(/</g, "\\u003c"),
+          __html: JSON.stringify(pageGraph).replace(/</g, "\\u003c"),
         }}
       />
       <HomepageMotion />

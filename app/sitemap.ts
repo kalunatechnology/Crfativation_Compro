@@ -1,39 +1,44 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, SITE_LAST_MODIFIED, DEFAULT_OG_IMAGE } from "@/lib/seo";
 
-// Tanggal rilis / update konten situs
-const STATIC_LAST_MODIFIED = new Date("2026-10-14");
+const LAST_MODIFIED = new Date(SITE_LAST_MODIFIED);
+const OG_IMAGE = `${SITE_URL}${DEFAULT_OG_IMAGE.url}`;
 
-
+/**
+ * Sitemap berisi 5 halaman utama (kandidat sitelink). Prioritas mencerminkan
+ * hierarki navigasi; gambar ikut didaftarkan untuk Google Images.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
-      lastModified: STATIC_LAST_MODIFIED,
+      lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 1.0,
+      images: [OG_IMAGE],
     },
     {
       url: `${SITE_URL}/projects`,
-      lastModified: STATIC_LAST_MODIFIED,
+      lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.9,
+      images: [OG_IMAGE],
     },
     {
       url: `${SITE_URL}/approach`,
-      lastModified: STATIC_LAST_MODIFIED,
+      lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/about`,
-      lastModified: STATIC_LAST_MODIFIED,
+      lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: `${SITE_URL}/contact`,
-      lastModified: STATIC_LAST_MODIFIED,
+      lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.8,
     },

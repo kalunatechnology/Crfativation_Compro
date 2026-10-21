@@ -6,27 +6,25 @@ import AboutSection from "@/components/AboutSection";
 import AboutValuesSection from "@/components/AboutValuesSection";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
-import { SITE_URL, buildBreadcrumbJsonLd } from "@/lib/seo";
+import { buildPageMetadata, buildPageGraph } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Tentang Kami | Craftivation Exhibition Contractor",
+export const metadata: Metadata = buildPageMetadata({
+  title: "Tentang Kami",
   description:
     "Kenali Craftivation, kontraktor pameran profesional yang menghadirkan desain, fabrikasi, instalasi, dan brand experience dengan presisi.",
-  alternates: {
-    canonical: `${SITE_URL}/about`,
-  },
-  openGraph: {
-    title: "Tentang Kami | Craftivation Exhibition Contractor",
-    description: "Craftivation membangun lebih dari sekedar booth. Mewujudkan pengalaman presisi untuk brand Anda.",
-    url: `${SITE_URL}/about`,
-    type: "website",
-    images: ["/assets/hero-booth.webp"],
-  },
-};
+  path: "/about",
+  ogDescription:
+    "Craftivation membangun lebih dari sekedar booth. Mewujudkan pengalaman presisi untuk brand Anda.",
+});
 
-const breadcrumbs = buildBreadcrumbJsonLd([
-  { name: "Tentang Kami", path: "/about" },
-]);
+const pageGraph = buildPageGraph({
+  path: "/about",
+  type: "AboutPage",
+  name: "Tentang Kami | Craftivation Exhibition Contractor",
+  description:
+    "Profil Craftivation, kontraktor pameran profesional di bawah PT Sinergi Muda Arsa.",
+  breadcrumbs: [{ name: "Tentang Kami", path: "/about" }],
+});
 
 /**
  * About page matching the provided 1440 × 3512 aboutus.svg:
@@ -39,7 +37,7 @@ export default function AboutPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbs).replace(/</g, "\\u003c"),
+          __html: JSON.stringify(pageGraph).replace(/</g, "\\u003c"),
         }}
       />
       <HomepageMotion />

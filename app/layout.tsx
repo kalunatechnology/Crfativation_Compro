@@ -8,6 +8,7 @@ import {
   SITE_TITLE,
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
+  DEFAULT_OG_IMAGE,
   rootStructuredData,
 } from "@/lib/seo";
 import { ContactModalProvider } from "@/components/ContactModal";
@@ -68,6 +69,10 @@ export const metadata: Metadata = {
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   publisher: "PT SINERGI MUDA ARSA (ARSALYNK)",
+  category: "business",
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
   robots: {
     index: true,
     follow: true,
@@ -86,14 +91,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: [
-      {
-        url: "/assets/hero-booth.webp",
-        width: 1200,
-        height: 630,
-        alt: "Craftivation Exhibition Contractor - Desain dan Fabrikasi Booth Pameran",
-      },
-    ],
+    images: [DEFAULT_OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
@@ -103,11 +101,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/assets/icon-craftivation.svg" },
-      { url: "/favicon.ico" },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+      { url: "/assets/icon-craftivation.svg", type: "image/svg+xml" },
     ],
-    shortcut: "/assets/icon-craftivation.svg",
-    apple: "/assets/icon-craftivation.svg",
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
   formatDetection: {
     email: false,
