@@ -39,6 +39,13 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
         ],
       },
+      {
+        // Ikon dan favicon di-cache optimal untuk crawler favicon Google/Bing/Apple
+        source: "/:file(favicon.*|icon.*|apple-icon.*|apple-touch-icon.*)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" },
+        ],
+      },
     ];
   },
   turbopack: {
