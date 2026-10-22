@@ -161,14 +161,14 @@ export default function Footer() {
           <div className="footer__locationGroup">
             <h2 className="footer__sectionTitle">PRODUCTION WORKSHOP</h2>
             <a
-              href="https://maps.app.goo.gl/wMhkBfd8HkyLqMyDA"
+              href="https://maps.app.goo.gl/U6FBNp487VZNdG1V8"
               target="_blank"
               rel="noopener noreferrer"
               className="footer__addressLink"
               aria-label="Buka lokasi Production Workshop di Google Maps"
             >
               <span className="footer__addressText">
-                Kavling Tiga Belas, Jl. Djaman Nairin, Sasak Panjang, Tajurhalang, Kab. Bogor, Jawa Barat 16936
+                Caftivation, Jl. Djaman Nairin, Sasak Panjang, Tajurhalang, Kab. Bogor, Jawa Barat 16936
               </span>
               <span className="footer__addressArrow" aria-hidden="true">→</span>
             </a>
