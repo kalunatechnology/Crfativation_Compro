@@ -6,10 +6,10 @@ import Image from "next/image";
  * responsive rather than embedding a screenshot of the design.
  */
 const footerLinks = [
-  { label: "Portofolio", href: "/projects" },
-  { label: "Pendekatan", href: "/approach" },
+  { label: "Portofolio Proyek", href: "/projects" },
+  { label: "Pendekatan Kerja", href: "/approach" },
   { label: "Tentang Kami", href: "/about" },
-  { label: "Kontak", href: "/contact" },
+  { label: "Hubungi Kami", href: "/contact" },
 ];
 
 function WhatsappIcon() {

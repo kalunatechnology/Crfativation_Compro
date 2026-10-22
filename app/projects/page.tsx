@@ -5,6 +5,7 @@ import HomepageNavbar from "@/components/HomepageNavbar";
 import ProjectsGallery from "@/components/ProjectsGallery";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { buildPageMetadata, buildPageGraph } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -60,6 +61,13 @@ export default function ProjectsPage() {
         <section className="projectsHero" id="projects-top" aria-labelledby="projects-hero-title">
           <div className="projectsHero__shell">
             <div className="projectsHero__copy">
+              <BreadcrumbNav
+                items={[{ name: "Portofolio Proyek", href: "/projects" }]}
+                className="mb-3"
+              />
+              <p className="font-[family-name:var(--font-arsenal)] text-[13px] md:text-[15px] tracking-[0.2em] uppercase text-[#4B002B] font-bold mb-1">
+                Portofolio Proyek
+              </p>
               <h1 id="projects-hero-title">Solusi booth Craftivation<br /> untuk beragam brandmu</h1>
               <p>DIPERCAYA OLEH LEBIH DARI PULUHAN BRAND</p>
             </div>

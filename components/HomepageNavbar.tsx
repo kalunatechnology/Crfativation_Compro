@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { useContactModal } from "@/components/ContactModal";
 
 const navItems = [
-  { label: "Portofolio", href: "/projects" },
-  { label: "Pendekatan", href: "/approach" },
+  { label: "Portofolio Proyek", href: "/projects" },
+  { label: "Pendekatan Kerja", href: "/approach" },
   { label: "Tentang Kami", href: "/about" },
 ];
 
@@ -163,9 +163,10 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
             {item.label}
           </a>
         ))}
-        <button
-          type="button"
-          onClick={() => {
+        <a
+          href="/contact"
+          onClick={(e) => {
+            e.preventDefault();
             closeMenu();
             openModal();
           }}
@@ -173,7 +174,7 @@ export default function HomepageNavbar({ variant = "home" }: { variant?: "home" 
           className="font-[family-name:var(--font-arsenal)] mt-3 flex h-11 min-h-11 w-full items-center justify-center border border-current bg-transparent text-[18px] font-normal text-inherit cursor-pointer no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
         >
           Hubungi Kami
-        </button>
+        </a>
       </nav>
       <span className="homeScrollProgress" aria-hidden="true" />
     </header>

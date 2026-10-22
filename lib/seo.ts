@@ -64,7 +64,7 @@ export const SITE_NAVIGATION_ITEMS = [
  * Tanggal pembaruan konten situs (satu sumber untuk sitemap, dateModified JSON-LD, dll.).
  * Ubah hanya saat konten benar-benar berubah agar sinyal freshness akurat.
  */
-export const SITE_LAST_MODIFIED = "2026-10-21";
+export const SITE_LAST_MODIFIED = "2026-10-22";
 
 export const DEFAULT_OG_IMAGE = {
   url: "/assets/hero-booth.webp",
@@ -184,6 +184,7 @@ export function buildPageGraph({
         about: { "@id": `${SITE_URL}/#organization` },
         publisher: { "@id": `${SITE_URL}/#organization` },
         breadcrumb: { "@id": `${url}#breadcrumb` },
+        significantLink: SITE_NAVIGATION_ITEMS.map((item) => `${SITE_URL}${item.href}`),
         primaryImageOfPage: {
           "@type": "ImageObject",
           url: `${SITE_URL}${DEFAULT_OG_IMAGE.url}`,
@@ -199,21 +200,43 @@ export function buildPageGraph({
 
 /**
  * Schema.org @graph structured data standar Enterprise (arsitektur Arsalynk & Kaluna)
- * Menggunakan stable @id linkers: SiteNavigationElement, WebSite, Organization, dan WebPage hasPart.
+ * Menggunakan stable @id linkers: SiteNavigationElement, ItemList, WebSite, Organization, dan WebPage hasPart.
  */
 export const rootStructuredData = {
   "@context": "https://schema.org",
   "@graph": [
-    // 1. SiteNavigationElement (Memberi sinyal struktur Sitelinks Google SERP)
+    // 1. ItemList Navigasi Utama (Memberi sinyal eksplisit urutan Sitelinks di Google SERP)
+    {
+      "@type": "ItemList",
+      "@id": `${SITE_URL}/#navigation-list`,
+      name: "Navigasi Utama Craftivation",
+      description: "Pilar navigasi dan layanan resmi Craftivation Exhibition Contractor",
+      numberOfItems: SITE_NAVIGATION_ITEMS.length,
+      itemListElement: SITE_NAVIGATION_ITEMS.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.name,
+        item: {
+          "@type": "SiteNavigationElement",
+          "@id": `${SITE_URL}${item.href}#navigation`,
+          name: item.name,
+          url: `${SITE_URL}${item.href}`,
+          description: item.description,
+        },
+      })),
+    },
+
+    // 2. Individual SiteNavigationElement (Mendukung crawler Google yang membaca node langsung)
     ...SITE_NAVIGATION_ITEMS.map((item) => ({
       "@type": "SiteNavigationElement",
       "@id": `${SITE_URL}${item.href}#navigation`,
       name: item.name,
       url: `${SITE_URL}${item.href}`,
       description: item.description,
+      isPartOf: { "@id": `${SITE_URL}/#website` },
     })),
 
-    // 2. WebSite Entity (Dengan hasPart deklarasi Sitelinks)
+    // 3. WebSite Entity (Dengan hasPart deklarasi Sitelinks yang terhubung ke @id WebPage)
     {
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
@@ -232,11 +255,16 @@ export const rootStructuredData = {
       about: {
         "@id": `${SITE_URL}/#organization`,
       },
+      mainEntity: {
+        "@id": `${SITE_URL}/#navigation-list`,
+      },
       hasPart: SITE_NAVIGATION_ITEMS.map((item) => ({
         "@type": "WebPage",
+        "@id": `${SITE_URL}${item.href}#webpage`,
         name: item.name,
         url: `${SITE_URL}${item.href}`,
         description: item.description,
+        isPartOf: { "@id": `${SITE_URL}/#website` },
       })),
     },
 
@@ -389,6 +417,7 @@ export const homeStructuredData = {
       about: { "@id": `${SITE_URL}/#organization` },
       mainEntity: { "@id": `${SITE_URL}/#organization` },
       inLanguage: "id-ID",
+      significantLink: SITE_NAVIGATION_ITEMS.map((item) => `${SITE_URL}${item.href}`),
       primaryImageOfPage: {
         "@type": "ImageObject",
         url: `${SITE_URL}${DEFAULT_OG_IMAGE.url}`,
@@ -398,9 +427,11 @@ export const homeStructuredData = {
       dateModified: SITE_LAST_MODIFIED,
       hasPart: SITE_NAVIGATION_ITEMS.map((item) => ({
         "@type": "WebPage",
+        "@id": `${SITE_URL}${item.href}#webpage`,
         name: item.name,
         url: `${SITE_URL}${item.href}`,
         description: item.description,
+        isPartOf: { "@id": `${SITE_URL}/#website` },
       })),
     },
   ],
