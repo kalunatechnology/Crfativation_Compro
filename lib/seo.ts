@@ -181,7 +181,10 @@ export function buildPageGraph({
         description,
         inLanguage: "id-ID",
         isPartOf: { "@id": `${SITE_URL}/#website` },
-        about: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@id": `${SITE_URL}/#organization` },
+          { "@id": `${SITE_URL}/#localbusiness` },
+        ],
         publisher: { "@id": `${SITE_URL}/#organization` },
         breadcrumb: { "@id": `${url}#breadcrumb` },
         significantLink: SITE_NAVIGATION_ITEMS.map((item) => `${SITE_URL}${item.href}`),
@@ -200,7 +203,7 @@ export function buildPageGraph({
 
 /**
  * Schema.org @graph structured data standar Enterprise (arsitektur Arsalynk & Kaluna)
- * Menggunakan stable @id linkers: SiteNavigationElement, ItemList, WebSite, Organization, dan WebPage hasPart.
+ * Menggunakan stable @id linkers: SiteNavigationElement, ItemList, WebSite, Organization, LocalBusiness, dan WebPage hasPart.
  */
 export const rootStructuredData = {
   "@context": "https://schema.org",
@@ -252,9 +255,10 @@ export const rootStructuredData = {
       publisher: {
         "@id": `${SITE_URL}/#organization`,
       },
-      about: {
-        "@id": `${SITE_URL}/#organization`,
-      },
+      about: [
+        { "@id": `${SITE_URL}/#organization` },
+        { "@id": `${SITE_URL}/#localbusiness` },
+      ],
       mainEntity: {
         "@id": `${SITE_URL}/#navigation-list`,
       },
@@ -268,7 +272,114 @@ export const rootStructuredData = {
       })),
     },
 
-    // 3. Organization Entity (Entity Knowledge Graph & Induk Arsalynk)
+    // 4. LocalBusiness Entity (Google Business Profile & Rich Results Synchronization)
+    {
+      "@type": ["LocalBusiness", "GeneralContractor", "ProfessionalService"],
+      "@id": `${SITE_URL}/#localbusiness`,
+      name: SITE_NAME,
+      legalName: "Craftivation (Unit PT Sinergi Muda Arsa)",
+      alternateName: [
+        "Craftivation Exhibition Contractor",
+        "Craftivation Indonesia",
+      ],
+      url: `${SITE_URL}/`,
+      logo: {
+        "@type": "ImageObject",
+        "@id": `${SITE_URL}/#logo`,
+        url: `${SITE_URL}/icon.png`,
+        contentUrl: `${SITE_URL}/icon.png`,
+        width: 512,
+        height: 512,
+        caption: "Craftivation Exhibition Contractor",
+      },
+      image: `${SITE_URL}/assets/hero-booth.webp`,
+      description: SITE_DESCRIPTION,
+      telephone: "+62 823-2230-8719",
+      email: "corporate@craftivation.com",
+      priceRange: "$$$",
+      currenciesAccepted: "IDR",
+      paymentAccepted: "Cash, Credit Card, Bank Transfer",
+      hasMap: "https://www.google.com/maps/search/?api=1&query=Menara+Rajawali+Mega+Kuningan+Jakarta",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Menara Rajawali 26th Floor, Jl. DR. Ide Anak Agung Gde Agung",
+        addressLocality: "Jakarta Selatan",
+        addressRegion: "DKI Jakarta",
+        postalCode: "12950",
+        addressCountry: "ID",
+      },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: -6.2289,
+        longitude: 106.8283,
+      },
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ],
+          opens: "08:30",
+          closes: "18:00",
+        },
+      ],
+      sameAs: [
+        "https://www.instagram.com/craftivation.io",
+        "https://www.threads.com/@craftivation.io",
+        "https://www.linkedin.com/company/craftivationio/",
+        "https://www.facebook.com/share/1A1biMXH2d/?mibextid=wwXIfr",
+        "https://maps.app.goo.gl/wMhkBfd8HkyLqMyDA",
+      ],
+      parentOrganization: {
+        "@id": `${SITE_URL}/#organization`,
+      },
+      department: [
+        {
+          "@type": ["LocalBusiness", "GeneralContractor"],
+          "@id": `${SITE_URL}/#production-workshop`,
+          name: "Craftivation Production Workshop",
+          url: `${SITE_URL}/contact`,
+          telephone: "+62 823-2230-8719",
+          image: `${SITE_URL}/assets/hero-booth.webp`,
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "Kavling Tiga Belas, Jl. Djaman Nairin, Sasak Panjang, Tajurhalang",
+            addressLocality: "Bogor",
+            addressRegion: "Jawa Barat",
+            postalCode: "16936",
+            addressCountry: "ID",
+          },
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: -6.4674,
+            longitude: 106.7481,
+          },
+          hasMap: "https://maps.app.goo.gl/wMhkBfd8HkyLqMyDA",
+          openingHoursSpecification: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+              ],
+              opens: "08:30",
+              closes: "18:00",
+            },
+          ],
+        },
+      ],
+    },
+
+    // 5. Organization Entity (Entity Knowledge Graph & Induk Arsalynk)
     {
       "@type": ["Organization", "Corporation"],
       "@id": `${SITE_URL}/#organization`,
@@ -302,6 +413,7 @@ export const rootStructuredData = {
         "https://www.threads.com/@craftivation.io",
         "https://www.linkedin.com/company/craftivationio/",
         "https://www.facebook.com/share/1A1biMXH2d/?mibextid=wwXIfr",
+        "https://maps.app.goo.gl/wMhkBfd8HkyLqMyDA",
       ],
       contactPoint: [
         {
@@ -414,8 +526,11 @@ export const homeStructuredData = {
       name: SITE_TITLE,
       description: SITE_DESCRIPTION,
       isPartOf: { "@id": `${SITE_URL}/#website` },
-      about: { "@id": `${SITE_URL}/#organization` },
-      mainEntity: { "@id": `${SITE_URL}/#organization` },
+      about: [
+        { "@id": `${SITE_URL}/#organization` },
+        { "@id": `${SITE_URL}/#localbusiness` },
+      ],
+      mainEntity: { "@id": `${SITE_URL}/#localbusiness` },
       inLanguage: "id-ID",
       significantLink: SITE_NAVIGATION_ITEMS.map((item) => `${SITE_URL}${item.href}`),
       primaryImageOfPage: {

@@ -168,7 +168,7 @@ export default function Footer() {
               aria-label="Buka lokasi Production Workshop di Google Maps"
             >
               <span className="footer__addressText">
-                Caftivation, Jl. Djaman Nairin, Sasak Panjang, Tajurhalang, Kab. Bogor, Jawa Barat 16936
+                Craftivation, Jl. Djaman Nairin, Sasak Panjang, Tajurhalang, Kab. Bogor, Jawa Barat 16936
               </span>
               <span className="footer__addressArrow" aria-hidden="true">→</span>
             </a>
