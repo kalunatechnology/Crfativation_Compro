@@ -4,7 +4,6 @@ import HomepageMotion from "@/components/HomepageMotion";
 import HeroSection from "@/components/HeroSection";
 import SectionChanger from "@/components/SectionChanger";
 import ProcessSection from "@/components/ProcessSection";
-import PortfolioSection from "@/components/PortfolioSection";
 import AboutSection from "@/components/AboutSection";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
@@ -42,7 +41,6 @@ export default function Home() {
         <HeroSection />
         <SectionChanger />
         <ProcessSection />
-        <PortfolioSection />
         <AboutSection />
         <CTA />
       </main>

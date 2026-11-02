@@ -29,17 +29,11 @@ export const SITE_KEYWORDS = [
 ];
 
 /**
- * 4 Pilar Navigasi Utama Craftivation (Target Sitelinks Google SERP)
+ * 3 Pilar Navigasi Utama Craftivation (Target Sitelinks Google SERP)
  * Deskripsi ditulis ringkas (110–140 karakter) agar Google dapat menampilkannya
  * secara utuh sebagai snippet 2-baris di bawah judul sitelink di SERP (seperti Arsalynk).
  */
 export const SITE_NAVIGATION_ITEMS = [
-  {
-    name: "Portofolio Proyek",
-    href: "/projects",
-    description:
-      "Eksplorasi portofolio desain dan fabrikasi booth pameran komersial, exhibition stand, dan brand activation presisi tinggi dari Craftivation.",
-  },
   {
     name: "Pendekatan Kerja",
     href: "/approach",

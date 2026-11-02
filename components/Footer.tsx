@@ -6,8 +6,7 @@ import Image from "next/image";
  * responsive rather than embedding a screenshot of the design.
  */
 const footerLinks = [
-  { label: "Portofolio Proyek", href: "/projects" },
-  { label: "Pendekatan Kerja", href: "/approach" },
+    { label: "Pendekatan Kerja", href: "/approach" },
   { label: "Tentang Kami", href: "/about" },
   { label: "Hubungi Kami", href: "/contact" },
 ];

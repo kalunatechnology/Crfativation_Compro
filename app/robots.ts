@@ -8,7 +8,7 @@ import { SITE_URL } from "@/lib/seo";
  * - Asset gambar & font
  * - Endpoint rendering JSON (tetap berstatus noindex di header HTTP)
  */
-const RENDER_API_PATHS = ["/api/projects", "/api/services", "/api/stats"];
+const RENDER_API_PATHS = ["/api/services", "/api/stats"];
 const STATIC_ALLOW_PATHS = [
   "/",
   "/favicon.ico",
@@ -27,7 +27,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: STATIC_ALLOW_PATHS,
-        disallow: ["/api/"],
+        disallow: ["/api/", "/projects"],
       },
       // Izinkan crawler khusus ikon, gambar, dan search engine utama tanpa hambatan
       {

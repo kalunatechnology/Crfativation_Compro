@@ -5,7 +5,7 @@ const LAST_MODIFIED = new Date(SITE_LAST_MODIFIED);
 const OG_IMAGE = `${SITE_URL}${DEFAULT_OG_IMAGE.url}`;
 
 /**
- * Sitemap berisi 5 halaman utama (kandidat sitelink). Prioritas mencerminkan
+ * Sitemap berisi 4 halaman utama (kandidat sitelink). Prioritas mencerminkan
  * hierarki navigasi; gambar ikut didaftarkan untuk Google Images.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -16,13 +16,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 1.0,
       images: [OG_IMAGE, `${SITE_URL}/icon.png`],
-    },
-    {
-      url: `${SITE_URL}/projects`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.9,
-      images: [OG_IMAGE],
     },
     {
       url: `${SITE_URL}/approach`,
