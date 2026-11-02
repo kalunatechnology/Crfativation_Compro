@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import HomepageNavbar from "@/components/HomepageNavbar";
 import HomepageMotion from "@/components/HomepageMotion";
 import HeroSection from "@/components/HeroSection";
-import HubSection from "@/components/HubSection";
+import SectionChanger from "@/components/SectionChanger";
 import ProcessSection from "@/components/ProcessSection";
 import PortfolioSection from "@/components/PortfolioSection";
 import AboutSection from "@/components/AboutSection";
@@ -26,7 +26,6 @@ export const metadata: Metadata = {
   },
 };
 
-
 /** Composed homepage; interaction stays inside its section components. */
 export default function Home() {
   return (
@@ -41,7 +40,7 @@ export default function Home() {
       <HomepageNavbar />
       <main className="homepage">
         <HeroSection />
-        <HubSection />
+        <SectionChanger />
         <ProcessSection />
         <PortfolioSection />
         <AboutSection />
