@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useStats } from "@/lib/useStats";
-import AnimatedStat from "@/components/AnimatedStat";
+// import { useStats } from "@/lib/useStats";
+// import AnimatedStat from "@/components/AnimatedStat";
 
 /** Hero and translucent glass statistic cards connected to SQLite. */
 export default function HeroSection() {
-  const { items: stats } = useStats();
+  // const { items: stats } = useStats(); // Angka statistik sementara disembunyikan
 
   return (
 <section
@@ -62,7 +62,8 @@ export default function HeroSection() {
       YOUR TRUSTED EXHIBITION CONTRACTOR
     </p>
 
-    {/* GLASS NUMBER CARDS */}
+    {/* GLASS NUMBER CARDS - Sementara disembunyikan sesuai permintaan */}
+    {/*
     <div
       aria-label="Statistik Craftivation"
       className="
@@ -89,7 +90,6 @@ export default function HeroSection() {
             backdrop-saturate-150
           "
         >
-          {/* Glass Reflection */}
           <div
             aria-hidden="true"
             className="
@@ -101,7 +101,6 @@ export default function HeroSection() {
             "
           />
 
-          {/* Top Glass Highlight */}
           <div
             aria-hidden="true"
             className="
@@ -110,7 +109,6 @@ export default function HeroSection() {
             "
           />
 
-          {/* Number with synchronized count-up delay */}
           <AnimatedStat
             value={item.value}
             prefix={item.prefix}
@@ -118,7 +116,6 @@ export default function HeroSection() {
             delay={1300 + index * 140}
           />
 
-          {/* Label – rata kiri, berdampingan dengan angka */}
           <span
             className="
               relative z-10 text-left
@@ -134,6 +131,7 @@ export default function HeroSection() {
         </div>
       ))}
     </div>
+    */}
   </div>
 
   {/* The opening curtain is visual only and never locks document scrolling. */}
