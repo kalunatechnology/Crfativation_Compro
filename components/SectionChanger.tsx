@@ -41,21 +41,23 @@ const PANELS: PanelData[] = [
 ];
 
 /**
- * Komponen Setiap Panel dengan Animasi Sinkron:
- * - Fade-In & Fade-Out (Opacity 100% saat di tengah layar, 30% saat di luar fokus)
- * - Blur-In & Blur-Out (Blur 0px saat fokus normal, Blur 10px saat belum/sudah lewat)
- * - Progressive Blur-Up Placeholder saat pemuatan awal
+ * Komponen Setiap Panel:
+ * - Desktop (>= 1024px): Animasi Depth-of-Field (fokus tajam di tengah, blur halus di luar tengah)
+ * - Responsif / Tablet / Mobile (< 1024px): Blur & dimming dinonaktifkan sepenuhnya;
+ *   seluruh gambar tampil normal, terang (100% opacity), tajam, dan proporsional.
  */
 function PanelItem({
   panel,
   index,
   isFocused,
+  isDesktop,
   openModal,
   setPanelRef,
 }: {
   panel: PanelData;
   index: number;
   isFocused: boolean;
+  isDesktop: boolean;
   openModal: () => void;
   setPanelRef: (index: number, el: HTMLDivElement | null) => void;
 }) {
@@ -66,21 +68,33 @@ function PanelItem({
       ref={(el) => setPanelRef(index, el)}
       id={panel.id}
       data-panel-index={index}
-      className={`relative w-full aspect-[1440/450] overflow-hidden select-none ${
-        isFocused ? "z-10" : "z-0 pointer-events-none"
+      className={`section-changer-panel relative w-full aspect-[1440/450] overflow-hidden select-none ${
+        isDesktop
+          ? isFocused
+            ? "z-10 pointer-events-auto"
+            : "z-0 pointer-events-none"
+          : "z-10 opacity-100 pointer-events-auto"
       }`}
-      style={{
-        willChange: "filter, opacity, transform",
-        filter: isFocused ? "blur(0px)" : "blur(10px)",
-        opacity: isFocused ? 1 : 0.3,
-        transform: isFocused
-          ? "translate3d(0, 0, 0) scale(1)"
-          : "translate3d(0, 0, 0) scale(0.985)",
-        transition:
-          "filter 700ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1)",
-      }}
+      style={
+        isDesktop
+          ? {
+              willChange: "filter, opacity, transform",
+              filter: isFocused ? "blur(0px)" : "blur(10px)",
+              opacity: isFocused ? 1 : 0.3,
+              transform: isFocused
+                ? "translate3d(0, 0, 0) scale(1)"
+                : "translate3d(0, 0, 0) scale(0.985)",
+              transition:
+                "filter 700ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }
+          : {
+              filter: "none",
+              opacity: 1,
+              transform: "none",
+            }
+      }
     >
-      {/* 1. Placeholder Blur-Up: Muncul instan saat gambar SVG utama memuat */}
+      {/* 1. Placeholder Blur-Up: Hanya muncul sesaat saat aset resolusi tinggi awal dimuat */}
       <div
         className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ease-out z-0 ${
           isLoaded ? "opacity-0" : "opacity-100"
@@ -93,7 +107,6 @@ function PanelItem({
           alt=""
           className="w-full h-full object-cover filter blur-2xl scale-110"
         />
-        {/* Shimmer loading pulse halus */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
       </div>
 
@@ -114,13 +127,15 @@ function PanelItem({
       {panel.hasButton && (
         <button
           type="button"
-          disabled={!isFocused}
+          disabled={isDesktop && !isFocused}
           onClick={(e) => {
             e.preventDefault();
             openModal();
           }}
           className={`group absolute z-20 rounded-lg focus:outline-none focus:ring-4 focus:ring-[#801e46]/40 transition-all duration-300 ${
-            isFocused ? "cursor-pointer pointer-events-auto" : "pointer-events-none"
+            !isDesktop || isFocused
+              ? "cursor-pointer pointer-events-auto"
+              : "pointer-events-none"
           }`}
           style={{
             left: "59.2%",
@@ -140,25 +155,36 @@ function PanelItem({
 }
 
 /**
- * Section Homepage Craftivation dengan Animasi Scroll Dinamis:
- * - Fade-In & Fade-Out
- * - Blur-In & Blur-Out
- * - Progressive Blur-Up Placeholder
- *
- * Mengikuti posisi scroll secara akurat:
- * Panel yang berada di tengah pandangan mata pengguna akan menjadi normal (100% tajam & terang),
- * sedangkan panel di atas maupun di bawahnya akan memudar dan blur lembut (Depth of Field cinematic).
+ * Section Homepage Craftivation:
+ * - Pada perangkat mobile dan tablet (< 1024px), efek blur & redup dinonaktifkan
+ *   agar semua panel langsung tampil jernih, tajam, dan lengkap tanpa harus berada di tengah.
+ * - Pada perangkat desktop (>= 1024px), efek fokus scroll depth-of-field tetap aktif.
  */
 export default function SectionChanger() {
   const { openModal } = useContactModal();
   const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activePanelIndex, setActivePanelIndex] = useState<number>(0);
+  const [isDesktop, setIsDesktop] = useState<boolean>(false);
 
   const setPanelRef = useCallback((index: number, el: HTMLDivElement | null) => {
     panelRefs.current[index] = el;
   }, []);
 
+  // Deteksi ukuran layar untuk membedakan mobile/tablet vs desktop
   useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Scroll watcher: Hanya aktif jika tampilan desktop
+  useEffect(() => {
+    if (!isDesktop) return;
+
     let frameId: number | null = null;
 
     const evaluateFocus = () => {
@@ -190,7 +216,6 @@ export default function SectionChanger() {
       }
     };
 
-    // Evaluasi pertama saat mount / resize
     evaluateFocus();
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -201,7 +226,7 @@ export default function SectionChanger() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+  }, [isDesktop]);
 
   return (
     <section
@@ -209,6 +234,18 @@ export default function SectionChanger() {
       aria-label="Craftivation Exhibition Contractor"
       className="relative w-full overflow-hidden bg-black flex justify-center py-0"
     >
+      {/* CSS Guard: Menjamin pada tablet & HP tidak pernah terkena blur / redup */}
+      <style>{`
+        @media (max-width: 1023px) {
+          .section-changer-panel {
+            filter: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+            pointer-events: auto !important;
+          }
+        }
+      `}</style>
+
       {/* Anchor navigasi untuk kompatibilitas */}
       <span id="hub" className="sr-only" aria-hidden="true" />
       <span id="services" className="sr-only" aria-hidden="true" />
@@ -220,6 +257,7 @@ export default function SectionChanger() {
             panel={panel}
             index={idx}
             isFocused={activePanelIndex === idx}
+            isDesktop={isDesktop}
             openModal={openModal}
             setPanelRef={setPanelRef}
           />
