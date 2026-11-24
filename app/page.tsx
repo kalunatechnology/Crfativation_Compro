@@ -5,6 +5,7 @@ import HeroSection from "@/components/HeroSection";
 import SectionChanger from "@/components/SectionChanger";
 import ProcessSection from "@/components/ProcessSection";
 import PortfolioSection from "@/components/PortfolioSection";
+import ServicesCarouselSection from "@/components/ServicesCarouselSection";
 import AboutSection from "@/components/AboutSection";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
@@ -43,6 +44,7 @@ export default function Home() {
         <SectionChanger />
         <ProcessSection />
         <PortfolioSection />
+        <ServicesCarouselSection />
         <AboutSection />
         <CTA />
       </main>

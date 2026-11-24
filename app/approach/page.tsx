@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import HomepageMotion from "@/components/HomepageMotion";
 import HomepageNavbar from "@/components/HomepageNavbar";
 import ApproachJourney from "@/components/ApproachJourney";
+import ApproachServicesSection from "@/components/ApproachServicesSection";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 import { buildPageMetadata, buildPageGraph } from "@/lib/seo";
@@ -41,6 +42,7 @@ export default function ApproachPage() {
       <HomepageNavbar variant="approach" />
       <main className="homepage approachPage">
         <ApproachJourney />
+        <ApproachServicesSection />
         <CTA />
       </main>
       <Footer />
