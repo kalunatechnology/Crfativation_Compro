@@ -6,7 +6,6 @@ import AboutSection from "@/components/AboutSection";
 import AboutValuesSection from "@/components/AboutValuesSection";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
-import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { buildPageMetadata, buildPageGraph } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -60,11 +59,6 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="aboutHero__copy">
-              <BreadcrumbNav
-                items={[{ name: "Tentang Kami", href: "/about" }]}
-                theme="dark"
-                className="mb-3"
-              />
               <p className="font-[family-name:var(--font-arsenal)] text-[13px] md:text-[15px] tracking-[0.2em] uppercase text-[#E6C6D6] font-bold mb-1">
                 Tentang Kami
               </p>

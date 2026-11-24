@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { useContactModal } from "@/components/ContactModal";
 
 const navItems = [
-    { label: "Pendekatan Kerja", href: "/approach" },
+  { label: "Portofolio Proyek", href: "/projects" },
+  { label: "Pendekatan Kerja", href: "/approach" },
   { label: "Tentang Kami", href: "/about" },
 ];
 

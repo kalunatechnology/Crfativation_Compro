@@ -294,13 +294,13 @@ export default function ProjectDetailModal({
 
             <div
               style={ARSENAL}
-              className="mt-2 flex items-center justify-center gap-3 text-[14px] text-[#4B002B] sm:gap-4 sm:text-[18px] md:text-[20px]"
+              className="mt-2 flex flex-wrap items-center justify-center gap-3 text-[14px] text-[#4B002B] sm:gap-4 sm:text-[18px] md:text-[20px]"
             >
               <span>{project.year || "2026"}</span>
               <span className="inline-block h-[1.3em] w-px bg-[#4B002B]" aria-hidden="true" />
-              <span>{project.client || "Craftivation"}</span>
+              <span>{project.type || project.client || "Craftivation"}</span>
               <span className="inline-block h-[1.3em] w-px bg-[#4B002B]" aria-hidden="true" />
-              <span>{project.size || "30m²"}</span>
+              <span>{project.location || project.size || "Indonesia"}</span>
             </div>
 
             {project.description && (

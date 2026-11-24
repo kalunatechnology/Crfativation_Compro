@@ -6,7 +6,7 @@ import { useProjects } from "@/lib/useProjects";
 import type { Project } from "@/lib/types";
 import ProjectDetailModal from "@/components/ProjectDetailModal";
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 9;
 
 /**
  * Single SQLite project collection shared with homepage.

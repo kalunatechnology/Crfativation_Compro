@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { Service } from "@/lib/types";
-import BreadcrumbNav from "@/components/BreadcrumbNav";
 
 /**
  * Source-derived Approach page, separate from the homepage's pinned Hub.
@@ -122,11 +121,6 @@ export default function ApproachJourney() {
         />
         <div className="approachHero__shade" aria-hidden="true" />
         <div className="approachHero__copy">
-          <BreadcrumbNav
-            items={[{ name: "Pendekatan Kerja", href: "/approach" }]}
-            theme="dark"
-            className="mb-3 flex justify-center"
-          />
           <p className="font-[family-name:var(--font-arsenal)] text-[13px] md:text-[15px] tracking-[0.25em] uppercase text-[#FAF8F7]/85 font-bold mb-1">
             Pendekatan Kerja
           </p>

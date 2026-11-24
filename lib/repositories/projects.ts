@@ -15,6 +15,8 @@ interface Row {
   is_active: number;
   year?: string;
   size?: string;
+  type?: string | null;
+  location?: string | null;
   images?: string | null;
 }
 
@@ -44,11 +46,15 @@ const toProject = (r: Row): Project => ({
   isActive: r.is_active === 1,
   year: r.year || "2026",
   size: r.size || (r.slug === "gamefinity-brand-activation" ? "48m²" : r.slug === "exhibition-project" ? "36m²" : "30m²"),
+  type: r.type || undefined,
+  location: r.location || undefined,
   images: parseImages(r.images),
 });
 
 const toParams = (p: ProjectInput) => ({
   ...p,
+  type: p.type ?? "",
+  location: p.location ?? "",
   isActive: p.isActive ? 1 : 0,
   images: JSON.stringify(Array.isArray(p.images) ? p.images : []),
 });
@@ -70,8 +76,8 @@ export const projectsRepo = {
   create(input: ProjectInput): Project {
     const info = getDb()
       .prepare(
-        `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, images)
-         VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @images)`
+        `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, type, location, images)
+         VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @type, @location, @images)`
       )
       .run(toParams(input));
     return this.get(Number(info.lastInsertRowid))!;
@@ -86,7 +92,7 @@ export const projectsRepo = {
       .prepare(
         `UPDATE projects SET slug=@slug, number=@number, title=@title, client=@client,
          description=@description, image=@image, image_alt=@imageAlt, href=@href,
-         sort_order=@sortOrder, is_active=@isActive, images=@images WHERE id=@id`
+         sort_order=@sortOrder, is_active=@isActive, type=@type, location=@location, images=@images WHERE id=@id`
       )
       .run({ ...toParams(merged), id });
     return this.get(id);

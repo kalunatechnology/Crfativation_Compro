@@ -4,7 +4,6 @@ import HomepageNavbar from "@/components/HomepageNavbar";
 import HomepageMotion from "@/components/HomepageMotion";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
-import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { buildPageMetadata, buildPageGraph } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -44,10 +43,6 @@ export default function ContactPage() {
           aria-labelledby="contact-heading"
         >
           <div className="max-w-[860px]">
-            <BreadcrumbNav
-              items={[{ name: "Hubungi Kami", href: "/contact" }]}
-              className="mb-4"
-            />
             <p className="font-[family-name:var(--font-arsenal)] text-[14px] md:text-[16px] tracking-[0.2em] uppercase text-[#4B002B] font-bold mb-3">
               Hubungi Kami • Konsultasi & Kemitraan
             </p>

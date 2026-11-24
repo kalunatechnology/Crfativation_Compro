@@ -65,6 +65,12 @@ function init(db: Database.Database) {
   if (!projectCols.some(c => c.name === "images")) {
     db.exec("ALTER TABLE projects ADD COLUMN images TEXT NOT NULL DEFAULT '[]'");
   }
+  if (!projectCols.some(c => c.name === "type")) {
+    db.exec("ALTER TABLE projects ADD COLUMN type TEXT NOT NULL DEFAULT ''");
+  }
+  if (!projectCols.some(c => c.name === "location")) {
+    db.exec("ALTER TABLE projects ADD COLUMN location TEXT NOT NULL DEFAULT ''");
+  }
 
   // Seed hanya jika tabel kosong.
   const count = (table: string) =>
@@ -82,11 +88,19 @@ function init(db: Database.Database) {
 
   if (count("projects") === 0) {
     const insert = db.prepare(
-      `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, images)
-       VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @images)`
+      `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, type, location, images)
+       VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @type, @location, @images)`
     );
     db.transaction(() => {
-      for (const p of dummyProjects) insert.run({ ...p, isActive: p.isActive ? 1 : 0, images: JSON.stringify(p.images ?? []) });
+      for (const p of dummyProjects) {
+        insert.run({
+          ...p,
+          type: p.type ?? "",
+          location: p.location ?? "",
+          isActive: p.isActive ? 1 : 0,
+          images: JSON.stringify(p.images ?? []),
+        });
+      }
     })();
   }
 
@@ -158,6 +172,46 @@ function init(db: Database.Database) {
         }
       }
       db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(galleryMigrationKey);
+    })();
+  }
+
+  // Portfolio Revision 2026: ganti proyek placeholder lama dengan 7 proyek portofolio resmi
+  const portfolioRevisionKey = "portfolio-revision-2026-v1";
+  const portfolioRevisionApplied = db
+    .prepare("SELECT key FROM craftivation_seed_migrations WHERE key = ?")
+    .get(portfolioRevisionKey);
+  if (!portfolioRevisionApplied) {
+    db.transaction(() => {
+      db.prepare(
+        "DELETE FROM projects WHERE slug IN ('mid-century-coffeebooth', 'gamefinity-brand-activation', 'exhibition-project')"
+      ).run();
+      const upsert = db.prepare(
+        `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, type, location, images)
+         VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @type, @location, @images)
+         ON CONFLICT(slug) DO UPDATE SET
+           number=excluded.number,
+           title=excluded.title,
+           client=excluded.client,
+           description=excluded.description,
+           image=excluded.image,
+           image_alt=excluded.image_alt,
+           href=excluded.href,
+           sort_order=excluded.sort_order,
+           is_active=excluded.is_active,
+           type=excluded.type,
+           location=excluded.location,
+           images=excluded.images`
+      );
+      for (const p of dummyProjects) {
+        upsert.run({
+          ...p,
+          type: p.type ?? "",
+          location: p.location ?? "",
+          isActive: p.isActive ? 1 : 0,
+          images: JSON.stringify(p.images ?? []),
+        });
+      }
+      db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(portfolioRevisionKey);
     })();
   }
 }
