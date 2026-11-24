@@ -150,7 +150,7 @@ function HeroSlider({ project }: { project: Project }) {
   );
 }
 
-/* ---------- Similar Projects (carousel, kartu tengah fokus) ---------- */
+/* ---------- Similar Projects (carousel, kartu tengah fokus + arrow & drag) ---------- */
 function SimilarCarousel({
   projects,
   onSelect,
@@ -158,47 +158,125 @@ function SimilarCarousel({
   projects: Project[];
   onSelect?: (project: Project) => void;
 }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef<{ isDown: boolean; startX: number; scrollLeft: number; moved: boolean }>({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+    moved: false,
+  });
+
+  const scrollByCard = (direction: "left" | "right") => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>("article");
+    const step = card ? card.offsetWidth + 24 : el.clientWidth * 0.55;
+    el.scrollBy({
+      left: direction === "right" ? step : -step,
+      behavior: "smooth",
+    });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = trackRef.current;
+    if (!el) return;
+    dragState.current = {
+      isDown: true,
+      startX: e.pageX - el.offsetLeft,
+      scrollLeft: el.scrollLeft,
+      moved: false,
+    };
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = trackRef.current;
+    if (!el || !dragState.current.isDown) return;
+    const x = e.pageX - el.offsetLeft;
+    const walk = x - dragState.current.startX;
+    if (Math.abs(walk) > 6) {
+      dragState.current.moved = true;
+    }
+    el.scrollLeft = dragState.current.scrollLeft - walk;
+  };
+
+  const stopDragging = () => {
+    dragState.current.isDown = false;
+  };
+
   return (
-    <div className="-mx-5 sm:-mx-10 md:-mx-[7%] [container-type:inline-size]">
-      <div
-        className="flex snap-x snap-mandatory gap-[4.7cqw] overflow-x-auto pb-4 [padding-inline:23.3cqw] [scroll-padding-inline:23.3cqw] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-      {projects.map((similar) => (
-        <article
-          key={similar.id}
-          className="group w-[53cqw] shrink-0 snap-center cursor-pointer text-left"
-          onClick={() => onSelect?.(similar)}
-        >
-          <div
-            className="relative w-full overflow-hidden rounded-[14px] bg-neutral-100 shadow-[0_6px_16px_rgba(0,0,0,0.12)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_12px_26px_rgba(0,0,0,0.2)] sm:rounded-[18px]"
-            style={{ aspectRatio: "527 / 285" }}
+    <div className="relative -mx-5 sm:-mx-10 md:-mx-[7%] [container-type:inline-size]">
+      {projects.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={() => scrollByCard("left")}
+            aria-label="Geser proyek serupa ke kiri"
+            className="absolute left-2 top-[40%] z-10 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-black/10 bg-white/90 text-[#181818] shadow-[0_4px_14px_rgba(0,0,0,0.18)] backdrop-blur transition hover:bg-[#4B002B] hover:text-white sm:left-4 sm:h-10 sm:w-10"
           >
-            <Image
-              src={similar.image?.trim() || FALLBACK_IMAGE}
-              alt={similar.imageAlt?.trim() || similar.title}
-              fill
-              unoptimized
-              sizes="(max-width: 640px) 55vw, 527px"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div className="mt-2 flex items-baseline justify-between gap-[1.5cqw]">
-            <span
-              style={{ ...ARSENAL, fontSize: "clamp(14px, 3.7cqw, 38px)" }}
-              className="truncate leading-tight text-[#4a4a4a] transition-colors group-hover:text-[#4B002B]"
+            <svg width="9" height="15" viewBox="0 0 9 15" fill="none" aria-hidden="true">
+              <path d="M7.5 1.5 1.5 7.5l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollByCard("right")}
+            aria-label="Geser proyek serupa ke kanan"
+            className="absolute right-2 top-[40%] z-10 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-black/10 bg-white/90 text-[#181818] shadow-[0_4px_14px_rgba(0,0,0,0.18)] backdrop-blur transition hover:bg-[#4B002B] hover:text-white sm:right-4 sm:h-10 sm:w-10"
+          >
+            <svg width="9" height="15" viewBox="0 0 9 15" fill="none" aria-hidden="true">
+              <path d="m1.5 1.5 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      <div
+        ref={trackRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={stopDragging}
+        onMouseLeave={stopDragging}
+        className="flex cursor-grab snap-x snap-mandatory gap-[4.7cqw] overflow-x-auto pb-4 select-none active:cursor-grabbing [padding-inline:23.3cqw] [scroll-padding-inline:23.3cqw] [scrollbar-width:thin] [scrollbar-color:#4B002B_rgba(0,0,0,0.08)]"
+      >
+        {projects.map((similar) => (
+          <article
+            key={similar.id}
+            className="group w-[53cqw] shrink-0 snap-center cursor-pointer text-left"
+            onClick={() => {
+              if (!dragState.current.moved) onSelect?.(similar);
+            }}
+          >
+            <div
+              className="relative w-full overflow-hidden rounded-[14px] bg-neutral-100 shadow-[0_6px_16px_rgba(0,0,0,0.12)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_12px_26px_rgba(0,0,0,0.2)] sm:rounded-[18px]"
+              style={{ aspectRatio: "527 / 285" }}
             >
-              {similar.title}
-            </span>
-            <span
-              style={{ ...ARSENAL, fontSize: "clamp(11px, 2.3cqw, 24px)" }}
-              className="shrink-0 text-[#6b6b6b]"
-            >
-              {similar.number || String(similar.id).padStart(2, "0")}
-            </span>
-          </div>
-        </article>
-      ))}
-    </div>
+              <Image
+                src={similar.image?.trim() || FALLBACK_IMAGE}
+                alt={similar.imageAlt?.trim() || similar.title}
+                fill
+                unoptimized
+                draggable={false}
+                sizes="(max-width: 640px) 55vw, 527px"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
+            <div className="mt-2 flex items-baseline justify-between gap-[1.5cqw]">
+              <span
+                style={{ ...ARSENAL, fontSize: "clamp(14px, 3.7cqw, 38px)" }}
+                className="truncate leading-tight text-[#4a4a4a] transition-colors group-hover:text-[#4B002B]"
+              >
+                {similar.title}
+              </span>
+              <span
+                style={{ ...ARSENAL, fontSize: "clamp(11px, 2.3cqw, 24px)" }}
+                className="shrink-0 text-[#6b6b6b]"
+              >
+                {similar.number || String(similar.id).padStart(2, "0")}
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
@@ -296,8 +374,6 @@ export default function ProjectDetailModal({
               style={ARSENAL}
               className="mt-2 flex flex-wrap items-center justify-center gap-3 text-[14px] text-[#4B002B] sm:gap-4 sm:text-[18px] md:text-[20px]"
             >
-              <span>{project.year || "2026"}</span>
-              <span className="inline-block h-[1.3em] w-px bg-[#4B002B]" aria-hidden="true" />
               <span>{project.type || project.client || "Craftivation"}</span>
               <span className="inline-block h-[1.3em] w-px bg-[#4B002B]" aria-hidden="true" />
               <span>{project.location || project.size || "Indonesia"}</span>
