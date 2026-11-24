@@ -79,7 +79,7 @@ export const dummyProjects: ProjectInput[] = [
     location: "BSD City Tangerang",
     year: "2026",
     description:
-      "Full fit-out and custom furniture for Foom Cafe in BSD City, Tangerang. We handled the entire build from the ground up — designing the layout, constructing the bar counter, and crafting custom seating pieces that invite guests to settle in and stay awhile. Every corner was built with one goal: making the space feel as warm as the coffee.",
+      "Fit-out menyeluruh dan pembuatan furnitur kustom untuk Foom Cafe di BSD City, Tangerang. Kami menangani seluruh proses pengerjaan dari awal — mulai dari merancang tata letak, membangun bar counter, hingga memproduksi kursi kustom yang mengundang tamu untuk bersantai dan betah berlama-lama. Setiap sudut dirancang dengan satu tujuan: menghadirkan suasana ruang yang sehangat kopinya.",
     image: "/assets/portfolio/foom-cafe-1.webp",
     imageAlt: "Foom Cafe BSD City Tangerang fit out dan custom furniture bar counter",
     href: "#projects",
@@ -99,7 +99,7 @@ export const dummyProjects: ProjectInput[] = [
     location: "Living World Alam Sutera",
     year: "2026",
     description:
-      "Booth fit-out and interior for Matchaya at Living World Alam Sutera. In a busy mall environment, the booth had to do more than display product — it had to stop people mid-walk. We designed a clean, modern interior with efficient display areas and a brand identity that reads clearly from every angle, turning a small footprint into a strong retail presence.",
+      "Fit-out booth dan interior untuk Matchaya di Living World Alam Sutera. Di tengah ramainya area mal, booth harus mampu melakukan lebih dari sekadar memajang produk — tetapi juga menarik perhatian pengunjung yang melintas. Kami merancang interior yang bersih dan modern dengan area display yang efisien serta identitas merek yang terbaca jelas dari segala sudut, mengubah area ringkas menjadi daya tarik ritel yang kuat.",
     image: "/assets/portfolio/matchaya-1.webp",
     imageAlt: "Matchaya booth fit out dan interior di Living World Alam Sutera",
     href: "#projects",
@@ -120,7 +120,7 @@ export const dummyProjects: ProjectInput[] = [
     location: "Jakarta",
     year: "2026",
     description:
-      "Fit-out and custom furniture for Papa Cookies in Jakarta. For an F&B brand, the store is the stage — so we built one that works as hard as the team behind the counter. The fit-out balances operational efficiency for staff with a warm, appetizing atmosphere for customers, and every piece of custom furniture was built for durability without sacrificing style.",
+      "Fit-out dan furnitur kustom untuk Papa Cookies di Jakarta. Bagi brand F&B, toko adalah panggung utama — sehingga kami membangun ruang yang bekerja seoptimal tim di balik meja kasir. Fit-out ini menyeimbangkan efisiensi operasional staf dengan suasana hangat yang menggugah selera bagi pelanggan, serta memastikan setiap furnitur kustom dibuat kokoh tanpa mengorbankan estetika.",
     image: "/assets/portfolio/papa-cookies-1.webp",
     imageAlt: "Papa Cookies Jakarta store interior dan custom furniture",
     href: "#projects",
@@ -141,7 +141,7 @@ export const dummyProjects: ProjectInput[] = [
     location: "Mal Ciputra Jakarta",
     year: "2026",
     description:
-      "Store fit-out and interior for Shake Shake at Mall Ciputra Jakarta. High-volume mall retail demands a space that can keep up — and this one does. We delivered a fit-out that matches the brand's fun, energetic personality while ensuring smooth customer flow and materials that stay fresh-looking under constant foot traffic, day in and day out.",
+      "Fit-out toko dan interior untuk Shake Shake di Mal Ciputra Jakarta. Ritel mal dengan trafik tinggi menuntut ruang yang mampu mengimbangi ritme tersebut. Kami menghadirkan fit-out yang selaras dengan karakter merek yang seru dan energik, sekaligus memastikan alur pelanggan yang lancar serta pemilihan material yang tetap terlihat prima di tengah aktivitas padat setiap harinya.",
     image: "/assets/portfolio/shake-shake-1.webp",
     imageAlt: "Shake Shake Mal Ciputra Jakarta store fit out dan interior",
     href: "#projects",
@@ -161,7 +161,7 @@ export const dummyProjects: ProjectInput[] = [
     location: "Serang & Tangerang",
     year: "2026",
     description:
-      "Activation booth and event management for Axis x Gamefinity at Axis Nation Cup 2026 in Serang and Tangerang. This wasn't just a booth to look at — it was built to pull the crowd in, spark gameplay, and create real engagement. We handled everything from booth construction to on-ground event management, keeping the road to the Grand Final full of hype and seamless activation.",
+      "Booth aktivasi dan manajemen acara untuk Axis x Gamefinity pada ajang Axis Nation Cup 2026 di Serang dan Tangerang. Booth ini bukan sekadar untuk dilihat — melainkan dibangun untuk menarik keramaian, memicu keseruan bermain, dan menciptakan interaksi nyata. Kami menangani seluruh kebutuhan mulai dari konstruksi booth hingga pengelolaan acara di lapangan, menjaga atmosfer menuju Grand Final tetap meriah dan berjalan mulus.",
     image: "/assets/portfolio/axis-nation-cup-1.webp",
     imageAlt: "Axis Nation Cup 2026 Series activation booth di Serang dan Tangerang",
     href: "#projects",
@@ -182,7 +182,7 @@ export const dummyProjects: ProjectInput[] = [
     location: "Istora Senayan Jakarta",
     year: "2026",
     description:
-      "Activation booth and event management for the Grand Final of Axis Nation Cup 2026 at ISTORA Senayan, Jakarta. At a venue of this scale, the activation had to be larger than life — and it was. We delivered a booth that matched the energy of the championship, drew crowds throughout the day, and created moments fans won't forget. Major events demand precision, and we brought it.",
+      "Booth aktivasi dan manajemen acara untuk Grand Final Axis Nation Cup 2026 di Istora Senayan, Jakarta. Di venue sebesar ini, aktivasi harus tampil megah dan berkesan. Kami menghadirkan booth yang sepadan dengan energi kejuaraan, mampu menarik kerumunan sepanjang hari, serta menciptakan momen tak terlupakan bagi para penggemar. Acara berskala besar menuntut presisi tinggi, dan kami mewujudkannya.",
     image: "/assets/portfolio/grand-final-axis-1.webp",
     imageAlt: "Grand Final Axis Nation Cup 2026 Series activation booth di Istora Senayan Jakarta",
     href: "#projects",
@@ -203,7 +203,7 @@ export const dummyProjects: ProjectInput[] = [
     location: "Semarang",
     year: "2026",
     description:
-      "Event decoration for Spotlite X in Semarang. We designed and built a proper stage backdrop along with full event decorations — pieces that frame the moment and elevate the entire room. From structural build to finishing details, everything was crafted to make Spotlite X look as good as it felt, proving that event decoration is about more than filling a space — it's about setting the stage.",
+      "Dekorasi acara untuk Spotlite X di Semarang. Kami merancang dan membangun backdrop panggung beserta dekorasi acara secara menyeluruh — elemen visual yang membingkai momen dan meningkatkan suasana ruangan. Dari konstruksi struktur hingga detail finishing, semuanya dikerjakan agar Spotlite X tampil memukau, membuktikan bahwa dekorasi acara lebih dari sekadar mengisi ruang, melainkan menciptakan panggung yang berkesan.",
     image: "/assets/portfolio/spotlite-x-1.webp",
     imageAlt: "Spotlite X Semarang stage backdrop dan event decoration",
     href: "#projects",

@@ -214,6 +214,21 @@ function init(db: Database.Database) {
       db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(portfolioRevisionKey);
     })();
   }
+
+  // Perbarui deskripsi portofolio ke Bahasa Indonesia pada database yang sudah ada
+  const portfolioIdTranslationKey = "portfolio-revision-2026-id-v1";
+  const portfolioIdTranslationApplied = db
+    .prepare("SELECT key FROM craftivation_seed_migrations WHERE key = ?")
+    .get(portfolioIdTranslationKey);
+  if (!portfolioIdTranslationApplied) {
+    db.transaction(() => {
+      const updateDesc = db.prepare("UPDATE projects SET description = ? WHERE slug = ?");
+      for (const p of dummyProjects) {
+        updateDesc.run(p.description, p.slug);
+      }
+      db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(portfolioIdTranslationKey);
+    })();
+  }
 }
 
 export function getDb(): Database.Database {
