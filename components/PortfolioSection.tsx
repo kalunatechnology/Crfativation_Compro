@@ -123,6 +123,7 @@ export default function PortfolioSection() {
         <div className="portofolioTrack">
           {portfolioItems.map((item, index) => {
             const projectKey = String(item.id);
+            const displayNumber = String(index + 1).padStart(2, "0");
             const isLiked = !!likedItems[projectKey];
             const projectUrl = `/projects#${item.slug || item.id}`;
             const isActive = activeIndex === index;
@@ -140,7 +141,7 @@ export default function PortfolioSection() {
                   onClick={(e) => {
                     if (isActive) {
                       e.preventDefault();
-                      setSelectedProject(item);
+                      setSelectedProject({ ...item, number: displayNumber });
                     }
                   }}
                   className="portofolioCard__image"
@@ -169,14 +170,14 @@ export default function PortfolioSection() {
                     onClick={(e) => {
                       if (isActive) {
                         e.preventDefault();
-                        setSelectedProject(item);
+                        setSelectedProject({ ...item, number: displayNumber });
                       }
                     }}
                     className="portofolioCard__titleLink"
                   >
                     <h3 className="portofolioCard__title">{item.title}</h3>
                   </Link>
-                  <span className="portofolioCard__num">{item.number}</span>
+                  <span className="portofolioCard__num">{displayNumber}</span>
                 </div>
 
                 {/* Action Row: Favorite / Like button only */}

@@ -71,6 +71,9 @@ function init(db: Database.Database) {
   if (!projectCols.some(c => c.name === "location")) {
     db.exec("ALTER TABLE projects ADD COLUMN location TEXT NOT NULL DEFAULT ''");
   }
+  if (!projectCols.some(c => c.name === "visible")) {
+    db.exec("ALTER TABLE projects ADD COLUMN visible INTEGER NOT NULL DEFAULT 1");
+  }
 
   // Seed hanya jika tabel kosong.
   const count = (table: string) =>
@@ -88,8 +91,8 @@ function init(db: Database.Database) {
 
   if (count("projects") === 0) {
     const insert = db.prepare(
-      `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, type, location, images)
-       VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @type, @location, @images)`
+      `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, visible, type, location, images)
+       VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @visible, @type, @location, @images)`
     );
     db.transaction(() => {
       for (const p of dummyProjects) {
@@ -98,6 +101,7 @@ function init(db: Database.Database) {
           type: p.type ?? "",
           location: p.location ?? "",
           isActive: p.isActive ? 1 : 0,
+          visible: p.visible ? 1 : 0,
           images: JSON.stringify(p.images ?? []),
         });
       }
@@ -227,6 +231,21 @@ function init(db: Database.Database) {
         updateDesc.run(p.description, p.slug);
       }
       db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(portfolioIdTranslationKey);
+    })();
+  }
+
+  // Migrasi parameter visible (true/false): tampilkan hanya ANC Series, ANC Grand Final, dan Spotlite X
+  const portfolioVisibleKey = "portfolio-visible-flag-v1";
+  const portfolioVisibleApplied = db
+    .prepare("SELECT key FROM craftivation_seed_migrations WHERE key = ?")
+    .get(portfolioVisibleKey);
+  if (!portfolioVisibleApplied) {
+    db.transaction(() => {
+      const updateVisible = db.prepare("UPDATE projects SET visible = ? WHERE slug = ?");
+      for (const p of dummyProjects) {
+        updateVisible.run(p.visible ? 1 : 0, p.slug);
+      }
+      db.prepare("INSERT INTO craftivation_seed_migrations (key) VALUES (?)").run(portfolioVisibleKey);
     })();
   }
 }

@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       href: body.href ?? "#projects",
       sortOrder: body.sortOrder ?? 0,
       isActive: body.isActive ?? true,
+      visible: body.visible ?? true,
       images: Array.isArray(body.images) ? body.images : [],
     });
     return NextResponse.json({ data: created }, { status: 201 });

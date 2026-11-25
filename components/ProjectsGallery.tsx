@@ -52,12 +52,14 @@ export default function ProjectsGallery() {
 
         {visible.length ? (
           <div className="projectsIndex__grid">
-            {visible.map((project, index) => (
+            {visible.map((project, index) => {
+              const displayNumber = String(index + 1).padStart(2, "0");
+              return (
               <article key={project.id} className="projectsIndex__item" data-home-reveal="card">
                 <button
                   type="button"
                   className="projectsIndex__open"
-                  onClick={() => setSelected(project)}
+                  onClick={() => setSelected({ ...project, number: displayNumber })}
                   aria-label={"Lihat detail proyek " + project.title}
                 >
                   <span className="projectsIndex__imageWrap">
@@ -73,11 +75,12 @@ export default function ProjectsGallery() {
                   </span>
                   <span className="projectsIndex__meta">
                     <span className="projectsIndex__name">{project.title}</span>
-                    <span className="projectsIndex__number">{project.number || String(index + 1).padStart(2, "0")}</span>
+                    <span className="projectsIndex__number">{displayNumber}</span>
                   </span>
                 </button>
               </article>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="projectsIndex__empty" role="status">

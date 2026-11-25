@@ -85,6 +85,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 1,
     isActive: true,
+    visible: false,
     images: [
       "/assets/portfolio/foom-cafe-2.webp",
       "/assets/portfolio/foom-cafe-3.webp",
@@ -105,6 +106,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 2,
     isActive: true,
+    visible: false,
     images: [
       "/assets/portfolio/matchaya-2.webp",
       "/assets/portfolio/matchaya-3.webp",
@@ -126,6 +128,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 3,
     isActive: true,
+    visible: false,
     images: [
       "/assets/portfolio/papa-cookies-2.webp",
       "/assets/portfolio/papa-cookies-3.webp",
@@ -147,6 +150,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 4,
     isActive: true,
+    visible: false,
     images: [
       "/assets/portfolio/shake-shake-2.webp",
       "/assets/portfolio/shake-shake-3.webp",
@@ -167,6 +171,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 5,
     isActive: true,
+    visible: true,
     images: [
       "/assets/portfolio/axis-nation-cup-2.webp",
       "/assets/portfolio/axis-nation-cup-3.webp",
@@ -188,6 +193,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 6,
     isActive: true,
+    visible: true,
     images: [
       "/assets/portfolio/grand-final-axis-2.webp",
       "/assets/portfolio/grand-final-axis-3.webp",
@@ -209,6 +215,7 @@ export const dummyProjects: ProjectInput[] = [
     href: "#projects",
     sortOrder: 7,
     isActive: true,
+    visible: true,
     images: [
       "/assets/portfolio/spotlite-x-2.webp",
       "/assets/portfolio/spotlite-x-3.webp",

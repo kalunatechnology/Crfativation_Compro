@@ -23,6 +23,7 @@ export interface Project {
   href: string;
   sortOrder: number;
   isActive: boolean;
+  visible: boolean;
   year?: string;
   size?: string;
   type?: string;

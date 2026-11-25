@@ -10,7 +10,9 @@ import type { Project } from "@/lib/types";
  * Seeded dummy data is only shown while loading or after a network error.
  * An intentionally empty API list stays empty: never fabricate projects.
  */
-const fallback: Project[] = dummyProjects.map((item, index) => ({ ...item, id: index + 1 }));
+const fallback: Project[] = dummyProjects
+  .filter((item) => item.visible !== false)
+  .map((item, index) => ({ ...item, id: index + 1 }));
 
 type State = { items: Project[]; status: "loading" | "ready" | "error" };
 export function useProjects(): State {
@@ -27,7 +29,14 @@ export function useProjects(): State {
           throw new Error("Format daftar proyek tidak valid");
         }
         const items = (payload.data as Project[])
-          .filter(item => item && typeof item.id === "number" && typeof item.title === "string" && item.isActive !== false)
+          .filter(
+            (item) =>
+              item &&
+              typeof item.id === "number" &&
+              typeof item.title === "string" &&
+              item.isActive !== false &&
+              item.visible !== false
+          )
           .sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id);
         if (!controller.signal.aborted) setState({ items, status: "ready" });
       } catch {

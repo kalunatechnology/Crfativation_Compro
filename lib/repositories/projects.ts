@@ -13,6 +13,7 @@ interface Row {
   href: string;
   sort_order: number;
   is_active: number;
+  visible?: number;
   year?: string;
   size?: string;
   type?: string | null;
@@ -44,6 +45,7 @@ const toProject = (r: Row): Project => ({
   href: r.href,
   sortOrder: r.sort_order,
   isActive: r.is_active === 1,
+  visible: r.visible !== 0,
   year: r.year || "2026",
   size: r.size || (r.slug === "gamefinity-brand-activation" ? "48m²" : r.slug === "exhibition-project" ? "36m²" : "30m²"),
   type: r.type || undefined,
@@ -56,12 +58,13 @@ const toParams = (p: ProjectInput) => ({
   type: p.type ?? "",
   location: p.location ?? "",
   isActive: p.isActive ? 1 : 0,
+  visible: p.visible !== false ? 1 : 0,
   images: JSON.stringify(Array.isArray(p.images) ? p.images : []),
 });
 
 export const projectsRepo = {
   list(includeInactive = false): Project[] {
-    const where = includeInactive ? "" : "WHERE is_active = 1";
+    const where = includeInactive ? "" : "WHERE is_active = 1 AND visible = 1";
     const rows = getDb()
       .prepare(`SELECT * FROM projects ${where} ORDER BY sort_order ASC, id ASC`)
       .all() as Row[];
@@ -76,8 +79,8 @@ export const projectsRepo = {
   create(input: ProjectInput): Project {
     const info = getDb()
       .prepare(
-        `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, type, location, images)
-         VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @type, @location, @images)`
+        `INSERT INTO projects (slug, number, title, client, description, image, image_alt, href, sort_order, is_active, visible, type, location, images)
+         VALUES (@slug, @number, @title, @client, @description, @image, @imageAlt, @href, @sortOrder, @isActive, @visible, @type, @location, @images)`
       )
       .run(toParams(input));
     return this.get(Number(info.lastInsertRowid))!;
@@ -92,7 +95,7 @@ export const projectsRepo = {
       .prepare(
         `UPDATE projects SET slug=@slug, number=@number, title=@title, client=@client,
          description=@description, image=@image, image_alt=@imageAlt, href=@href,
-         sort_order=@sortOrder, is_active=@isActive, type=@type, location=@location, images=@images WHERE id=@id`
+         sort_order=@sortOrder, is_active=@isActive, visible=@visible, type=@type, location=@location, images=@images WHERE id=@id`
       )
       .run({ ...toParams(merged), id });
     return this.get(id);
